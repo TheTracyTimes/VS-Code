@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import RegistrationForm from './components/RegistrationForm';
 import Dashboard from './components/Dashboard';
+import DoveAnimation from './components/DoveAnimation';
 import type { Registration } from './types';
 import { calculateAnalytics, generateSampleData } from './utils/analytics';
 import './App.css';
@@ -9,6 +10,11 @@ function App() {
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [view, setView] = useState<'form' | 'dashboard'>('dashboard');
   const [showNotification, setShowNotification] = useState(false);
+  const [showDove, setShowDove] = useState(() => {
+    // Show dove only on first visit
+    const hasVisited = localStorage.getItem('hasVisitedCampAnalytics');
+    return !hasVisited;
+  });
 
   // Load registrations from localStorage on mount
   useEffect(() => {
@@ -51,6 +57,11 @@ function App() {
   const showSuccessNotification = () => {
     setShowNotification(true);
     setTimeout(() => setShowNotification(false), 3000);
+  };
+
+  const handleDoveComplete = () => {
+    setShowDove(false);
+    localStorage.setItem('hasVisitedCampAnalytics', 'true');
   };
 
   const loadSampleData = () => {
@@ -159,6 +170,9 @@ function App() {
 
   return (
     <div className="app">
+      {/* Dove Animation - Shows on first visit */}
+      {showDove && <DoveAnimation onComplete={handleDoveComplete} />}
+
       {/* Header */}
       <header className="app-header">
         <div className="header-content">
