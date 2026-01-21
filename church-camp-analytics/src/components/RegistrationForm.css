@@ -140,6 +140,89 @@
   transform: translateY(0);
 }
 
+/* Conditional Field Highlighting */
+.conditional-field {
+  background: #fff3cd;
+  padding: 1rem;
+  border-radius: 6px;
+  border: 2px solid #ffc107;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.conditional-field label {
+  color: #856404;
+  font-weight: 600;
+}
+
+/* Payment Section */
+.payment-section {
+  border-left-color: #28a745;
+}
+
+.payment-info {
+  margin-top: 1rem;
+}
+
+.info-box {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 2px solid #28a745;
+}
+
+.info-box h4 {
+  color: #28a745;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+.info-box p {
+  margin: 0.5rem 0;
+  color: #2c3e50;
+}
+
+.info-box strong {
+  color: #28a745;
+}
+
+.payment-link {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: #28a745;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.payment-link:hover {
+  background: #218838;
+  transform: translateY(-2px);
+}
+
+/* Form Footer */
+.form-footer {
+  text-align: center;
+  margin-top: 1rem;
+  color: #7f8c8d;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (max-width: 768px) {
   .registration-form {
     padding: 1rem;

@@ -10,99 +10,99 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
+    gender: '',
     age: 18,
-    email: '',
+    chaperoneName: '',
     phone: '',
-    country: '',
-    stateProvince: '',
-    city: '',
-    previouslyAttended: false,
-    timesAttended: 0,
-    heardAboutCamp: '',
-    interests: [] as string[],
-    dietaryRestrictions: [] as string[],
-    tShirtSize: '',
-    transportationNeeded: false,
-    transportationMethod: '',
-    accommodationType: '',
-    financialAidNeeded: false,
-    estimatedBudget: '',
+    email: '',
+    nationality: '',
+    assembly: '',
+    transportation: '',
+    allergies: '',
     emergencyContactName: '',
     emergencyContactPhone: '',
-    emergencyContactRelation: '',
-    specialNeeds: '',
     comments: '',
+    concerns: '',
+    questions: '',
+    paymentOption: '',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
 
-    if (type === 'checkbox') {
-      const checked = (e.target as HTMLInputElement).checked;
-      setFormData(prev => ({ ...prev, [name]: checked }));
-    } else if (type === 'number') {
+    if (type === 'number') {
       setFormData(prev => ({ ...prev, [name]: parseInt(value) || 0 }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
   };
 
-  const handleMultiSelect = (value: string, field: 'interests' | 'dietaryRestrictions') => {
-    setFormData(prev => {
-      const currentValues = prev[field];
-      const newValues = currentValues.includes(value)
-        ? currentValues.filter(v => v !== value)
-        : [...currentValues, value];
-      return { ...prev, [field]: newValues };
-    });
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate chaperone requirement
+    if (formData.age < 18 && !formData.chaperoneName.trim()) {
+      alert('A chaperone name is required for attendees under 18 years old.');
+      return;
+    }
+
     onSubmit(formData);
+
     // Reset form
     setFormData({
       firstName: '',
       lastName: '',
+      gender: '',
       age: 18,
-      email: '',
+      chaperoneName: '',
       phone: '',
-      country: '',
-      stateProvince: '',
-      city: '',
-      previouslyAttended: false,
-      timesAttended: 0,
-      heardAboutCamp: '',
-      interests: [],
-      dietaryRestrictions: [],
-      tShirtSize: '',
-      transportationNeeded: false,
-      transportationMethod: '',
-      accommodationType: '',
-      financialAidNeeded: false,
-      estimatedBudget: '',
+      email: '',
+      nationality: '',
+      assembly: '',
+      transportation: '',
+      allergies: '',
       emergencyContactName: '',
       emergencyContactPhone: '',
-      emergencyContactRelation: '',
-      specialNeeds: '',
       comments: '',
+      concerns: '',
+      questions: '',
+      paymentOption: '',
     });
   };
 
-  const interestOptions = ['Worship', 'Bible study', 'Sports', 'Arts & crafts', 'Music', 'Community service', 'Leadership'];
-  const dietaryOptions = ['None', 'Vegetarian', 'Vegan', 'Gluten-free', 'Halal', 'Kosher', 'Nut allergy', 'Lactose intolerant'];
+  const assemblies = [
+    'Assemblée Évangélique de Laval (Pastor Exavier Noel & Pastor Rosage Beauzil)',
+    'Assemblée Évangélique de Montreal (Pastor David Paul)',
+    'Tabernacle Evangelique Mahanaim (Pastor Gesner Dorzin)',
+    'Gospel Assembly of the Kingdom of Peace (Pastor Ancelot Joseph)',
+    'Assemblée Évangélique (Pastor Jean Bazelais)',
+    'Eglise de la Nouvelle Alliance (Pastor Vitalerme Dorestant)',
+    'Eglise du Corps de Christ (Pastor Wilner Dumond)',
+    'Sarasota Gospel Temple (Pastor Edwige Achile)',
+    'Christian Family Gospel Assembly (Pastor Kennedy Demosthenes)',
+    'Ansonia Gospel Assembly (Pastor Jowel Guerrier)',
+    'Gospel Assembly Church (Pastor Noisin Raphael)',
+    'Boston Gospel Congregation (Pastor Guy Mauristhene)',
+    'First Church of the Latter Rain (Pastor Wilson Douce)',
+    'God of Mercy Church (Pastor Hogarth Louis)',
+    'First Church of Brooklyn (Pastor Jean Michaud Derissant)',
+    'Christian Church of the Latter Rain (Pastor Jean Raymond Pharaud)',
+    'Gospel Church of Hope (Pastor Augustin Dalusma)',
+    'Other',
+  ];
 
   return (
     <form onSubmit={handleSubmit} className="registration-form">
       <h2>Church Camp Registration Form</h2>
-      <p className="form-description">Complete this form to register for our upcoming church camp. All fields marked with * are required.</p>
+      <p className="form-description">Please complete all required fields (*) to register for our church camp.</p>
 
       {/* Personal Information */}
       <section className="form-section">
         <h3>Personal Information</h3>
+
         <div className="form-row">
           <div className="form-group">
-            <label htmlFor="firstName">First Name *</label>
+            <label htmlFor="firstName">1. First Name *</label>
             <input
               type="text"
               id="firstName"
@@ -112,8 +112,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
               required
             />
           </div>
+
           <div className="form-group">
-            <label htmlFor="lastName">Last Name *</label>
+            <label htmlFor="lastName">2. Last Name *</label>
             <input
               type="text"
               id="lastName"
@@ -127,7 +128,22 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
 
         <div className="form-row">
           <div className="form-group">
-            <label htmlFor="age">Age (13-40) *</label>
+            <label htmlFor="gender">3. Gender *</label>
+            <select
+              id="gender"
+              name="gender"
+              value={formData.gender}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Select gender</option>
+              <option value="Female">Female</option>
+              <option value="Male">Male</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="age">4. Age (13-40) *</label>
             <input
               type="number"
               id="age"
@@ -139,8 +155,41 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
               required
             />
           </div>
+        </div>
+
+        {/* Conditional Chaperone Field */}
+        {formData.age < 18 && (
+          <div className="form-group conditional-field">
+            <label htmlFor="chaperoneName">5. Chaperone Name (Required for under 18) *</label>
+            <input
+              type="text"
+              id="chaperoneName"
+              name="chaperoneName"
+              value={formData.chaperoneName}
+              onChange={handleChange}
+              required={formData.age < 18}
+              placeholder="Required for attendees under 18"
+            />
+            <small className="helper-text">A chaperone is required for all attendees under 18 years old</small>
+          </div>
+        )}
+
+        <div className="form-row">
           <div className="form-group">
-            <label htmlFor="email">Email *</label>
+            <label htmlFor="phone">6. Phone Number *</label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              placeholder="+1-555-1234"
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="email">7. Email *</label>
             <input
               type="email"
               id="email"
@@ -153,273 +202,100 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="phone">Phone Number *</label>
+          <label htmlFor="nationality">8. Nationality *</label>
+          <select
+            id="nationality"
+            name="nationality"
+            value={formData.nationality}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select nationality</option>
+            <option value="French">French</option>
+            <option value="Canadian">Canadian</option>
+            <option value="American">American</option>
+          </select>
+        </div>
+      </section>
+
+      {/* Church Information */}
+      <section className="form-section">
+        <h3>Church Information</h3>
+
+        <div className="form-group">
+          <label htmlFor="assembly">9. Assembly *</label>
+          <select
+            id="assembly"
+            name="assembly"
+            value={formData.assembly}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select your assembly</option>
+            {assemblies.map(assembly => (
+              <option key={assembly} value={assembly}>
+                {assembly}
+              </option>
+            ))}
+          </select>
+        </div>
+      </section>
+
+      {/* Transportation & Logistics */}
+      <section className="form-section">
+        <h3>Transportation & Health</h3>
+
+        <div className="form-group">
+          <label htmlFor="transportation">10. Transportation *</label>
+          <select
+            id="transportation"
+            name="transportation"
+            value={formData.transportation}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select transportation option</option>
+            <option value="Personal car">Personal car</option>
+            <option value="Church bus">Church bus</option>
+            <option value="Carpooling">Carpooling</option>
+            <option value="Public transit">Public transit</option>
+            <option value="Need ride">Need ride</option>
+          </select>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="allergies">11. Allergies</label>
           <input
-            type="tel"
-            id="phone"
-            name="phone"
-            value={formData.phone}
+            type="text"
+            id="allergies"
+            name="allergies"
+            value={formData.allergies}
             onChange={handleChange}
-            required
+            placeholder="e.g., Peanuts, Shellfish, Lactose, or 'None'"
           />
-        </div>
-      </section>
-
-      {/* Geographic Information */}
-      <section className="form-section">
-        <h3>Location Information</h3>
-        <div className="form-group">
-          <label htmlFor="country">Country *</label>
-          <select
-            id="country"
-            name="country"
-            value={formData.country}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select a country</option>
-            <option value="Canada">Canada</option>
-            <option value="United States">United States</option>
-            <option value="Haiti">Haiti</option>
-            <option value="France">France</option>
-            <option value="Congo">Democratic Republic of Congo</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-
-        <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="stateProvince">State/Province *</label>
-            <input
-              type="text"
-              id="stateProvince"
-              name="stateProvince"
-              value={formData.stateProvince}
-              onChange={handleChange}
-              placeholder="e.g., Quebec, Ontario, New York"
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="city">City *</label>
-            <input
-              type="text"
-              id="city"
-              name="city"
-              value={formData.city}
-              onChange={handleChange}
-              required
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Camp Experience */}
-      <section className="form-section">
-        <h3>Camp Experience</h3>
-        <div className="form-group checkbox-group">
-          <label>
-            <input
-              type="checkbox"
-              name="previouslyAttended"
-              checked={formData.previouslyAttended}
-              onChange={handleChange}
-            />
-            I have attended this camp before
-          </label>
-        </div>
-
-        {formData.previouslyAttended && (
-          <div className="form-group">
-            <label htmlFor="timesAttended">How many times?</label>
-            <input
-              type="number"
-              id="timesAttended"
-              name="timesAttended"
-              min="0"
-              value={formData.timesAttended}
-              onChange={handleChange}
-            />
-          </div>
-        )}
-
-        <div className="form-group">
-          <label htmlFor="heardAboutCamp">How did you hear about this camp? *</label>
-          <select
-            id="heardAboutCamp"
-            name="heardAboutCamp"
-            value={formData.heardAboutCamp}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select an option</option>
-            <option value="Church announcement">Church announcement</option>
-            <option value="Friend">Friend</option>
-            <option value="Social media">Social media</option>
-            <option value="Website">Website</option>
-            <option value="Previous attendee">Previous attendee</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-      </section>
-
-      {/* Program Interests */}
-      <section className="form-section">
-        <h3>Program Interests</h3>
-        <p className="helper-text">Select all activities you're interested in:</p>
-        <div className="checkbox-grid">
-          {interestOptions.map(interest => (
-            <label key={interest} className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={formData.interests.includes(interest)}
-                onChange={() => handleMultiSelect(interest, 'interests')}
-              />
-              {interest}
-            </label>
-          ))}
-        </div>
-      </section>
-
-      {/* Dietary & Logistics */}
-      <section className="form-section">
-        <h3>Dietary Restrictions</h3>
-        <div className="checkbox-grid">
-          {dietaryOptions.map(dietary => (
-            <label key={dietary} className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={formData.dietaryRestrictions.includes(dietary)}
-                onChange={() => handleMultiSelect(dietary, 'dietaryRestrictions')}
-              />
-              {dietary}
-            </label>
-          ))}
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="tShirtSize">T-Shirt Size *</label>
-          <select
-            id="tShirtSize"
-            name="tShirtSize"
-            value={formData.tShirtSize}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select a size</option>
-            <option value="XS">XS</option>
-            <option value="S">S</option>
-            <option value="M">M</option>
-            <option value="L">L</option>
-            <option value="XL">XL</option>
-            <option value="XXL">XXL</option>
-          </select>
-        </div>
-      </section>
-
-      {/* Transportation & Accommodation */}
-      <section className="form-section">
-        <h3>Transportation & Accommodation</h3>
-        <div className="form-group checkbox-group">
-          <label>
-            <input
-              type="checkbox"
-              name="transportationNeeded"
-              checked={formData.transportationNeeded}
-              onChange={handleChange}
-            />
-            I need transportation assistance
-          </label>
-        </div>
-
-        {formData.transportationNeeded && (
-          <div className="form-group">
-            <label htmlFor="transportationMethod">Preferred transportation method</label>
-            <select
-              id="transportationMethod"
-              name="transportationMethod"
-              value={formData.transportationMethod}
-              onChange={handleChange}
-            >
-              <option value="">Select an option</option>
-              <option value="Church bus">Church bus</option>
-              <option value="Carpooling">Carpooling</option>
-              <option value="Public transit">Public transit</option>
-              <option value="Personal car">Personal car</option>
-            </select>
-          </div>
-        )}
-
-        <div className="form-group">
-          <label htmlFor="accommodationType">Accommodation preference *</label>
-          <select
-            id="accommodationType"
-            name="accommodationType"
-            value={formData.accommodationType}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select an option</option>
-            <option value="Shared cabin">Shared cabin</option>
-            <option value="Private room">Private room</option>
-            <option value="Tent">Tent</option>
-            <option value="RV">RV</option>
-          </select>
-        </div>
-      </section>
-
-      {/* Financial Information */}
-      <section className="form-section">
-        <h3>Financial Information</h3>
-        <div className="form-group checkbox-group">
-          <label>
-            <input
-              type="checkbox"
-              name="financialAidNeeded"
-              checked={formData.financialAidNeeded}
-              onChange={handleChange}
-            />
-            I am interested in financial aid
-          </label>
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="estimatedBudget">Estimated budget for camp *</label>
-          <select
-            id="estimatedBudget"
-            name="estimatedBudget"
-            value={formData.estimatedBudget}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select a range</option>
-            <option value="$0-$100">$0-$100</option>
-            <option value="$100-$200">$100-$200</option>
-            <option value="$200-$300">$200-$300</option>
-            <option value="$300-$500">$300-$500</option>
-            <option value="$500+">$500+</option>
-          </select>
+          <small className="helper-text">Please list any allergies or dietary restrictions</small>
         </div>
       </section>
 
       {/* Emergency Contact */}
       <section className="form-section">
         <h3>Emergency Contact</h3>
-        <div className="form-group">
-          <label htmlFor="emergencyContactName">Emergency contact name *</label>
-          <input
-            type="text"
-            id="emergencyContactName"
-            name="emergencyContactName"
-            value={formData.emergencyContactName}
-            onChange={handleChange}
-            required
-          />
-        </div>
 
         <div className="form-row">
           <div className="form-group">
-            <label htmlFor="emergencyContactPhone">Emergency contact phone *</label>
+            <label htmlFor="emergencyContactName">12. Emergency Contact Name *</label>
+            <input
+              type="text"
+              id="emergencyContactName"
+              name="emergencyContactName"
+              value={formData.emergencyContactName}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="emergencyContactPhone">Emergency Contact Phone *</label>
             <input
               type="tel"
               id="emergencyContactPhone"
@@ -429,55 +305,104 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
               required
             />
           </div>
-          <div className="form-group">
-            <label htmlFor="emergencyContactRelation">Relationship *</label>
-            <select
-              id="emergencyContactRelation"
-              name="emergencyContactRelation"
-              value={formData.emergencyContactRelation}
-              onChange={handleChange}
-              required
-            >
-              <option value="">Select relationship</option>
-              <option value="Parent">Parent</option>
-              <option value="Spouse">Spouse</option>
-              <option value="Sibling">Sibling</option>
-              <option value="Friend">Friend</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
         </div>
       </section>
 
       {/* Additional Information */}
       <section className="form-section">
         <h3>Additional Information</h3>
-        <div className="form-group">
-          <label htmlFor="specialNeeds">Special needs or medical conditions</label>
-          <textarea
-            id="specialNeeds"
-            name="specialNeeds"
-            value={formData.specialNeeds}
-            onChange={handleChange}
-            rows={3}
-            placeholder="Please list any special needs or medical conditions we should be aware of"
-          />
-        </div>
 
         <div className="form-group">
-          <label htmlFor="comments">Additional comments or questions</label>
+          <label htmlFor="comments">13. Comments</label>
           <textarea
             id="comments"
             name="comments"
             value={formData.comments}
             onChange={handleChange}
             rows={3}
-            placeholder="Any additional information you'd like to share"
+            placeholder="Any additional comments or information you'd like to share..."
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="concerns">14. Concerns</label>
+          <textarea
+            id="concerns"
+            name="concerns"
+            value={formData.concerns}
+            onChange={handleChange}
+            rows={3}
+            placeholder="Do you have any concerns we should be aware of?"
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="questions">15. Questions</label>
+          <textarea
+            id="questions"
+            name="questions"
+            value={formData.questions}
+            onChange={handleChange}
+            rows={3}
+            placeholder="Any questions about the camp?"
           />
         </div>
       </section>
 
+      {/* Payment Information */}
+      <section className="form-section payment-section">
+        <h3>Payment Information</h3>
+
+        <div className="form-group">
+          <label htmlFor="paymentOption">16. Payment Option *</label>
+          <select
+            id="paymentOption"
+            name="paymentOption"
+            value={formData.paymentOption}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select payment method</option>
+            <option value="CashApp">CashApp</option>
+            <option value="Zelle">Zelle</option>
+            <option value="Check">Check</option>
+          </select>
+        </div>
+
+        {formData.paymentOption && (
+          <div className="payment-info">
+            <div className="info-box">
+              <h4>📱 Payment Details</h4>
+              {formData.paymentOption === 'CashApp' && (
+                <div>
+                  <p><strong>CashApp:</strong> $ChurchCampPayment</p>
+                  <a href="https://cash.app/$ChurchCampPayment" target="_blank" rel="noopener noreferrer" className="payment-link">
+                    Click here to pay via CashApp
+                  </a>
+                </div>
+              )}
+              {formData.paymentOption === 'Zelle' && (
+                <div>
+                  <p><strong>Zelle:</strong> churchcamp@example.com</p>
+                  <p className="helper-text">Use this email to send payment via Zelle</p>
+                </div>
+              )}
+              {formData.paymentOption === 'Check' && (
+                <div>
+                  <p><strong>Make checks payable to:</strong> Church Camp Ministry</p>
+                  <p className="helper-text">Please bring your check to the church office or mail to the address provided in your confirmation email</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </section>
+
       <button type="submit" className="submit-button">Submit Registration</button>
+
+      <p className="form-footer">
+        After submitting, you will receive a confirmation email with additional details about the camp.
+      </p>
     </form>
   );
 };

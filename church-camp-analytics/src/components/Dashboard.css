@@ -202,3 +202,30 @@
 .recharts-surface {
   overflow: visible;
 }
+
+/* Wide Chart Card */
+.chart-card-wide {
+  grid-column: 1 / -1;
+}
+
+/* Custom Tooltip */
+.custom-tooltip {
+  background: white;
+  padding: 1rem;
+  border: 2px solid #667eea;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.custom-tooltip .label {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.custom-tooltip .value {
+  color: #667eea;
+  font-weight: 500;
+  margin: 0;
+}

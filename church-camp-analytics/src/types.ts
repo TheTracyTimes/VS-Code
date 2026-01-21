@@ -5,54 +5,43 @@ export interface Registration {
   // Personal Information
   firstName: string;
   lastName: string;
+  gender: string;
   age: number;
-  email: string;
+  chaperoneName: string; // Required if under 18
   phone: string;
+  email: string;
+  nationality: string;
 
-  // Geographic Information
-  country: string;
-  stateProvince: string;
-  city: string;
+  // Church Information
+  assembly: string;
 
-  // Camp Details
-  previouslyAttended: boolean;
-  timesAttended: number;
-  heardAboutCamp: string;
-
-  // Program Interests (multiple selection)
-  interests: string[];
-
-  // Logistics & Cost Factors
-  dietaryRestrictions: string[];
-  tShirtSize: string;
-  transportationNeeded: boolean;
-  transportationMethod: string;
-  accommodationType: string;
-  financialAidNeeded: boolean;
-  estimatedBudget: string;
+  // Transportation & Logistics
+  transportation: string;
+  allergies: string;
 
   // Emergency Contact
   emergencyContactName: string;
   emergencyContactPhone: string;
-  emergencyContactRelation: string;
 
   // Additional Information
-  specialNeeds: string;
   comments: string;
+  concerns: string;
+  questions: string;
+
+  // Payment
+  paymentOption: string;
 }
 
 export interface AnalyticsData {
   totalRegistrations: number;
   averageAge: number;
   ageDistribution: { [key: string]: number };
-  countryDistribution: { [key: string]: number };
-  stateProvinceDistribution: { [key: string]: number };
-  dietaryStats: { [key: string]: number };
+  genderDistribution: { [key: string]: number };
+  nationalityDistribution: { [key: string]: number };
+  assemblyDistribution: { [key: string]: number };
   transportationStats: { [key: string]: number };
-  accommodationStats: { [key: string]: number };
-  interestStats: { [key: string]: number };
-  financialAidRequests: number;
-  budgetDistribution: { [key: string]: number };
+  allergyStats: { [key: string]: number };
+  paymentOptionStats: { [key: string]: number };
   registrationTimeline: { date: string; count: number }[];
-  returningVsNew: { returning: number; new: number };
+  minorsRequiringChaperone: number;
 }

@@ -30,49 +30,45 @@ const Dashboard: React.FC<DashboardProps> = ({ analytics }) => {
     count,
   }));
 
-  const countryData = Object.entries(analytics.countryDistribution)
-    .map(([country, count]) => ({ country, count }))
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 10);
+  const genderData = Object.entries(analytics.genderDistribution).map(([name, value]) => ({
+    name,
+    value,
+  }));
 
-  const stateData = Object.entries(analytics.stateProvinceDistribution)
-    .map(([state, count]) => ({ state, count }))
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 10);
+  const nationalityData = Object.entries(analytics.nationalityDistribution).map(([name, value]) => ({
+    name,
+    value,
+  }));
 
-  const dietaryData = Object.entries(analytics.dietaryStats)
-    .map(([name, value]) => ({ name, value }))
-    .filter(item => item.name !== 'None');
+  const assemblyData = Object.entries(analytics.assemblyDistribution)
+    .map(([name, value]) => ({
+      name: name.length > 40 ? name.substring(0, 40) + '...' : name,
+      fullName: name,
+      value
+    }))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 10);
 
   const transportationData = Object.entries(analytics.transportationStats).map(([name, value]) => ({
     name,
     value,
   }));
 
-  const accommodationData = Object.entries(analytics.accommodationStats).map(([name, value]) => ({
+  const allergyData = Object.entries(analytics.allergyStats).map(([name, value]) => ({
     name,
     value,
   }));
 
-  const interestData = Object.entries(analytics.interestStats)
-    .map(([name, value]) => ({ name, value }))
-    .sort((a, b) => b.value - a.value);
-
-  const budgetData = Object.entries(analytics.budgetDistribution).map(([name, value]) => ({
+  const paymentData = Object.entries(analytics.paymentOptionStats).map(([name, value]) => ({
     name,
     value,
   }));
-
-  const attendeeTypeData = [
-    { name: 'Returning', value: analytics.returningVsNew.returning },
-    { name: 'New', value: analytics.returningVsNew.new },
-  ];
 
   return (
     <div className="dashboard">
       <div className="dashboard-header">
-        <h2>Camp Registration Analytics Dashboard</h2>
-        <p className="dashboard-subtitle">Real-time insights for planning and cost analysis</p>
+        <h2>Church Camp Registration Analytics Dashboard</h2>
+        <p className="dashboard-subtitle">Real-time insights for planning and organization</p>
       </div>
 
       {/* Key Metrics Cards */}
@@ -94,30 +90,25 @@ const Dashboard: React.FC<DashboardProps> = ({ analytics }) => {
         </div>
 
         <div className="metric-card">
-          <div className="metric-icon">💰</div>
+          <div className="metric-icon">👨‍👩‍👧</div>
           <div className="metric-content">
-            <h3>Financial Aid Requests</h3>
-            <p className="metric-value">{analytics.financialAidRequests}</p>
+            <h3>Minors (Under 18)</h3>
+            <p className="metric-value">{analytics.minorsRequiringChaperone}</p>
             <p className="metric-subtitle">
               {analytics.totalRegistrations > 0
-                ? `${Math.round((analytics.financialAidRequests / analytics.totalRegistrations) * 100)}%`
+                ? `${Math.round((analytics.minorsRequiringChaperone / analytics.totalRegistrations) * 100)}%`
                 : '0%'}{' '}
-              of total
+              require chaperone
             </p>
           </div>
         </div>
 
         <div className="metric-card">
-          <div className="metric-icon">🔄</div>
+          <div className="metric-icon">⛪</div>
           <div className="metric-content">
-            <h3>Returning Attendees</h3>
-            <p className="metric-value">{analytics.returningVsNew.returning}</p>
-            <p className="metric-subtitle">
-              {analytics.totalRegistrations > 0
-                ? `${Math.round((analytics.returningVsNew.returning / analytics.totalRegistrations) * 100)}%`
-                : '0%'}{' '}
-              retention
-            </p>
+            <h3>Assemblies</h3>
+            <p className="metric-value">{Object.keys(analytics.assemblyDistribution).length}</p>
+            <p className="metric-subtitle">Participating churches</p>
           </div>
         </div>
       </div>
@@ -127,7 +118,7 @@ const Dashboard: React.FC<DashboardProps> = ({ analytics }) => {
         {/* Age Distribution */}
         <div className="chart-card">
           <h3>Age Distribution</h3>
-          <p className="chart-description">Understanding our demographic spread helps plan age-appropriate activities</p>
+          <p className="chart-description">Understanding our demographic spread</p>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={ageData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -140,34 +131,43 @@ const Dashboard: React.FC<DashboardProps> = ({ analytics }) => {
           </ResponsiveContainer>
         </div>
 
-        {/* Geographic Distribution - Countries */}
+        {/* Gender Distribution */}
         <div className="chart-card">
-          <h3>Registrations by Country</h3>
-          <p className="chart-description">International distribution helps plan logistics and transportation</p>
+          <h3>Gender Distribution</h3>
+          <p className="chart-description">Attendee gender breakdown</p>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={countryData} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis type="number" />
-              <YAxis type="category" dataKey="country" width={100} />
+            <PieChart>
+              <Pie
+                data={genderData}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                outerRadius={80}
+                label
+              >
+                {genderData.map((_, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
               <Tooltip />
               <Legend />
-              <Bar dataKey="count" fill="#764ba2" />
-            </BarChart>
+            </PieChart>
           </ResponsiveContainer>
         </div>
 
-        {/* States/Provinces */}
+        {/* Nationality Distribution */}
         <div className="chart-card">
-          <h3>Top States/Provinces</h3>
-          <p className="chart-description">Regional distribution for organizing carpools and local meetups</p>
+          <h3>Nationality Breakdown</h3>
+          <p className="chart-description">International reach of our camp</p>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={stateData}>
+            <BarChart data={nationalityData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="state" />
+              <XAxis dataKey="name" />
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar dataKey="count" fill="#f093fb" />
+              <Bar dataKey="value" fill="#764ba2" />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -175,7 +175,7 @@ const Dashboard: React.FC<DashboardProps> = ({ analytics }) => {
         {/* Registration Timeline */}
         <div className="chart-card">
           <h3>Registration Timeline</h3>
-          <p className="chart-description">Track registration pace to optimize marketing efforts</p>
+          <p className="chart-description">Track registration pace over time</p>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={analytics.registrationTimeline}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -188,35 +188,36 @@ const Dashboard: React.FC<DashboardProps> = ({ analytics }) => {
           </ResponsiveContainer>
         </div>
 
-        {/* Dietary Restrictions */}
-        <div className="chart-card">
-          <h3>Dietary Restrictions</h3>
-          <p className="chart-description">Essential for meal planning and catering budget</p>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={dietaryData}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius={80}
-                label
-              >
-                {dietaryData.map((_, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
+        {/* Assembly Distribution */}
+        <div className="chart-card chart-card-wide">
+          <h3>Top Assemblies (Churches)</h3>
+          <p className="chart-description">Which churches are sending the most attendees</p>
+          <ResponsiveContainer width="100%" height={400}>
+            <BarChart data={assemblyData} layout="vertical">
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis type="number" />
+              <YAxis type="category" dataKey="name" width={250} />
+              <Tooltip content={({ active, payload }) => {
+                if (active && payload && payload.length) {
+                  return (
+                    <div className="custom-tooltip">
+                      <p className="label">{payload[0].payload.fullName}</p>
+                      <p className="value">Count: {payload[0].value}</p>
+                    </div>
+                  );
+                }
+                return null;
+              }} />
               <Legend />
-            </PieChart>
+              <Bar dataKey="value" fill="#f093fb" />
+            </BarChart>
           </ResponsiveContainer>
         </div>
 
-        {/* Transportation Needs */}
+        {/* Transportation */}
         <div className="chart-card">
           <h3>Transportation Methods</h3>
-          <p className="chart-description">Plan transportation resources and associated costs</p>
+          <p className="chart-description">Plan transportation resources</p>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
@@ -238,12 +239,37 @@ const Dashboard: React.FC<DashboardProps> = ({ analytics }) => {
           </ResponsiveContainer>
         </div>
 
-        {/* Accommodation Preferences */}
+        {/* Allergy Information */}
         <div className="chart-card">
-          <h3>Accommodation Preferences</h3>
-          <p className="chart-description">Allocate facilities and estimate accommodation costs</p>
+          <h3>Allergy Information</h3>
+          <p className="chart-description">Essential for meal planning</p>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={accommodationData}>
+            <PieChart>
+              <Pie
+                data={allergyData}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                outerRadius={80}
+                label
+              >
+                {allergyData.map((_, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip />
+              <Legend />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Payment Methods */}
+        <div className="chart-card">
+          <h3>Payment Methods</h3>
+          <p className="chart-description">Track preferred payment options</p>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={paymentData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis />
@@ -253,66 +279,9 @@ const Dashboard: React.FC<DashboardProps> = ({ analytics }) => {
             </BarChart>
           </ResponsiveContainer>
         </div>
-
-        {/* Program Interests */}
-        <div className="chart-card">
-          <h3>Program Interest Levels</h3>
-          <p className="chart-description">Allocate staff and resources based on popularity</p>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={interestData} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis type="number" />
-              <YAxis type="category" dataKey="name" width={120} />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="value" fill="#fa709a" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Budget Distribution */}
-        <div className="chart-card">
-          <h3>Budget Distribution</h3>
-          <p className="chart-description">Understand attendee budgets for pricing strategy</p>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={budgetData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="value" fill="#fee140" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* New vs Returning */}
-        <div className="chart-card">
-          <h3>New vs Returning Attendees</h3>
-          <p className="chart-description">Measure camp retention and growth</p>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={attendeeTypeData}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius={80}
-                label
-              >
-                {attendeeTypeData.map((_, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
       </div>
 
-      {/* Cost Analysis Insights */}
+      {/* Key Insights */}
       <div className="insights-section">
         <h3>💡 Key Insights for Planning</h3>
         <div className="insights-grid">
@@ -321,16 +290,16 @@ const Dashboard: React.FC<DashboardProps> = ({ analytics }) => {
             <ul>
               <li>Average age: {analytics.averageAge} years</li>
               <li>Total attendees: {analytics.totalRegistrations}</li>
-              <li>Geographic diversity: {Object.keys(analytics.countryDistribution).length} countries</li>
+              <li>Minors requiring chaperone: {analytics.minorsRequiringChaperone}</li>
             </ul>
           </div>
 
           <div className="insight-card">
-            <h4>Financial Planning</h4>
+            <h4>Churches</h4>
             <ul>
-              <li>Financial aid requests: {analytics.financialAidRequests}</li>
-              <li>Most common budget: {Object.entries(analytics.budgetDistribution).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A'}</li>
-              <li>Aid percentage: {analytics.totalRegistrations > 0 ? Math.round((analytics.financialAidRequests / analytics.totalRegistrations) * 100) : 0}%</li>
+              <li>Participating assemblies: {Object.keys(analytics.assemblyDistribution).length}</li>
+              <li>Top church: {Object.entries(analytics.assemblyDistribution).sort((a, b) => b[1] - a[1])[0]?.[0].split('(')[0] || 'N/A'}</li>
+              <li>Multi-church event: Yes ✓</li>
             </ul>
           </div>
 
@@ -338,17 +307,17 @@ const Dashboard: React.FC<DashboardProps> = ({ analytics }) => {
             <h4>Logistics</h4>
             <ul>
               <li>Transportation needed: {Object.values(analytics.transportationStats).reduce((a, b) => a + b, 0)}</li>
-              <li>Special dietary needs: {Object.entries(analytics.dietaryStats).filter(([key]) => key !== 'None').reduce((sum, [, val]) => sum + val, 0)}</li>
-              <li>Most popular activity: {Object.entries(analytics.interestStats).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A'}</li>
+              <li>Attendees with allergies: {analytics.allergyStats['Has Allergies'] || 0}</li>
+              <li>Nationalities: {Object.keys(analytics.nationalityDistribution).join(', ')}</li>
             </ul>
           </div>
 
           <div className="insight-card">
-            <h4>Retention</h4>
+            <h4>Payment</h4>
             <ul>
-              <li>Returning attendees: {analytics.returningVsNew.returning}</li>
-              <li>New attendees: {analytics.returningVsNew.new}</li>
-              <li>Retention rate: {analytics.totalRegistrations > 0 ? Math.round((analytics.returningVsNew.returning / analytics.totalRegistrations) * 100) : 0}%</li>
+              <li>CashApp: {analytics.paymentOptionStats['CashApp'] || 0}</li>
+              <li>Zelle: {analytics.paymentOptionStats['Zelle'] || 0}</li>
+              <li>Check: {analytics.paymentOptionStats['Check'] || 0}</li>
             </ul>
           </div>
         </div>
