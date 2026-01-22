@@ -6,9 +6,12 @@ An AI-powered Optical Music Recognition (OMR) system that reads and digitizes ha
 
 - **Symbol Recognition**: Deep learning model for identifying handwritten music symbols (notes, clefs, accidentals, etc.)
 - **Staff Detection**: Automatic detection and removal of staff lines
+- **Multi-Part Scores**: Process and assemble complete band/orchestral arrangements with multiple instrumental parts
+- **Automatic Transposition**: Handle Bb, Eb, and F transposing instruments automatically
 - **Multi-Format Output**: Export to MusicXML, MIDI, and ABC notation
 - **Preprocessing Pipeline**: Robust image preprocessing for various handwriting styles
 - **Training Framework**: Complete training pipeline with data augmentation
+- **26+ Instruments Supported**: Full concert band, brass ensemble, and woodwind configurations
 
 ## Architecture
 
@@ -42,6 +45,66 @@ result.export_musicxml("output.xml")
 result.export_midi("output.mid")
 result.export_abc("output.abc")
 ```
+
+### Multi-Part Scores (Band/Orchestral Arrangements)
+
+```python
+from music_recognition import (
+    MusicRecognitionSystem,
+    ScoreAssembler,
+    BandInstruments
+)
+
+# Initialize
+system = MusicRecognitionSystem(model_path='checkpoints/best_model.pth')
+assembler = ScoreAssembler(recognition_system=system)
+
+# Process multiple parts
+part_images = {
+    'C Flute': 'parts/flute.jpg',
+    '1st Bb Clarinet': 'parts/clarinet1.jpg',
+    '1st Eb Alto Sax': 'parts/alto_sax1.jpg',
+    'F French Horn': 'parts/horn.jpg',
+    '1st Trombone': 'parts/trombone1.jpg',
+}
+
+instruments = {
+    'C Flute': BandInstruments.C_FLUTE,
+    '1st Bb Clarinet': BandInstruments.Bb_CLARINET_1,
+    '1st Eb Alto Sax': BandInstruments.Eb_ALTO_SAX_1,
+    'F French Horn': BandInstruments.F_FRENCH_HORN_1,
+    '1st Trombone': BandInstruments.C_TROMBONE_1,
+}
+
+# Assemble complete score
+score = assembler.create_score_from_parts(
+    part_images=part_images,
+    instruments=instruments,
+    title="Band Arrangement",
+    composer="Composer"
+)
+
+# Export full score (with transpositions)
+score.export_musicxml('full_score.xml')
+
+# Export concert pitch version
+score.export_musicxml('concert_score.xml', concert_pitch=True)
+
+# Export individual parts
+score.export_parts_separately('parts/', format='musicxml')
+```
+
+Or use the command line:
+
+```bash
+# View all supported instruments
+python multipart_demo.py --list-instruments
+
+# Process multiple parts at once
+python multipart_demo.py --process-parts ./part_images --output score.xml
+```
+
+See [MULTIPART_GUIDE.md](MULTIPART_GUIDE.md) for complete documentation.
 
 ### Training
 
