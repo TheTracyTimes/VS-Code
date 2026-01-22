@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 International Meeting - Registration | Sarasota Gospel Temple</title>
+    <link rel="stylesheet" href="../css/design-system.css">
+    <style>
+        /* Page-specific styles */
+        .lighthouse-watermark {
+            position: absolute;
+            top: 50%;
+            right: -100px;
+            transform: translateY(-50%);
+            opacity: 0.1;
+            width: 300px;
+            height: auto;
+            pointer-events: none;
+        }
+
+        .event-info {
+            background-color: var(--off-white);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-xl);
+            border-left: 4px solid var(--burnt-orange);
+        }
+
+        .event-info h3 {
+            margin-top: 0;
+            font-size: 20px;
+        }
+
+        .event-info p {
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .event-info strong {
+            color: var(--navy-blue);
+        }
+    </style>
+</head>
+<body>
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="container">
+            <h1>2026 International Meeting</h1>
+            <p class="subtitle">April 9-11, 2026 | Register Today</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container-narrow" style="padding-top: 48px; padding-bottom: 48px;">
+
+        <!-- Event Information Card -->
+        <div class="event-info">
+            <h3>Event Details</h3>
+            <p><strong>Dates:</strong> April 9-11, 2026</p>
+            <p><strong>Location:</strong> 1900 Gandy Blvd N, St. Petersburg, FL 33702</p>
+            <p><strong>Contact:</strong> 941-667-0526</p>
+        </div>
+
+        <!-- Registration Form Card -->
+        <div class="card">
+
+            <!-- Progress Indicator -->
+            <ul class="progress-steps">
+                <li class="progress-step active" data-step="1">
+                    <span class="step-circle">1</span>
+                    <span class="step-label">Basic Info</span>
+                </li>
+                <li class="progress-step" data-step="2">
+                    <span class="step-circle">2</span>
+                    <span class="step-label">Transportation</span>
+                </li>
+                <li class="progress-step" data-step="3">
+                    <span class="step-circle">3</span>
+                    <span class="step-label">Child Care</span>
+                </li>
+            </ul>
+
+            <!-- Form -->
+            <form id="registrationForm">
+
+                <!-- PHASE 1: Basic Information -->
+                <div class="form-section active" data-section="1">
+                    <h2 class="section-title">Basic Information</h2>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First Name <span class="required">*</span></label>
+                            <input type="text" id="firstName" name="firstName" required>
+                            <span class="error-message">Please enter your first name</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="lastName">Last Name <span class="required">*</span></label>
+                            <input type="text" id="lastName" name="lastName" required>
+                            <span class="error-message">Please enter your last name</span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="phone">Phone Number (with country code) <span class="required">*</span></label>
+                            <input type="tel" id="phone" name="phone" placeholder="+1-941-555-1234" required>
+                            <span class="helper-text">Include country code (e.g., +1 for USA)</span>
+                            <span class="error-message">Please enter a valid phone number</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" placeholder="your@email.com">
+                            <span class="error-message">Please enter a valid email address</span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="pastorName">Name of your Pastor <span class="required">*</span></label>
+                            <input type="text" id="pastorName" name="pastorName" required>
+                            <span class="error-message">Please enter your pastor's name</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="assemblyName">Name of your Assembly</label>
+                            <input type="text" id="assemblyName" name="assemblyName">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Services of Attendance <span class="required">*</span></label>
+                        <p class="helper-text">Select all services you plan to attend</p>
+
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="service1" name="services" value="Thursday Morning Service, April 9th">
+                                <label for="service1">Thursday Morning Service, April 9th</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="service2" name="services" value="Thursday Night Service, April 9th">
+                                <label for="service2">Thursday Night Service, April 9th</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="service3" name="services" value="Friday Morning Service, April 10th">
+                                <label for="service3">Friday Morning Service, April 10th</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="service4" name="services" value="Friday Night Service, April 10th">
+                                <label for="service4">Friday Night Service, April 10th</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="service5" name="services" value="Saturday Morning Service, April 11th">
+                                <label for="service5">Saturday Morning Service, April 11th</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="service6" name="services" value="Saturday Youth Night, April 11th">
+                                <label for="service6">Saturday Youth Night, April 11th</label>
+                            </div>
+                        </div>
+                        <span class="error-message">Please select at least one service</span>
+                    </div>
+
+                    <div class="form-navigation">
+                        <div></div> <!-- Empty div for spacing -->
+                        <button type="button" class="btn btn-secondary" onclick="nextStep(2)">Continue to Transportation</button>
+                    </div>
+                </div>
+
+                <!-- PHASE 2: Transportation -->
+                <div class="form-section" data-section="2">
+                    <h2 class="section-title">Transportation</h2>
+
+                    <div class="form-group">
+                        <label>Do you need transportation from the airport? <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <div class="radio-item">
+                                <input type="radio" id="airportYes" name="airportTransport" value="Yes" onchange="toggleAirportFields(true)" required>
+                                <label for="airportYes">Yes</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="airportNo" name="airportTransport" value="No" onchange="toggleAirportFields(false)">
+                                <label for="airportNo">No</label>
+                            </div>
+                        </div>
+                        <span class="error-message">Please select an option</span>
+                    </div>
+
+                    <div id="airportFields" style="display: none;">
+                        <h3 style="font-size: 20px; margin-top: 32px; margin-bottom: 16px;">Arrival Information</h3>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="arrivalTime">Arrival Time <span class="required">*</span></label>
+                                <input type="text" id="arrivalTime" name="arrivalTime" placeholder="e.g., 2:00 PM or N/A">
+                                <span class="error-message">Please enter arrival time or N/A</span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="arrivalAirline">Airline <span class="required">*</span></label>
+                                <input type="text" id="arrivalAirline" name="arrivalAirline" placeholder="e.g., Delta or N/A">
+                                <span class="error-message">Please enter airline or N/A</span>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="arrivalAirport">Airport <span class="required">*</span></label>
+                                <input type="text" id="arrivalAirport" name="arrivalAirport" placeholder="e.g., TPA or N/A">
+                                <span class="error-message">Please enter airport or N/A</span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="arrivalFlight">Flight Number <span class="required">*</span></label>
+                                <input type="text" id="arrivalFlight" name="arrivalFlight" placeholder="e.g., DL1234 or N/A">
+                                <span class="error-message">Please enter flight number or N/A</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="numPeople">Number of people with you <span class="required">*</span></label>
+                            <input type="text" id="numPeople" name="numPeople" placeholder="e.g., 2 or N/A">
+                            <span class="error-message">Please enter number or N/A</span>
+                        </div>
+
+                        <h3 style="font-size: 20px; margin-top: 32px; margin-bottom: 16px;">Departure Information</h3>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="departureTime">Departure Time <span class="required">*</span></label>
+                                <input type="text" id="departureTime" name="departureTime" placeholder="e.g., 5:30 PM or N/A">
+                                <span class="error-message">Please enter departure time or N/A</span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="departureAirline">Airline <span class="required">*</span></label>
+                                <input type="text" id="departureAirline" name="departureAirline" placeholder="e.g., Delta or N/A">
+                                <span class="error-message">Please enter airline or N/A</span>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="departureAirport">Airport <span class="required">*</span></label>
+                                <input type="text" id="departureAirport" name="departureAirport" placeholder="e.g., TPA or N/A">
+                                <span class="error-message">Please enter airport or N/A</span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="departureFlight">Flight Number <span class="required">*</span></label>
+                                <input type="text" id="departureFlight" name="departureFlight" placeholder="e.g., DL5678 or N/A">
+                                <span class="error-message">Please enter flight number or N/A</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 32px;">
+                        <label>Will you need transportation during the meeting? <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <div class="radio-item">
+                                <input type="radio" id="localTransportYes" name="localTransport" value="Yes" onchange="toggleLocalTransport(true)" required>
+                                <label for="localTransportYes">Yes</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="localTransportNo" name="localTransport" value="No" onchange="toggleLocalTransport(false)">
+                                <label for="localTransportNo">No</label>
+                            </div>
+                        </div>
+                        <span class="error-message">Please select an option</span>
+                    </div>
+
+                    <div id="localTransportField" class="form-group" style="display: none;">
+                        <label for="pickupLocation">Pickup Location</label>
+                        <textarea id="pickupLocation" name="pickupLocation" placeholder="Please provide the hotel name and address or location where you need to be picked up"></textarea>
+                        <span class="error-message">Please enter pickup location</span>
+                    </div>
+
+                    <div class="form-navigation">
+                        <button type="button" class="btn btn-back" onclick="previousStep(1)">Back to Basic Info</button>
+                        <button type="button" class="btn btn-secondary" onclick="nextStep(3)">Continue to Child Care</button>
+                    </div>
+                </div>
+
+                <!-- PHASE 3: Child Care -->
+                <div class="form-section" data-section="3">
+                    <h2 class="section-title">Child Care</h2>
+
+                    <div class="form-group">
+                        <label>Will you have children under 5? <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <div class="radio-item">
+                                <input type="radio" id="childrenYes" name="hasChildren" value="Yes" onchange="toggleChildrenFields(true)" required>
+                                <label for="childrenYes">Yes</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="childrenNo" name="hasChildren" value="No" onchange="toggleChildrenFields(false)">
+                                <label for="childrenNo">No</label>
+                            </div>
+                        </div>
+                        <span class="error-message">Please select an option</span>
+                    </div>
+
+                    <div id="childrenFields" style="display: none;">
+                        <div class="form-group">
+                            <label for="numChildren">How many children under 5?</label>
+                            <input type="number" id="numChildren" name="numChildren" min="1" placeholder="e.g., 2">
+                            <span class="error-message">Please enter number of children</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 32px;">
+                        <label>Will your child/children attend VBS (Vacation Bible School)? <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <div class="radio-item">
+                                <input type="radio" id="vbsYes" name="vbsAttendance" value="Yes" onchange="toggleVBSField(true)" required>
+                                <label for="vbsYes">Yes</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="vbsNo" name="vbsAttendance" value="No" onchange="toggleVBSField(false)">
+                                <label for="vbsNo">No</label>
+                            </div>
+                        </div>
+                        <span class="error-message">Please select an option</span>
+                    </div>
+
+                    <div id="vbsField" class="form-group" style="display: none;">
+                        <label for="numVBS">How many will attend VBS?</label>
+                        <input type="number" id="numVBS" name="numVBS" min="1" placeholder="e.g., 2">
+                        <span class="error-message">Please enter number attending VBS</span>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 32px;">
+                        <label>Will your child/children be in the nursery during service? <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <div class="radio-item">
+                                <input type="radio" id="nurseryYes" name="nurseryAttendance" value="Yes" onchange="toggleNurseryField(true)" required>
+                                <label for="nurseryYes">Yes</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="nurseryNo" name="nurseryAttendance" value="No" onchange="toggleNurseryField(false)">
+                                <label for="nurseryNo">No</label>
+                            </div>
+                        </div>
+                        <span class="error-message">Please select an option</span>
+                    </div>
+
+                    <div id="nurseryField" class="form-group" style="display: none;">
+                        <label for="numNursery">How many children in the nursery?</label>
+                        <input type="number" id="numNursery" name="numNursery" min="1" placeholder="e.g., 1">
+                        <span class="error-message">Please enter number in nursery</span>
+                    </div>
+
+                    <div class="form-navigation">
+                        <button type="button" class="btn btn-back" onclick="previousStep(2)">Back to Transportation</button>
+                        <button type="submit" class="btn btn-primary" id="submitBtn">Submit Registration</button>
+                    </div>
+                </div>
+
+                <!-- Success Message (Hidden by default) -->
+                <div id="successMessage" class="success-message" style="display: none;">
+                    <h3>Thank you for registering!</h3>
+                    <p>Your registration has been received. We'll contact you at <strong id="confirmEmail"></strong> with more details.</p>
+                    <p>Confirmation has been sent to your email.</p>
+                    <p style="margin-top: 24px;">Blessings,<br>Sarasota Gospel Temple</p>
+                </div>
+
+            </form>
+        </div>
+    </main>
+
+    <!-- JavaScript -->
+    <script src="../js/registration-form.js"></script>
+</body>
+</html>
