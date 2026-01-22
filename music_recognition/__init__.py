@@ -13,6 +13,18 @@ from .instruments import (
     list_all_instruments
 )
 from .transposition import Transposer, ScoreTransposer, Note
+from .pdf_export import (
+    PDFExporter,
+    ScorePDFExporter,
+    MultiPartPDFExporter,
+    export_score_to_pdf,
+    check_pdf_backends
+)
+from .staff_paper import (
+    StaffPaperGenerator,
+    create_blank_sheet,
+    create_instrument_part
+)
 
 __version__ = "0.1.0"
 __all__ = [
@@ -26,5 +38,13 @@ __all__ = [
     "ScoreTransposer",
     "Note",
     "get_instrument_by_name",
-    "list_all_instruments"
+    "list_all_instruments",
+    "PDFExporter",
+    "ScorePDFExporter",
+    "MultiPartPDFExporter",
+    "export_score_to_pdf",
+    "check_pdf_backends",
+    "StaffPaperGenerator",
+    "create_blank_sheet",
+    "create_instrument_part"
 ]

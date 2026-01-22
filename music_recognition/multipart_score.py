@@ -297,6 +297,56 @@ class MultiPartScore:
 
         print(f"Exported {len(self.parts)} parts to {output_dir}/")
 
+    def export_pdf(self, output_path: str, method: str = 'auto', concert_pitch: bool = False) -> bool:
+        """
+        Export multi-part score to PDF.
+
+        Args:
+            output_path: Path for output PDF
+            method: Export method ('auto', 'music21', 'verovio', 'basic')
+            concert_pitch: Export in concert pitch if True
+
+        Returns:
+            True if successful, False otherwise
+        """
+        from .pdf_export import MultiPartPDFExporter
+
+        exporter = MultiPartPDFExporter()
+        return exporter.export_full_score(
+            self,
+            output_path,
+            method=method,
+            concert_pitch=concert_pitch
+        )
+
+    def export_parts_as_pdf(self, output_dir: str, method: str = 'auto') -> bool:
+        """
+        Export each part as a separate PDF file.
+
+        Args:
+            output_dir: Directory to save PDF files
+            method: Export method ('auto', 'music21', 'verovio', 'basic')
+
+        Returns:
+            True if all successful, False otherwise
+        """
+        from .pdf_export import MultiPartPDFExporter
+
+        exporter = MultiPartPDFExporter()
+        return exporter.export_parts_as_pdf(self, output_dir, method=method)
+
+    def export_parts_book(self, output_path: str):
+        """
+        Create a PDF "parts book" with all parts.
+
+        Args:
+            output_path: Path for output PDF
+        """
+        from .pdf_export import MultiPartPDFExporter
+
+        exporter = MultiPartPDFExporter()
+        exporter.create_parts_book(self, output_path)
+
     def to_dict(self) -> Dict:
         """Convert multi-part score to dictionary."""
         return {

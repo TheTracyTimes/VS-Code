@@ -1,0 +1,491 @@
+"""
+PDF export functionality for music scores.
+
+Supports multiple rendering backends:
+1. music21 + MuseScore/LilyPond (recommended for professional output)
+2. reportlab (for basic PDF generation, always available)
+3. External converters (e.g., verovio, via MusicXML)
+"""
+
+import tempfile
+import subprocess
+from pathlib import Path
+from typing import Optional, List, Dict, Tuple
+import os
+
+from reportlab.lib.pagesizes import letter, A4
+from reportlab.lib.units import inch
+from reportlab.pdfgen import canvas
+from reportlab.lib import colors
+
+
+class PDFExporter:
+    """Base class for PDF export functionality."""
+
+    def __init__(self, page_size: str = 'letter'):
+        """
+        Initialize PDF exporter.
+
+        Args:
+            page_size: Page size ('letter' or 'A4')
+        """
+        self.page_size = letter if page_size.lower() == 'letter' else A4
+
+    def export_via_music21(
+        self,
+        score_path: str,
+        output_path: str,
+        backend: str = 'musescore'
+    ) -> bool:
+        """
+        Export to PDF using music21 library.
+
+        Args:
+            score_path: Path to MusicXML file
+            output_path: Path for output PDF
+            backend: Backend to use ('musescore', 'lilypond')
+
+        Returns:
+            True if successful, False otherwise
+        """
+        try:
+            from music21 import converter
+
+            # Load the score
+            score = converter.parse(score_path)
+
+            # Export to PDF
+            if backend == 'musescore':
+                score.write('musicxml.pdf', fp=output_path)
+            elif backend == 'lilypond':
+                score.write('lily.pdf', fp=output_path)
+            else:
+                raise ValueError(f"Unknown backend: {backend}")
+
+            return True
+
+        except ImportError:
+            print("Warning: music21 library not installed")
+            print("Install with: pip install music21")
+            return False
+        except Exception as e:
+            print(f"Error exporting via music21: {e}")
+            return False
+
+    def export_via_verovio(
+        self,
+        musicxml_path: str,
+        output_path: str
+    ) -> bool:
+        """
+        Export to PDF using Verovio command-line tool.
+
+        Args:
+            musicxml_path: Path to MusicXML file
+            output_path: Path for output PDF
+
+        Returns:
+            True if successful, False otherwise
+        """
+        try:
+            # Check if verovio is installed
+            result = subprocess.run(
+                ['verovio', '--version'],
+                capture_output=True,
+                timeout=5
+            )
+
+            if result.returncode != 0:
+                print("Warning: verovio not installed")
+                return False
+
+            # Convert to PDF
+            subprocess.run(
+                ['verovio', '-f', 'pdf', '-o', output_path, musicxml_path],
+                check=True,
+                timeout=30
+            )
+
+            return True
+
+        except FileNotFoundError:
+            print("Warning: verovio not found in PATH")
+            return False
+        except subprocess.TimeoutExpired:
+            print("Error: verovio conversion timed out")
+            return False
+        except Exception as e:
+            print(f"Error exporting via verovio: {e}")
+            return False
+
+    def export_basic_pdf(
+        self,
+        title: str,
+        composer: str,
+        parts_info: List[Dict],
+        output_path: str
+    ):
+        """
+        Create a basic PDF with score information using reportlab.
+
+        Args:
+            title: Score title
+            composer: Composer name
+            parts_info: List of part information dictionaries
+            output_path: Path for output PDF
+        """
+        c = canvas.Canvas(output_path, pagesize=self.page_size)
+        width, height = self.page_size
+
+        # Title page
+        c.setFont("Helvetica-Bold", 24)
+        c.drawCentredString(width / 2, height - 2 * inch, title)
+
+        c.setFont("Helvetica", 16)
+        c.drawCentredString(width / 2, height - 2.5 * inch, f"by {composer}")
+
+        # Parts list
+        c.setFont("Helvetica-Bold", 14)
+        c.drawString(inch, height - 4 * inch, "Instrumentation:")
+
+        c.setFont("Helvetica", 12)
+        y_position = height - 4.5 * inch
+
+        for i, part_info in enumerate(parts_info, 1):
+            part_name = part_info.get('name', f'Part {i}')
+            instrument = part_info.get('instrument', 'Unknown')
+            measures = part_info.get('measures', 0)
+
+            text = f"{i}. {part_name} ({instrument}) - {measures} measures"
+            c.drawString(inch * 1.5, y_position, text)
+            y_position -= 0.3 * inch
+
+            if y_position < inch:
+                c.showPage()
+                y_position = height - inch
+
+        # Footer
+        c.setFont("Helvetica", 10)
+        c.drawCentredString(
+            width / 2,
+            0.5 * inch,
+            "Generated by Handwritten Music Recognition System"
+        )
+
+        c.save()
+        print(f"Basic PDF created: {output_path}")
+
+
+class ScorePDFExporter(PDFExporter):
+    """PDF exporter for music scores with notation rendering."""
+
+    def export_score(
+        self,
+        musicxml_path: str,
+        output_path: str,
+        method: str = 'auto',
+        include_title_page: bool = True
+    ) -> bool:
+        """
+        Export a music score to PDF.
+
+        Args:
+            musicxml_path: Path to MusicXML file
+            output_path: Path for output PDF
+            method: Export method ('auto', 'music21', 'verovio', 'basic')
+            include_title_page: Include a title page
+
+        Returns:
+            True if successful, False otherwise
+        """
+        if method == 'auto':
+            # Try methods in order of quality
+            methods = ['music21', 'verovio', 'basic']
+        else:
+            methods = [method]
+
+        for m in methods:
+            if m == 'music21':
+                if self.export_via_music21(musicxml_path, output_path):
+                    print(f"✓ PDF exported via music21: {output_path}")
+                    return True
+
+            elif m == 'verovio':
+                if self.export_via_verovio(musicxml_path, output_path):
+                    print(f"✓ PDF exported via verovio: {output_path}")
+                    return True
+
+            elif m == 'basic':
+                print("Note: Using basic PDF export (no notation rendering)")
+                print("For professional output, install: pip install music21")
+                # Create basic info PDF
+                self.export_basic_pdf(
+                    title="Music Score",
+                    composer="Unknown",
+                    parts_info=[],
+                    output_path=output_path
+                )
+                return True
+
+        print("❌ All PDF export methods failed")
+        return False
+
+
+class MultiPartPDFExporter(PDFExporter):
+    """PDF exporter for multi-part scores."""
+
+    def export_full_score(
+        self,
+        multipart_score,
+        output_path: str,
+        method: str = 'auto',
+        concert_pitch: bool = False
+    ) -> bool:
+        """
+        Export a multi-part score to PDF.
+
+        Args:
+            multipart_score: MultiPartScore object
+            output_path: Path for output PDF
+            method: Export method ('auto', 'music21', 'verovio', 'basic')
+            concert_pitch: Export in concert pitch if True
+
+        Returns:
+            True if successful, False otherwise
+        """
+        # First export to MusicXML
+        with tempfile.NamedTemporaryFile(suffix='.xml', delete=False, mode='w') as tmp:
+            musicxml_path = tmp.name
+
+        try:
+            multipart_score.export_musicxml(musicxml_path, concert_pitch=concert_pitch)
+
+            # Then convert to PDF
+            exporter = ScorePDFExporter(page_size='letter')
+            success = exporter.export_score(musicxml_path, output_path, method=method)
+
+            return success
+
+        finally:
+            # Clean up temp file
+            if os.path.exists(musicxml_path):
+                os.unlink(musicxml_path)
+
+    def export_parts_as_pdf(
+        self,
+        multipart_score,
+        output_dir: str,
+        method: str = 'auto'
+    ) -> bool:
+        """
+        Export each part as a separate PDF.
+
+        Args:
+            multipart_score: MultiPartScore object
+            output_dir: Directory to save PDF files
+            method: Export method
+
+        Returns:
+            True if all successful, False otherwise
+        """
+        output_path = Path(output_dir)
+        output_path.mkdir(exist_ok=True, parents=True)
+
+        success_count = 0
+        total_parts = len(multipart_score.parts)
+
+        print(f"\nExporting {total_parts} parts as individual PDFs...")
+
+        for part_name in multipart_score.part_order:
+            # Export part to MusicXML first
+            safe_name = part_name.replace(' ', '_').replace('/', '_')
+            xml_path = output_path / f"{safe_name}.xml"
+            pdf_path = output_path / f"{safe_name}.pdf"
+
+            # Create single-part MusicXML
+            from .postprocessing import NotationConverter
+            score = multipart_score.parts[part_name]
+
+            converter = NotationConverter()
+            converter.current_score = score
+            converter.export_musicxml(str(xml_path))
+
+            # Convert to PDF
+            exporter = ScorePDFExporter()
+            if exporter.export_score(str(xml_path), str(pdf_path), method=method):
+                success_count += 1
+                print(f"  ✓ {part_name}")
+
+            # Clean up XML
+            xml_path.unlink()
+
+        print(f"\nExported {success_count}/{total_parts} parts to {output_dir}/")
+        return success_count == total_parts
+
+    def create_parts_book(
+        self,
+        multipart_score,
+        output_path: str,
+        parts_per_page: int = 1
+    ):
+        """
+        Create a PDF "parts book" with all parts.
+
+        Args:
+            multipart_score: MultiPartScore object
+            output_path: Path for output PDF
+            parts_per_page: Number of parts per page
+        """
+        c = canvas.Canvas(output_path, pagesize=self.page_size)
+        width, height = self.page_size
+
+        # Title page
+        c.setFont("Helvetica-Bold", 28)
+        c.drawCentredString(width / 2, height - 2 * inch, multipart_score.title)
+
+        c.setFont("Helvetica", 18)
+        c.drawCentredString(width / 2, height - 2.7 * inch, f"by {multipart_score.composer}")
+
+        c.setFont("Helvetica-Bold", 14)
+        c.drawCentredString(width / 2, height - 3.5 * inch, "Parts Book")
+
+        # Add instrumentation
+        c.setFont("Helvetica-Bold", 12)
+        c.drawString(inch, height - 5 * inch, "Instrumentation:")
+
+        c.setFont("Helvetica", 11)
+        y_pos = height - 5.5 * inch
+
+        for part_name in multipart_score.part_order:
+            instrument = multipart_score.instruments[part_name]
+            score = multipart_score.parts[part_name]
+
+            text = f"• {part_name} - {len(score.measures)} measures"
+            c.drawString(inch * 1.5, y_pos, text)
+            y_pos -= 0.25 * inch
+
+        c.showPage()
+
+        # Add part pages
+        for part_name in multipart_score.part_order:
+            instrument = multipart_score.instruments[part_name]
+            score = multipart_score.parts[part_name]
+
+            # Part title page
+            c.setFont("Helvetica-Bold", 24)
+            c.drawCentredString(width / 2, height - 2 * inch, part_name)
+
+            c.setFont("Helvetica", 14)
+            c.drawCentredString(width / 2, height - 2.5 * inch, multipart_score.title)
+            c.drawCentredString(width / 2, height - 3 * inch, f"by {multipart_score.composer}")
+
+            # Part info
+            c.setFont("Helvetica", 12)
+            info_y = height - 4 * inch
+            c.drawString(inch, info_y, f"Instrument: {instrument.name}")
+            c.drawString(inch, info_y - 0.3 * inch, f"Clef: {instrument.clef.value}")
+            c.drawString(inch, info_y - 0.6 * inch, f"Measures: {len(score.measures)}")
+
+            trans_text = "Non-transposing" if instrument.transposition.name == "NONE" else f"Transposing: {instrument.transposition.name}"
+            c.drawString(inch, info_y - 0.9 * inch, trans_text)
+
+            c.showPage()
+
+        c.save()
+        print(f"Parts book created: {output_path}")
+
+
+def export_score_to_pdf(
+    score,
+    output_path: str,
+    method: str = 'auto',
+    title: str = "Music Score",
+    composer: str = "Unknown"
+) -> bool:
+    """
+    Convenience function to export a single score to PDF.
+
+    Args:
+        score: MusicScore object
+        output_path: Path for output PDF
+        method: Export method ('auto', 'music21', 'verovio', 'basic')
+        title: Score title
+        composer: Composer name
+
+    Returns:
+        True if successful, False otherwise
+    """
+    from .postprocessing import NotationConverter
+
+    # Export to MusicXML first
+    with tempfile.NamedTemporaryFile(suffix='.xml', delete=False, mode='w') as tmp:
+        musicxml_path = tmp.name
+
+    try:
+        converter = NotationConverter()
+        converter.current_score = score
+        converter.export_musicxml(musicxml_path)
+
+        # Convert to PDF
+        exporter = ScorePDFExporter()
+        success = exporter.export_score(musicxml_path, output_path, method=method)
+
+        return success
+
+    finally:
+        if os.path.exists(musicxml_path):
+            os.unlink(musicxml_path)
+
+
+def check_pdf_backends():
+    """Check which PDF export backends are available."""
+    print("\n" + "="*60)
+    print("PDF Export Backend Status")
+    print("="*60)
+
+    # Check music21
+    try:
+        import music21
+        print("✓ music21: Available")
+        print(f"  Version: {music21.VERSION_STR}")
+
+        # Check for MuseScore
+        try:
+            music21.environment.Environment()['musescoreDirectPNGPath']
+            print("  ✓ MuseScore: Configured")
+        except:
+            print("  ✗ MuseScore: Not configured")
+            print("    Configure with: python -c \"import music21; music21.configure.run()\"")
+
+    except ImportError:
+        print("✗ music21: Not installed")
+        print("  Install with: pip install music21")
+
+    # Check reportlab
+    try:
+        import reportlab
+        print("✓ reportlab: Available")
+        print(f"  Version: {reportlab.Version}")
+    except ImportError:
+        print("✗ reportlab: Not installed (should not happen)")
+
+    # Check verovio
+    try:
+        result = subprocess.run(
+            ['verovio', '--version'],
+            capture_output=True,
+            timeout=5
+        )
+        if result.returncode == 0:
+            print("✓ verovio: Available")
+        else:
+            print("✗ verovio: Not working properly")
+    except FileNotFoundError:
+        print("✗ verovio: Not installed")
+        print("  Install from: https://www.verovio.org/")
+    except Exception as e:
+        print(f"✗ verovio: Error checking - {e}")
+
+    print("\nRecommended: Install music21 for best PDF output")
+    print("  pip install music21")
+    print("="*60 + "\n")

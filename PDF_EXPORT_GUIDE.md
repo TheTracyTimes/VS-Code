@@ -1,0 +1,541 @@
+## PDF Export Guide
+
+Complete guide for exporting music scores to PDF format with professional-looking staff paper.
+
+## Table of Contents
+
+1. [Overview](#overview)
+2. [Export Methods](#export-methods)
+3. [Blank Staff Paper](#blank-staff-paper)
+4. [Score Templates](#score-templates)
+5. [Exporting Recognized Scores](#exporting-recognized-scores)
+6. [Multi-Part Scores](#multi-part-scores)
+7. [Advanced Customization](#advanced-customization)
+8. [Backend Configuration](#backend-configuration)
+
+## Overview
+
+The system provides comprehensive PDF export capabilities:
+
+- **Blank Staff Paper**: 12 staves per page on US Letter size
+- **Score Templates**: Pre-configured templates with clefs and time signatures
+- **Recognized Scores**: Export AI-recognized music notation
+- **Multi-Part Scores**: Export complete band/orchestral arrangements
+- **Multiple Backends**: music21, verovio, or reportlab
+
+### Page Specifications
+
+- **Page Size**: US Letter (8.5" × 11")
+- **Staves per Page**: 12 (configurable)
+- **Staff Line Spacing**: 0.15" (standard)
+- **Margins**: 0.75" on all sides
+
+## Export Methods
+
+### Method 1: music21 (Recommended)
+
+Best for professional music notation rendering.
+
+```bash
+# Install
+pip install music21
+
+# Configure (first time)
+python -c "import music21; music21.configure.run()"
+```
+
+### Method 2: Verovio
+
+Web-based rendering engine for high-quality output.
+
+```bash
+# Install from https://www.verovio.org/
+# Or use system package manager
+```
+
+### Method 3: reportlab (Always Available)
+
+Basic PDF generation with staff lines, always included.
+
+```python
+# Already installed with the system
+import reportlab
+```
+
+### Check Available Backends
+
+```python
+from music_recognition import check_pdf_backends
+
+check_pdf_backends()
+```
+
+Or command line:
+
+```bash
+python pdf_examples.py --check-backends
+```
+
+## Blank Staff Paper
+
+### Create Basic Blank Paper
+
+```python
+from music_recognition import create_blank_sheet
+
+# Create 5 pages of blank staff paper
+create_blank_sheet(
+    output_path='blank_paper.pdf',
+    num_pages=5
+)
+```
+
+### With Measures
+
+```python
+from music_recognition import StaffPaperGenerator
+
+generator = StaffPaperGenerator(staves_per_page=12)
+
+generator.create_blank_staff_paper(
+    output_path='staff_paper.pdf',
+    num_pages=3,
+    title="Music Manuscript Paper",
+    include_measures=True,
+    measures_per_staff=4
+)
+```
+
+### Custom Configuration
+
+```python
+# Different number of staves
+generator = StaffPaperGenerator(staves_per_page=10)
+
+# Custom title
+generator.create_blank_staff_paper(
+    output_path='custom_paper.pdf',
+    num_pages=1,
+    title="My Music Paper"
+)
+```
+
+## Score Templates
+
+### Single Instrument Template
+
+```python
+from music_recognition import create_instrument_part
+
+# Create a clarinet part template
+create_instrument_part(
+    output_path='clarinet_part.pdf',
+    instrument_name='Bb Clarinet',
+    clef='treble',
+    time_signature=(4, 4),
+    num_pages=3
+)
+```
+
+### Multiple Instruments
+
+```python
+from music_recognition import StaffPaperGenerator
+
+generator = StaffPaperGenerator(staves_per_page=12)
+
+# Create templates for different instruments
+instruments = [
+    ('Bb Clarinet', 'treble', (4, 4)),
+    ('Eb Alto Saxophone', 'treble', (3, 4)),
+    ('Trombone', 'bass', (4, 4)),
+    ('Euphonium', 'bass', (6, 8)),
+]
+
+for name, clef, time_sig in instruments:
+    filename = name.replace(' ', '_').lower()
+    generator.create_score_template(
+        output_path=f'{filename}_template.pdf',
+        instrument_name=name,
+        clef=clef,
+        time_signature=time_sig,
+        num_pages=5,
+        measures_per_staff=4
+    )
+```
+
+### Score Template with Custom Settings
+
+```python
+generator = StaffPaperGenerator(staves_per_page=12)
+
+generator.create_score_template(
+    output_path='my_score.pdf',
+    instrument_name='C Flute',
+    clef='treble',
+    time_signature=(3, 4),  # 3/4 time
+    num_pages=10,
+    measures_per_staff=6     # 6 measures per staff
+)
+```
+
+## Exporting Recognized Scores
+
+### Single Part Score
+
+```python
+from music_recognition import MusicRecognitionSystem
+
+# Initialize system
+system = MusicRecognitionSystem(
+    model_path='checkpoints/best_model.pth'
+)
+
+# Recognize music
+score = system.recognize('handwritten_music.jpg')
+
+# Export to PDF
+system.export_score(score, 'output.pdf', format='pdf')
+
+# Or use the notation converter directly
+from music_recognition.postprocessing import NotationConverter
+
+converter = NotationConverter()
+converter.current_score = score
+converter.export_pdf(
+    'output.pdf',
+    method='auto',  # Try best method available
+    title="My Music",
+    composer="John Doe"
+)
+```
+
+### Choose Export Method
+
+```python
+# Try specific method
+converter.export_pdf('output.pdf', method='music21')  # Best quality
+
+# Or
+converter.export_pdf('output.pdf', method='verovio')  # Alternative
+
+# Or
+converter.export_pdf('output.pdf', method='basic')    # Always works
+```
+
+## Multi-Part Scores
+
+### Export Full Score
+
+```python
+from music_recognition import MultiPartScore, ScoreAssembler, BandInstruments
+
+# Create or load multi-part score
+score = MultiPartScore(title="Band Piece", composer="Composer")
+
+# ... add parts ...
+
+# Export to PDF
+score.export_pdf(
+    'band_score.pdf',
+    method='auto',
+    concert_pitch=False  # Use transposed parts
+)
+
+# Export concert pitch version
+score.export_pdf(
+    'concert_score.pdf',
+    method='auto',
+    concert_pitch=True
+)
+```
+
+### Export Individual Parts as PDFs
+
+```python
+# Export each part as a separate PDF file
+score.export_parts_as_pdf(
+    output_dir='pdf_parts/',
+    method='auto'
+)
+
+# Creates:
+# pdf_parts/C_Flute.pdf
+# pdf_parts/Bb_Clarinet_1.pdf
+# pdf_parts/Eb_Alto_Sax_1.pdf
+# etc.
+```
+
+### Create Parts Book
+
+```python
+# Create a single PDF with all parts
+# Includes title page and individual part pages
+score.export_parts_book('parts_book.pdf')
+```
+
+### Complete Multi-Part Example
+
+```python
+from music_recognition import (
+    MusicRecognitionSystem,
+    ScoreAssembler,
+    BandInstruments
+)
+
+# Initialize
+system = MusicRecognitionSystem(model_path='checkpoints/best_model.pth')
+assembler = ScoreAssembler(recognition_system=system)
+
+# Process multiple parts
+part_images = {
+    'C Flute': 'parts/flute.jpg',
+    'Bb Clarinet': 'parts/clarinet.jpg',
+    'Trombone': 'parts/trombone.jpg',
+}
+
+instruments = {
+    'C Flute': BandInstruments.C_FLUTE,
+    'Bb Clarinet': BandInstruments.Bb_CLARINET_1,
+    'Trombone': BandInstruments.C_TROMBONE_1,
+}
+
+# Assemble score
+score = assembler.create_score_from_parts(
+    part_images=part_images,
+    instruments=instruments,
+    title="My Band Arrangement",
+    composer="Your Name"
+)
+
+# Export everything
+score.export_pdf('full_score.pdf')                      # Full score
+score.export_pdf('concert.pdf', concert_pitch=True)    # Concert pitch
+score.export_parts_as_pdf('parts/')                    # Individual PDFs
+score.export_parts_book('parts_book.pdf')              # Parts book
+```
+
+## Advanced Customization
+
+### Custom Staff Configuration
+
+```python
+from music_recognition import StaffPaperGenerator
+
+# Change number of staves per page
+generator = StaffPaperGenerator(staves_per_page=8)
+
+# Custom staff dimensions
+generator.STAFF_LINE_SPACING = 0.2 * generator.inch  # Wider spacing
+generator.LEFT_MARGIN = 1.0 * generator.inch          # Larger margins
+```
+
+### Multi-Part Score Paper
+
+```python
+generator = StaffPaperGenerator(staves_per_page=12)
+
+# Create paper for entire ensemble
+parts = [
+    {'name': 'C Flute', 'clef': 'treble'},
+    {'name': 'Bb Clarinet', 'clef': 'treble'},
+    {'name': 'Eb Alto Sax', 'clef': 'treble'},
+    {'name': 'Trombone', 'clef': 'bass'},
+]
+
+generator.create_multipart_score_paper(
+    output_path='band_paper.pdf',
+    parts=parts,
+    time_signature=(4, 4),
+    staves_per_part=1
+)
+```
+
+### Custom Title Page
+
+```python
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+
+c = canvas.Canvas('custom_score.pdf', pagesize=letter)
+
+# Custom title page
+c.setFont("Helvetica-Bold", 36)
+c.drawCentredString(4.25*72, 9*72, "My Amazing Score")
+
+c.setFont("Helvetica", 24)
+c.drawCentredString(4.25*72, 8*72, "by Composer Name")
+
+c.showPage()
+
+# Add staff pages using generator
+generator = StaffPaperGenerator()
+# ... add staff pages ...
+
+c.save()
+```
+
+## Backend Configuration
+
+### Configure music21
+
+```python
+import music21
+
+# Interactive configuration
+music21.configure.run()
+
+# Or set paths manually
+env = music21.environment.Environment()
+env['musescoreDirectPNGPath'] = '/path/to/musescore'
+env['lilypondPath'] = '/path/to/lilypond'
+```
+
+### Verovio Installation
+
+```bash
+# macOS
+brew install verovio
+
+# Ubuntu/Debian
+sudo apt-get install verovio
+
+# Or download from https://www.verovio.org/
+```
+
+### Test Backends
+
+```python
+from music_recognition import check_pdf_backends
+
+# Prints status of all backends
+check_pdf_backends()
+```
+
+## Command Line Examples
+
+### Basic Usage
+
+```bash
+# Create blank paper
+python -c "from music_recognition import create_blank_sheet; create_blank_sheet('paper.pdf', 10)"
+
+# Create instrument template
+python -c "from music_recognition import create_instrument_part; create_instrument_part('clarinet.pdf', 'Bb Clarinet')"
+
+# Run all examples
+python pdf_examples.py
+
+# Run specific example
+python pdf_examples.py --example 1
+
+# Check backends
+python pdf_examples.py --check-backends
+```
+
+### Batch Create Templates
+
+```bash
+# Create templates for all instruments in your ensemble
+python << 'EOF'
+from music_recognition import create_instrument_part, BandInstruments
+
+instruments = [
+    ('C Flute', 'treble'),
+    ('Bb Clarinet', 'treble'),
+    ('Eb Alto Sax', 'treble'),
+    ('Trombone', 'bass'),
+]
+
+for name, clef in instruments:
+    filename = name.replace(' ', '_').lower()
+    create_instrument_part(f'{filename}.pdf', name, clef, num_pages=5)
+    print(f"Created {filename}.pdf")
+EOF
+```
+
+## Tips and Best Practices
+
+1. **Quality**: Use music21 + MuseScore for best results
+2. **Speed**: Use reportlab for quick blank paper generation
+3. **Consistency**: Keep staff spacing consistent (0.15" standard)
+4. **Measures**: 4-6 measures per staff is typical
+5. **Page Numbers**: Always included automatically
+6. **Margins**: 0.75" margins are standard for binding
+
+## Troubleshooting
+
+### PDF Export Fails
+
+```python
+# Check what's available
+from music_recognition import check_pdf_backends
+check_pdf_backends()
+
+# Try specific method
+score.export_pdf('output.pdf', method='basic')  # Always works
+```
+
+### music21 Not Working
+
+```bash
+# Reinstall
+pip uninstall music21
+pip install music21
+
+# Configure
+python -c "import music21; music21.configure.run()"
+```
+
+### Font Issues
+
+```python
+# reportlab uses built-in fonts
+# For custom fonts, register them:
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+
+pdfmetrics.registerFont(TTFont('CustomFont', 'path/to/font.ttf'))
+```
+
+## Integration with Notation Software
+
+### Export for MuseScore
+
+```python
+# Export as MusicXML (imports into MuseScore)
+score.export_musicxml('score.xml')
+
+# Then in MuseScore: File → Open → score.xml
+# Or use music21 to export directly
+```
+
+### Export for Sibelius
+
+```python
+# Export as MusicXML
+score.export_musicxml('score.xml')
+
+# Import in Sibelius: File → Open
+```
+
+### Export for Finale
+
+```python
+# Export as MusicXML
+score.export_musicxml('score.xml')
+
+# Import in Finale: File → Import → MusicXML
+```
+
+## Next Steps
+
+- Experiment with different staff configurations
+- Create templates for your ensemble
+- Process handwritten parts and export to PDF
+- Share parts with musicians
+
+For more information:
+- `README.md` - General overview
+- `MULTIPART_GUIDE.md` - Multi-part score documentation
+- `pdf_examples.py` - Example code

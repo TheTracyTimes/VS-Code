@@ -8,7 +8,9 @@ An AI-powered Optical Music Recognition (OMR) system that reads and digitizes ha
 - **Staff Detection**: Automatic detection and removal of staff lines
 - **Multi-Part Scores**: Process and assemble complete band/orchestral arrangements with multiple instrumental parts
 - **Automatic Transposition**: Handle Bb, Eb, and F transposing instruments automatically
-- **Multi-Format Output**: Export to MusicXML, MIDI, and ABC notation
+- **PDF Export**: Generate professional sheet music PDFs with 12 staves per page (US Letter)
+- **Blank Staff Paper**: Create customizable blank music manuscript paper
+- **Multi-Format Output**: Export to MusicXML, MIDI, ABC notation, and PDF
 - **Preprocessing Pipeline**: Robust image preprocessing for various handwriting styles
 - **Training Framework**: Complete training pipeline with data augmentation
 - **26+ Instruments Supported**: Full concert band, brass ensemble, and woodwind configurations
@@ -105,6 +107,43 @@ python multipart_demo.py --process-parts ./part_images --output score.xml
 ```
 
 See [MULTIPART_GUIDE.md](MULTIPART_GUIDE.md) for complete documentation.
+
+### PDF Export (12 Staves per Page)
+
+```python
+from music_recognition import create_blank_sheet, create_instrument_part
+
+# Create blank staff paper (US Letter, 12 staves/page)
+create_blank_sheet('blank_paper.pdf', num_pages=5)
+
+# Create instrument part template
+create_instrument_part(
+    'clarinet_part.pdf',
+    instrument_name='Bb Clarinet',
+    clef='treble',
+    time_signature=(4, 4),
+    num_pages=3
+)
+
+# Export recognized score to PDF
+score.export_pdf('output.pdf')
+
+# Export multi-part score
+multipart_score.export_pdf('full_score.pdf')
+multipart_score.export_parts_as_pdf('parts/')  # Individual PDFs
+```
+
+Command line:
+
+```bash
+# Create blank staff paper
+python pdf_examples.py --example 1
+
+# Run all PDF examples
+python pdf_examples.py
+```
+
+See [PDF_EXPORT_GUIDE.md](PDF_EXPORT_GUIDE.md) for complete documentation.
 
 ### Training
 

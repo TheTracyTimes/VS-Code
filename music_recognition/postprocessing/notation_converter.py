@@ -319,3 +319,32 @@ class NotationConverter:
 
         except ImportError:
             raise ImportError("music21 library required for MIDI export. Install with: pip install music21")
+
+    def export_pdf(self, output_path: str, method: str = 'auto', title: str = "Music Score", composer: str = "Unknown"):
+        """
+        Export score to PDF format.
+
+        Args:
+            output_path: Path to save the PDF file
+            method: Export method ('auto', 'music21', 'verovio', 'basic')
+            title: Score title
+            composer: Composer name
+        """
+        try:
+            from ..pdf_export import export_score_to_pdf
+
+            success = export_score_to_pdf(
+                self.current_score,
+                output_path,
+                method=method,
+                title=title,
+                composer=composer
+            )
+
+            if success:
+                print(f"PDF exported to {output_path}")
+            else:
+                print(f"Failed to export PDF to {output_path}")
+
+        except ImportError as e:
+            raise ImportError(f"PDF export dependencies not available: {e}")
