@@ -386,6 +386,87 @@ class MultiPartScore:
             include_part_pages=include_blank_pages
         )
 
+    def export_full_score_book(
+        self,
+        output_path: str,
+        num_pages: int = 10,
+        measures_per_system: int = 4,
+        systems_per_page: int = 3
+    ):
+        """
+        Export as a full score book with all parts together and aligned barlines.
+
+        This mode is ideal for complete scores where all parts play together
+        and barlines need to be vertically aligned across all staves.
+
+        Args:
+            output_path: Path for output PDF
+            num_pages: Number of pages to create
+            measures_per_system: Number of measures per system
+            systems_per_page: Number of systems (one per part group) per page
+        """
+        from .score_layout import create_full_score_book
+
+        # Prepare parts list
+        parts_list = []
+        for part_name in self.part_order:
+            instrument = self.instruments[part_name]
+            parts_list.append({
+                'name': part_name,
+                'clef': instrument.clef.value,
+                'time_signature': self.time_signature
+            })
+
+        create_full_score_book(
+            output_path,
+            self.title,
+            self.composer,
+            parts_list,
+            num_pages=num_pages,
+            measures_per_system=measures_per_system,
+            systems_per_page=systems_per_page
+        )
+
+    def export_as_song_collection(
+        self,
+        output_path: str,
+        songs_per_page: int = 4,
+        staves_per_song: int = 3
+    ):
+        """
+        Export as a song collection with multiple songs per page.
+
+        This mode is ideal for song books where individual songs can later
+        be extracted and made into separate scores.
+
+        Args:
+            output_path: Path for output PDF
+            songs_per_page: Number of songs to fit on each page
+            staves_per_song: Number of staves allocated to each song
+        """
+        from .score_layout import create_song_collection
+
+        # Prepare songs list (each part is treated as a song)
+        songs = []
+        for part_name in self.part_order:
+            instrument = self.instruments[part_name]
+            score = self.parts[part_name]
+
+            songs.append({
+                'title': part_name,
+                'clef': instrument.clef.value,
+                'time_signature': self.time_signature,
+                'measures_per_staff': 4  # Default, can be customized
+            })
+
+        create_song_collection(
+            output_path,
+            self.title,
+            songs,
+            songs_per_page=songs_per_page,
+            staves_per_song=staves_per_song
+        )
+
     def to_dict(self) -> Dict:
         """Convert multi-part score to dictionary."""
         return {

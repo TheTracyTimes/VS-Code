@@ -155,6 +155,47 @@ python pdf_examples.py
 
 See [PDF_EXPORT_GUIDE.md](PDF_EXPORT_GUIDE.md) for complete documentation.
 
+### Two Export Modes: Full Score vs Song Collection
+
+#### Mode 1: Full Score Book (Aligned Barlines)
+For complete ensemble scores where all parts play together:
+
+```python
+# All parts together with vertically aligned barlines
+multipart_score.export_full_score_book(
+    'full_score.pdf',
+    num_pages=10,
+    measures_per_system=4,
+    systems_per_page=2
+)
+```
+
+Features:
+- ✓ Barlines vertically aligned across all parts
+- ✓ System brackets connecting staves
+- ✓ Professional conductor score layout
+- ✓ Part labels on the left
+
+#### Mode 2: Song Collection (Multiple Songs per Page)
+For song books where individual songs can be extracted later:
+
+```python
+# Multiple songs per page, compact layout
+multipart_score.export_as_song_collection(
+    'song_book.pdf',
+    songs_per_page=4,
+    staves_per_song=3
+)
+```
+
+Features:
+- ✓ Multiple independent songs per page
+- ✓ Each song clearly titled
+- ✓ Songs can be extracted individually later
+- ✓ Compact layout for song books
+
+See [score_layout_examples.py](score_layout_examples.py) for detailed examples.
+
 ### Training
 
 ```bash

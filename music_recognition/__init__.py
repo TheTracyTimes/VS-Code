@@ -29,6 +29,12 @@ from .table_of_contents import (
     TableOfContentsGenerator,
     create_score_with_toc
 )
+from .score_layout import (
+    AlignedScoreLayout,
+    SongCollectionLayout,
+    create_full_score_book,
+    create_song_collection
+)
 
 __version__ = "0.1.0"
 __all__ = [
@@ -52,5 +58,9 @@ __all__ = [
     "create_blank_sheet",
     "create_instrument_part",
     "TableOfContentsGenerator",
-    "create_score_with_toc"
+    "create_score_with_toc",
+    "AlignedScoreLayout",
+    "SongCollectionLayout",
+    "create_full_score_book",
+    "create_song_collection"
 ]

@@ -795,6 +795,270 @@ score.export_musicxml('score.xml')
 # Import in Finale: File → Import → MusicXML
 ```
 
+## Export Modes: Full Score vs Song Collection
+
+### Overview
+
+The system provides two distinct export modes for different use cases:
+
+1. **Full Score Book**: All parts together with vertically aligned barlines
+2. **Song Collection**: Multiple songs per page for later extraction
+
+### Mode 1: Full Score Book with Aligned Barlines
+
+**Use this mode when:**
+- Creating conductor scores
+- All parts play together
+- Barlines must align vertically
+- Professional ensemble scores
+
+**Features:**
+- ✓ Vertically aligned barlines across all parts
+- ✓ System brackets connecting staves
+- ✓ Part labels on the left
+- ✓ Professional score layout
+
+**Example:**
+
+```python
+from music_recognition import MultiPartScore, BandInstruments
+from music_recognition.postprocessing import MusicScore
+
+# Create score
+score = MultiPartScore(title="Concert March", composer="John Composer")
+
+# Add parts
+parts = [
+    ('C Flute', BandInstruments.C_FLUTE),
+    ('Bb Clarinet', BandInstruments.Bb_CLARINET_1),
+    ('Alto Sax', BandInstruments.Eb_ALTO_SAX_1),
+    ('Trombone', BandInstruments.C_TROMBONE_1),
+]
+
+for name, instrument in parts:
+    part = MusicScore()
+    part.clef = instrument.clef.value
+    score.add_part(name, part, instrument)
+
+# Export as full score book
+score.export_full_score_book(
+    'full_score.pdf',
+    num_pages=10,               # Total pages
+    measures_per_system=4,      # Measures in each system
+    systems_per_page=2          # Systems on each page
+)
+```
+
+**Result:**
+- Each page contains multiple systems
+- Each system shows all parts together
+- Barlines are vertically aligned
+- Perfect for conductor scores
+
+### Mode 2: Song Collection (Multiple Songs per Page)
+
+**Use this mode when:**
+- Creating song books
+- Each song is independent
+- Songs will be extracted individually later
+- Space efficiency is important
+
+**Features:**
+- ✓ Multiple independent songs per page
+- ✓ Song titles clearly labeled
+- ✓ Compact layout
+- ✓ Easy to extract individual songs
+
+**Example:**
+
+```python
+# Export as song collection
+score.export_as_song_collection(
+    'song_book.pdf',
+    songs_per_page=4,    # Fit 4 songs on each page
+    staves_per_song=3    # 3 staves for each song
+)
+```
+
+**Result:**
+- Each page contains multiple songs
+- Each song has its own title
+- Songs are vertically stacked
+- Perfect for song books and collections
+
+### Direct Creation (Without MultiPartScore)
+
+#### Full Score Book
+
+```python
+from music_recognition import create_full_score_book
+
+parts = [
+    {'name': 'Flute', 'clef': 'treble', 'time_signature': (4, 4)},
+    {'name': 'Clarinet', 'clef': 'treble', 'time_signature': (4, 4)},
+    {'name': 'Trombone', 'clef': 'bass', 'time_signature': (4, 4)},
+]
+
+create_full_score_book(
+    output_path='score.pdf',
+    score_title='My Band Score',
+    composer='Composer Name',
+    parts=parts,
+    num_pages=8,
+    measures_per_system=4,
+    systems_per_page=2
+)
+```
+
+#### Song Collection
+
+```python
+from music_recognition import create_song_collection
+
+songs = [
+    {
+        'title': '1. Amazing Grace',
+        'clef': 'treble',
+        'time_signature': (3, 4),
+        'measures_per_staff': 4
+    },
+    {
+        'title': '2. Ode to Joy',
+        'clef': 'treble',
+        'time_signature': (4, 4),
+        'measures_per_staff': 4
+    },
+    # ... more songs
+]
+
+create_song_collection(
+    output_path='songs.pdf',
+    collection_title='Classic Songs',
+    songs=songs,
+    songs_per_page=3,
+    staves_per_song=4
+)
+```
+
+### Comparison
+
+| Feature | Full Score Book | Song Collection |
+|---------|----------------|-----------------|
+| **Layout** | All parts together | Songs stacked separately |
+| **Barlines** | Vertically aligned | Independent per song |
+| **Brackets** | System brackets | None |
+| **Part Labels** | Yes, on left | Song titles above |
+| **Density** | Lower (2-3 systems/page) | Higher (3-4 songs/page) |
+| **Best For** | Conductor scores | Song books |
+| **Extraction** | View all parts together | Extract individual songs |
+
+### Advanced Customization
+
+#### Custom System Layout
+
+```python
+from music_recognition import AlignedScoreLayout
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+
+c = canvas.Canvas('custom.pdf', pagesize=letter)
+layout = AlignedScoreLayout()
+
+parts = [
+    {'name': 'Soprano', 'clef': 'treble', 'time_signature': (3, 4)},
+    {'name': 'Alto', 'clef': 'treble', 'time_signature': (3, 4)},
+    {'name': 'Tenor', 'clef': 'treble', 'time_signature': (3, 4)},
+    {'name': 'Bass', 'clef': 'bass', 'time_signature': (3, 4)},
+]
+
+layout.create_full_score_page(
+    c,
+    parts=parts,
+    page_title="Choral Score - Page 1",
+    measures_per_system=3,
+    systems_per_page=4
+)
+
+c.save()
+```
+
+#### Custom Song Page
+
+```python
+from music_recognition import SongCollectionLayout
+
+c = canvas.Canvas('songs.pdf', pagesize=letter)
+layout = SongCollectionLayout()
+
+songs = [
+    {'title': 'Song 1', 'clef': 'treble', 'time_signature': (4, 4)},
+    {'title': 'Song 2', 'clef': 'treble', 'time_signature': (3, 4)},
+]
+
+layout.create_song_page(
+    c,
+    songs=songs,
+    staves_per_song=4,
+    page_title="My Songs - Page 1"
+)
+
+c.save()
+```
+
+### Extraction Workflow
+
+For song collections, you can later extract individual songs:
+
+```python
+from music_recognition import SongCollectionLayout
+
+# Get song regions (bounding boxes)
+layout = SongCollectionLayout()
+regions = layout.extract_song_regions(
+    songs=songs,
+    staves_per_song=3
+)
+
+# Each region contains:
+# - song_index
+# - title
+# - y_top, y_bottom
+# - x_left, x_right
+
+# Use these coordinates to extract individual songs from the PDF
+# (requires PDF manipulation library like PyPDF2 or pdfrw)
+```
+
+### Command Line Examples
+
+```bash
+# Run full score examples
+python score_layout_examples.py --example 1
+
+# Run song collection examples
+python score_layout_examples.py --example 2
+
+# Compare both modes
+python score_layout_examples.py --example 6
+
+# Show usage guide
+python score_layout_examples.py --guide
+```
+
+### Best Practices
+
+**For Full Score Books:**
+- Use 2-3 systems per page for readability
+- Keep measures per system to 3-5
+- Include part labels on the first system
+- Use system brackets to group instruments
+
+**For Song Collections:**
+- Allocate 3-4 staves per song
+- Fit 3-4 songs per page
+- Include clear song titles
+- Leave space between songs
+
 ## Next Steps
 
 - Experiment with different staff configurations
