@@ -291,7 +291,7 @@ class BandInstruments:
     VIOLA = InstrumentConfig(
         name="Viola",
         short_name="Vla.",
-        clef=ClefType.ALTO,
+        clef=ClefType.TREBLE,
         transposition=TransposeInterval.NONE,
         range_low="C3",
         range_high="E6"

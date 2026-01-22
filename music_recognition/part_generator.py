@@ -290,9 +290,9 @@ class PartGenerator:
         flute_3 = self.generate_flute_3()
         if flute_3:
             derived_parts['Flute 3'] = flute_3
-            # Viola = Flute 3 one octave down
+            # Viola = Flute 3 one octave down (using treble clef)
             viola = transpose_score_octaves(flute_3, -1)
-            viola.clef = 'C'  # Alto clef
+            viola.clef = 'G'  # Treble clef
             derived_parts['Viola'] = viola
 
         # Violin = C Flute 1 octave down

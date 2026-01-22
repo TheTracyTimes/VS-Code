@@ -52,7 +52,7 @@ The system can automatically generate the following derived parts:
 | **Flute 3** | All 3rd parts | Merge melodies from 3rd Clarinet, Trumpet, Alto Sax, Tenor Sax |
 | **Oboe** | Flute 2 | Direct copy (same part) |
 | **Violin** | C Flute | Transpose 1 octave down |
-| **Viola** | Flute 3 | Transpose 1 octave down |
+| **Viola** | Flute 3 | Transpose 1 octave down (treble clef) |
 | **Cello** | 1st Trombone | Direct copy |
 | **Bassoon** | 2nd Trombone | Direct copy |
 | **Tuba** | Baritone B.C. | Transpose 1 octave down |
@@ -302,11 +302,11 @@ generator = PartGenerator(score)
 violin = generator.copy_part_with_octave_shift('C Flute', -1)
 score.add_part('Violin', violin, BandInstruments.VIOLIN)
 
-# Viola = Flute 3 1 octave down
+# Viola = Flute 3 1 octave down (using treble clef)
 flute_3 = generator.generate_flute_3()
 from music_recognition import transpose_score_octaves
 viola = transpose_score_octaves(flute_3, -1)
-viola.clef = 'C'  # Alto clef
+viola.clef = 'G'  # Treble clef
 score.add_part('Viola', viola, BandInstruments.VIOLA)
 
 # Cello = Trombone 1
@@ -332,7 +332,7 @@ complete_score = AutoScoreBuilder.build_complete_score(score)
 # - Flute 3 (from 3rd parts)
 # - Oboe (= Flute 2)
 # - Violin (= Flute 1 octave down)
-# - Viola (= Flute 3 1 octave down)
+# - Viola (= Flute 3 1 octave down, treble clef)
 # - Cello (= Trombone 1)
 # - Bassoon (= Trombone 2)
 # - Tuba (= Baritone 1 octave down)

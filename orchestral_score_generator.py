@@ -156,7 +156,7 @@ def generate_derived_parts(score: MultiPartScore) -> MultiPartScore:
     print("  • Flute 3 (from all 3rd parts)")
     print("  • Oboe (= Flute 2)")
     print("  • Violin (= C Flute 1 octave down)")
-    print("  • Viola (= Flute 3 1 octave down)")
+    print("  • Viola (= Flute 3 1 octave down, treble clef)")
     print("  • Cello (= Trombone 1)")
     print("  • Bassoon (= Trombone 2)")
     print("  • Tuba (= Baritone B.C. 1 octave down)")
