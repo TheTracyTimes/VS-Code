@@ -131,6 +131,16 @@ score.export_pdf('output.pdf')
 # Export multi-part score
 multipart_score.export_pdf('full_score.pdf')
 multipart_score.export_parts_as_pdf('parts/')  # Individual PDFs
+
+# Export with table of contents
+multipart_score.export_with_toc('score_with_toc.pdf')
+
+# Add titles above staves
+from music_recognition import StaffPaperGenerator
+generator = StaffPaperGenerator()
+generator.draw_title_above_staff(c, staff_y, "Movement I: Allegro")
+generator.draw_title_in_staff(c, x, staff_y, "1. Song Title")
+generator.draw_section_marker(c, x, staff_y, "A", style='box')
 ```
 
 Command line:

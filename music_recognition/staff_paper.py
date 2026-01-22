@@ -189,6 +189,120 @@ class StaffPaperGenerator:
         y_denominator = y_top - (3 * self.STAFF_LINE_SPACING) - 5
         c.drawCentredString(x_position, y_denominator, str(time_sig[1]))
 
+    def draw_title_above_staff(
+        self,
+        c: canvas.Canvas,
+        staff_y: float,
+        title: str,
+        font_size: int = 14,
+        bold: bool = True,
+        centered: bool = True
+    ):
+        """
+        Draw a title above a staff.
+
+        Args:
+            c: ReportLab canvas
+            staff_y: Y-coordinate of top line of staff
+            title: Title text
+            font_size: Font size for title
+            bold: Use bold font
+            centered: Center the title (otherwise left-aligned)
+        """
+        font = "Helvetica-Bold" if bold else "Helvetica"
+        c.setFont(font, font_size)
+
+        # Position title above staff with some spacing
+        title_y = staff_y + 0.25 * inch
+
+        if centered:
+            x_pos = self.PAGE_WIDTH / 2
+            c.drawCentredString(x_pos, title_y, title)
+        else:
+            x_pos = self.LEFT_MARGIN
+            c.drawString(x_pos, title_y, title)
+
+    def draw_title_in_staff(
+        self,
+        c: canvas.Canvas,
+        x_position: float,
+        staff_y: float,
+        title: str,
+        font_size: int = 12,
+        bold: bool = True
+    ):
+        """
+        Draw a title within/on the staff (e.g., song title at start of section).
+
+        Args:
+            c: ReportLab canvas
+            x_position: X-coordinate for title
+            staff_y: Y-coordinate of top line of staff
+            title: Title text
+            font_size: Font size for title
+            bold: Use bold font
+        """
+        font = "Helvetica-Bold" if bold else "Helvetica"
+        c.setFont(font, font_size)
+
+        # Position title at middle of staff
+        title_y = staff_y - (2 * self.STAFF_LINE_SPACING)
+
+        c.drawString(x_position, title_y, title)
+
+    def draw_section_marker(
+        self,
+        c: canvas.Canvas,
+        x_position: float,
+        staff_y: float,
+        text: str,
+        style: str = 'box'
+    ):
+        """
+        Draw a section marker (like rehearsal marks A, B, C, etc.).
+
+        Args:
+            c: ReportLab canvas
+            x_position: X-coordinate
+            staff_y: Y-coordinate of top of staff
+            text: Section text (e.g., "A", "B", "Verse", "Chorus")
+            style: 'box', 'circle', or 'plain'
+        """
+        c.setFont("Helvetica-Bold", 12)
+
+        # Position above staff
+        marker_y = staff_y + 0.15 * inch
+
+        if style == 'box':
+            # Draw box around text
+            text_width = c.stringWidth(text, "Helvetica-Bold", 12)
+            padding = 4
+            c.rect(
+                x_position - padding,
+                marker_y - padding,
+                text_width + 2 * padding,
+                14 + 2 * padding,
+                stroke=1,
+                fill=0
+            )
+            c.drawString(x_position, marker_y, text)
+
+        elif style == 'circle':
+            # Draw circle around text
+            text_width = c.stringWidth(text, "Helvetica-Bold", 12)
+            radius = max(text_width / 2 + 4, 10)
+            c.circle(
+                x_position + text_width / 2,
+                marker_y + 6,
+                radius,
+                stroke=1,
+                fill=0
+            )
+            c.drawString(x_position, marker_y, text)
+
+        else:  # plain
+            c.drawString(x_position, marker_y, text)
+
     def create_blank_staff_paper(
         self,
         output_path: str,

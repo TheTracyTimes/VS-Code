@@ -25,6 +25,10 @@ from .staff_paper import (
     create_blank_sheet,
     create_instrument_part
 )
+from .table_of_contents import (
+    TableOfContentsGenerator,
+    create_score_with_toc
+)
 
 __version__ = "0.1.0"
 __all__ = [
@@ -46,5 +50,7 @@ __all__ = [
     "check_pdf_backends",
     "StaffPaperGenerator",
     "create_blank_sheet",
-    "create_instrument_part"
+    "create_instrument_part",
+    "TableOfContentsGenerator",
+    "create_score_with_toc"
 ]

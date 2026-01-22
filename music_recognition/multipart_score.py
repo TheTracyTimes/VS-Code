@@ -347,6 +347,45 @@ class MultiPartScore:
         exporter = MultiPartPDFExporter()
         exporter.create_parts_book(self, output_path)
 
+    def export_with_toc(self, output_path: str, include_blank_pages: bool = True):
+        """
+        Export score with table of contents.
+
+        Args:
+            output_path: Path for output PDF
+            include_blank_pages: Include blank staff pages for each part
+        """
+        from .table_of_contents import create_score_with_toc
+
+        # Prepare parts list for TOC
+        parts_list = []
+        page_num = 3  # Start after title and TOC pages
+
+        for part_name in self.part_order:
+            instrument = self.instruments[part_name]
+            score = self.parts[part_name]
+
+            parts_list.append({
+                'name': part_name,
+                'instrument': instrument.name,
+                'clef': instrument.clef.value,
+                'time_signature': self.time_signature,
+                'page': page_num if include_blank_pages else None,
+                'measures': len(score.measures)
+            })
+
+            if include_blank_pages:
+                page_num += 1
+
+        # Create the score
+        create_score_with_toc(
+            output_path,
+            self.title,
+            self.composer,
+            parts_list,
+            include_part_pages=include_blank_pages
+        )
+
     def to_dict(self) -> Dict:
         """Convert multi-part score to dictionary."""
         return {
