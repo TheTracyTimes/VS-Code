@@ -48,8 +48,8 @@ The system can automatically generate the following derived parts:
 
 | Derived Part | Source | Method |
 |--------------|--------|--------|
-| **Flute 2** | All 2nd parts | Merge melodies from 2nd Clarinet, Trumpet, Alto Sax, Trombone |
-| **Flute 3** | All 3rd parts | Merge melodies from 3rd Clarinet, Trumpet, Alto Sax, Tenor Sax |
+| **Flute 2** | All 2nd parts | Based on 2nd Clarinet, Trumpet, Alto Sax, Trombone - transposed to concert pitch and proper flute range |
+| **Flute 3** | All 3rd parts | Based on 3rd Clarinet, Trumpet, Alto Sax, Tenor Sax - transposed to concert pitch and proper flute range |
 | **Oboe** | Flute 2 | Direct copy (same part) |
 | **Violin** | C Flute | Transpose 1 octave down |
 | **Viola** | Flute 3 | Transpose 1 octave down (treble clef) |
@@ -127,12 +127,13 @@ The system handles transposition automatically:
 
 ### How It Works
 
-The `PartGenerator` class analyzes multiple parts and selects the most active melody at each measure:
+The `PartGenerator` class creates Flute 2 and Flute 3 parts based on existing 2nd/3rd parts:
 
-1. **Activity Analysis**: Counts notes vs. rests in each measure
-2. **Best Selection**: Chooses the measure with the most musical activity
-3. **Concert Pitch**: Converts all parts to concert pitch for comparison
-4. **Intelligent Merging**: Creates coherent melodic lines
+1. **Concert Pitch Conversion**: Converts all source parts to concert pitch (proper key for flute)
+2. **Activity Analysis**: Counts notes vs. rests in each measure
+3. **Best Selection**: Chooses the measure with the most musical activity at each position
+4. **Range Adjustment**: Automatically transposes by octaves to fit proper flute range (C4-C7)
+5. **Coherent Output**: Creates playable, well-ranged melodic lines for flute
 
 ### Usage Example
 

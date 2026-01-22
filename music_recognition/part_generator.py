@@ -2,8 +2,10 @@
 Automatic part generation system for creating derived instrumental parts.
 
 This module provides utilities to:
-1. Generate Flute 2 from all 2nd parts (Alto Sax 2, Trumpet 2, Clarinet 2, Trombone 2)
-2. Generate Flute 3 from all 3rd parts (Alto Sax 3, Trumpet 3, Clarinet 3, Tenor Sax)
+1. Generate Flute 2 based on all 2nd parts (Alto Sax 2, Trumpet 2, Clarinet 2, Trombone 2)
+   - Converts to concert pitch and adjusts to proper flute range
+2. Generate Flute 3 based on all 3rd parts (Alto Sax 3, Trumpet 3, Clarinet 3, Tenor Sax)
+   - Converts to concert pitch and adjusts to proper flute range
 3. Create equivalent parts with octave transpositions
 4. Copy parts with appropriate transpositions
 """
@@ -11,11 +13,96 @@ This module provides utilities to:
 from typing import List, Dict, Optional, Tuple
 from .postprocessing import MusicScore
 from .instruments import InstrumentConfig, BandInstruments
-from .transposition import Transposer, transpose_score_octaves, ScoreTransposer
+from .transposition import Transposer, transpose_score_octaves, ScoreTransposer, Note
 
 
 class PartMerger:
     """Merges multiple parts to create a single derived part."""
+
+    # Instrument ranges (in MIDI note numbers for easy comparison)
+    FLUTE_RANGE = (60, 84)  # C4 to C7
+
+    @staticmethod
+    def get_midi_range(pitch_low: str, pitch_high: str) -> Tuple[int, int]:
+        """
+        Get MIDI range from pitch strings.
+
+        Args:
+            pitch_low: Lowest pitch (e.g., 'C4')
+            pitch_high: Highest pitch (e.g., 'C7')
+
+        Returns:
+            Tuple of (low_midi, high_midi)
+        """
+        low = Note.from_string(pitch_low).to_midi_number()
+        high = Note.from_string(pitch_high).to_midi_number()
+        return (low, high)
+
+    @staticmethod
+    def transpose_to_range(measure: List[Dict], target_range: Tuple[int, int]) -> List[Dict]:
+        """
+        Transpose a measure to fit within a target range by adjusting octaves.
+
+        Args:
+            measure: List of note dictionaries
+            target_range: Tuple of (low_midi, high_midi)
+
+        Returns:
+            Transposed measure that fits within the target range
+        """
+        if not measure:
+            return measure
+
+        # Calculate average pitch of the measure
+        pitches = []
+        for note_data in measure:
+            if note_data.get('type') != 'rest' and 'pitch' in note_data:
+                try:
+                    note = Note.from_string(note_data['pitch'])
+                    pitches.append(note.to_midi_number())
+                except:
+                    continue
+
+        if not pitches:
+            return measure  # No notes to transpose
+
+        avg_pitch = sum(pitches) / len(pitches)
+        target_center = (target_range[0] + target_range[1]) / 2
+
+        # Calculate how many octaves to shift
+        octave_shift = round((target_center - avg_pitch) / 12)
+
+        # Don't shift if already in reasonable range
+        if abs(octave_shift) == 0:
+            return measure
+
+        # Transpose the measure
+        from .transposition import transpose_measure_octaves
+        return transpose_measure_octaves(measure, octave_shift)
+
+    @staticmethod
+    def adjust_score_to_range(score: MusicScore, target_range: Tuple[int, int]) -> MusicScore:
+        """
+        Adjust an entire score to fit within a target instrument range.
+
+        Args:
+            score: MusicScore to adjust
+            target_range: Tuple of (low_midi, high_midi)
+
+        Returns:
+            Adjusted MusicScore
+        """
+        adjusted_score = MusicScore()
+        adjusted_score.time_signature = score.time_signature
+        adjusted_score.key_signature = score.key_signature
+        adjusted_score.clef = score.clef
+        adjusted_score.tempo = score.tempo
+
+        for measure in score.measures:
+            adjusted_measure = PartMerger.transpose_to_range(measure, target_range)
+            adjusted_score.measures.append(adjusted_measure)
+
+        return adjusted_score
 
     @staticmethod
     def count_notes_in_measure(measure: List[Dict]) -> int:
@@ -133,13 +220,15 @@ class PartGenerator:
 
     def generate_flute_2(self) -> Optional[MusicScore]:
         """
-        Generate Flute 2 part from all 2nd parts.
+        Generate Flute 2 part based on all 2nd parts.
 
         Looks at: 2nd Alto Sax, 2nd Trumpet, 2nd Clarinet, 2nd Trombone.
-        Selects the most active melody at each measure.
+        - Converts all parts to concert pitch (proper key for flute)
+        - Selects the most active melody at each measure
+        - Adjusts to proper flute range (C4-C7)
 
         Returns:
-            Generated Flute 2 MusicScore in concert pitch
+            Generated Flute 2 MusicScore in concert pitch and proper range
         """
         # Define which parts to look for
         second_part_names = [
@@ -167,20 +256,25 @@ class PartGenerator:
         # Merge parts by selecting most active measures
         merged = PartMerger.merge_parts_by_activity(available_parts)
 
-        # Set appropriate clef for flute
-        merged.clef = 'G'
+        # Adjust to proper flute range
+        adjusted = PartMerger.adjust_score_to_range(merged, PartMerger.FLUTE_RANGE)
 
-        return merged
+        # Set appropriate clef for flute
+        adjusted.clef = 'G'
+
+        return adjusted
 
     def generate_flute_3(self) -> Optional[MusicScore]:
         """
-        Generate Flute 3 part from all 3rd parts.
+        Generate Flute 3 part based on all 3rd parts.
 
         Looks at: 3rd Alto Sax, 3rd Trumpet, 3rd Clarinet, Tenor Sax.
-        Selects the most active melody at each measure.
+        - Converts all parts to concert pitch (proper key for flute)
+        - Selects the most active melody at each measure
+        - Adjusts to proper flute range (C4-C7)
 
         Returns:
-            Generated Flute 3 MusicScore in concert pitch
+            Generated Flute 3 MusicScore in concert pitch and proper range
         """
         # Define which parts to look for
         third_part_names = [
@@ -208,10 +302,13 @@ class PartGenerator:
         # Merge parts by selecting most active measures
         merged = PartMerger.merge_parts_by_activity(available_parts)
 
-        # Set appropriate clef for flute
-        merged.clef = 'G'
+        # Adjust to proper flute range
+        adjusted = PartMerger.adjust_score_to_range(merged, PartMerger.FLUTE_RANGE)
 
-        return merged
+        # Set appropriate clef for flute
+        adjusted.clef = 'G'
+
+        return adjusted
 
     def _transpose_to_concert(self, score: MusicScore, transposer: Transposer) -> MusicScore:
         """

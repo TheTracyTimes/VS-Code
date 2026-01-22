@@ -152,8 +152,8 @@ def generate_derived_parts(score: MultiPartScore) -> MultiPartScore:
     complete_score = AutoScoreBuilder.build_complete_score(score)
 
     print("\nGenerated derived parts:")
-    print("  • Flute 2 (from all 2nd parts)")
-    print("  • Flute 3 (from all 3rd parts)")
+    print("  • Flute 2 (based on 2nd parts, transposed to flute range)")
+    print("  • Flute 3 (based on 3rd parts, transposed to flute range)")
     print("  • Oboe (= Flute 2)")
     print("  • Violin (= C Flute 1 octave down)")
     print("  • Viola (= Flute 3 1 octave down, treble clef)")
@@ -215,8 +215,8 @@ Workflow:
   1. Read scanned PDF (or use example)
   2. Recognize music notation (or use example)
   3. Generate derived parts automatically:
-     - Flute 2 from 2nd parts
-     - Flute 3 from 3rd parts
+     - Flute 2 based on 2nd parts (transposed to proper range/key)
+     - Flute 3 based on 3rd parts (transposed to proper range/key)
      - Orchestral instruments with octave transpositions
   4. Export complete score with table of contents
         """
