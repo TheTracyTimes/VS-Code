@@ -12,7 +12,15 @@ from .instruments import (
     get_instrument_by_name,
     list_all_instruments
 )
-from .transposition import Transposer, ScoreTransposer, Note
+from .transposition import (
+    Transposer,
+    ScoreTransposer,
+    Note,
+    transpose_pitch_string,
+    transpose_octaves,
+    transpose_measure_octaves,
+    transpose_score_octaves
+)
 from .pdf_export import (
     PDFExporter,
     ScorePDFExporter,
@@ -35,6 +43,12 @@ from .score_layout import (
     create_full_score_book,
     create_song_collection
 )
+from .pdf_reader import PDFMusicReader
+from .part_generator import (
+    PartMerger,
+    PartGenerator,
+    AutoScoreBuilder
+)
 
 __version__ = "0.1.0"
 __all__ = [
@@ -47,6 +61,10 @@ __all__ = [
     "Transposer",
     "ScoreTransposer",
     "Note",
+    "transpose_pitch_string",
+    "transpose_octaves",
+    "transpose_measure_octaves",
+    "transpose_score_octaves",
     "get_instrument_by_name",
     "list_all_instruments",
     "PDFExporter",
@@ -62,5 +80,9 @@ __all__ = [
     "AlignedScoreLayout",
     "SongCollectionLayout",
     "create_full_score_book",
-    "create_song_collection"
+    "create_song_collection",
+    "PDFMusicReader",
+    "PartMerger",
+    "PartGenerator",
+    "AutoScoreBuilder"
 ]

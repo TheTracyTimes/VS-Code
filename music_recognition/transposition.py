@@ -341,3 +341,74 @@ def transpose_pitch_string(pitch: str, semitones: int) -> str:
     note = Note.from_string(pitch)
     transposed = note.transpose_semitones(semitones)
     return transposed.to_string()
+
+
+def transpose_octaves(pitch: str, octaves: int) -> str:
+    """
+    Utility function to transpose a pitch string by octaves.
+
+    Args:
+        pitch: Pitch string (e.g., 'C4', 'F#5')
+        octaves: Number of octaves to transpose (positive = up, negative = down)
+
+    Returns:
+        Transposed pitch string
+
+    Examples:
+        >>> transpose_octaves('C4', -1)
+        'C3'
+        >>> transpose_octaves('F#5', 2)
+        'F#7'
+    """
+    note = Note.from_string(pitch)
+    transposed = note.transpose_semitones(octaves * 12)
+    return transposed.to_string()
+
+
+def transpose_measure_octaves(measure: List[Dict], octaves: int) -> List[Dict]:
+    """
+    Transpose all notes in a measure by octaves.
+
+    Args:
+        measure: List of note dictionaries
+        octaves: Number of octaves to transpose
+
+    Returns:
+        Transposed measure
+    """
+    transposed_measure = []
+    for note_data in measure:
+        if note_data.get('type') == 'rest':
+            transposed_measure.append(note_data.copy())
+        else:
+            transposed = note_data.copy()
+            if 'pitch' in note_data:
+                transposed['pitch'] = transpose_octaves(note_data['pitch'], octaves)
+            transposed_measure.append(transposed)
+    return transposed_measure
+
+
+def transpose_score_octaves(score: 'MusicScore', octaves: int) -> 'MusicScore':
+    """
+    Transpose an entire score by octaves.
+
+    Args:
+        score: MusicScore to transpose
+        octaves: Number of octaves to transpose
+
+    Returns:
+        New transposed MusicScore
+    """
+    from .postprocessing import MusicScore
+
+    transposed_score = MusicScore()
+    transposed_score.time_signature = score.time_signature
+    transposed_score.key_signature = score.key_signature
+    transposed_score.clef = score.clef
+    transposed_score.tempo = score.tempo
+
+    for measure in score.measures:
+        transposed_measure = transpose_measure_octaves(measure, octaves)
+        transposed_score.measures.append(transposed_measure)
+
+    return transposed_score

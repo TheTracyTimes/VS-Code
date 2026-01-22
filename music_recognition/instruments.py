@@ -278,6 +278,92 @@ class BandInstruments:
         range_high="C6"
     )
 
+    # Orchestral Strings (C instruments)
+    VIOLIN = InstrumentConfig(
+        name="Violin",
+        short_name="Vln.",
+        clef=ClefType.TREBLE,
+        transposition=TransposeInterval.NONE,
+        range_low="G3",
+        range_high="A7"
+    )
+
+    VIOLA = InstrumentConfig(
+        name="Viola",
+        short_name="Vla.",
+        clef=ClefType.ALTO,
+        transposition=TransposeInterval.NONE,
+        range_low="C3",
+        range_high="E6"
+    )
+
+    CELLO = InstrumentConfig(
+        name="Cello",
+        short_name="Vc.",
+        clef=ClefType.BASS,
+        transposition=TransposeInterval.NONE,
+        range_low="C2",
+        range_high="C6"
+    )
+
+    # Orchestral Woodwinds
+    OBOE = InstrumentConfig(
+        name="Oboe",
+        short_name="Ob.",
+        clef=ClefType.TREBLE,
+        transposition=TransposeInterval.NONE,
+        range_low="B3",
+        range_high="A6"
+    )
+
+    BASSOON = InstrumentConfig(
+        name="Bassoon",
+        short_name="Bsn.",
+        clef=ClefType.BASS,
+        transposition=TransposeInterval.NONE,
+        range_low="B1",
+        range_high="E5"
+    )
+
+    Bb_SOPRANO_SAX = InstrumentConfig(
+        name="B♭ Soprano Saxophone",
+        short_name="S. Sax",
+        clef=ClefType.TREBLE,
+        transposition=TransposeInterval.Bb_DOWN,
+        range_low="A3",
+        range_high="E6"
+    )
+
+    Eb_ALTO_CLARINET = InstrumentConfig(
+        name="E♭ Alto Clarinet",
+        short_name="A. Cl.",
+        clef=ClefType.TREBLE,
+        transposition=TransposeInterval.Eb_DOWN,
+        range_low="E2",
+        range_high="C6"
+    )
+
+    # Flute parts (for derived parts)
+    C_FLUTE_2 = InstrumentConfig(
+        name="2nd C Flute",
+        short_name="Fl. 2",
+        clef=ClefType.TREBLE,
+        transposition=TransposeInterval.NONE,
+        range_low="C4",
+        range_high="C7",
+        part_number=2
+    )
+
+    C_FLUTE_3 = InstrumentConfig(
+        name="3rd C Flute",
+        short_name="Fl. 3",
+        clef=ClefType.TREBLE,
+        transposition=TransposeInterval.NONE,
+        range_low="C4",
+        range_high="C7",
+        part_number=3
+    )
+
 
 class StandardEnsembles:
     """Pre-defined ensemble configurations."""
