@@ -314,7 +314,7 @@ document.getElementById('registrationForm').addEventListener('submit', async fun
 
     try {
         // Submit to Firebase
-        await submitToFirebase(formData);
+        await submitRegistration(formData);
 
         // Send email notification
         await sendEmailNotification(formData);
@@ -335,63 +335,80 @@ document.getElementById('registrationForm').addEventListener('submit', async fun
     }
 });
 
-// ===== FIREBASE INTEGRATION =====
-
-// Import Firebase (will be loaded from CDN in config file)
-async function submitToFirebase(data) {
-    // This function will be implemented with Firebase SDK
-    // For now, this is a placeholder
-
-    try {
-        // Send to Firebase Firestore
-        const response = await fetch('https://your-firebase-project.firebaseio.com/registrations.json', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        });
-
-        if (!response.ok) {
-            throw new Error('Firebase submission failed');
-        }
-
-        return await response.json();
-    } catch (error) {
-        console.error('Firebase error:', error);
-        throw error;
-    }
-}
-
 // ===== EMAIL NOTIFICATION =====
 
 async function sendEmailNotification(data) {
-    // This will send email notification to admin
-    // Can use EmailJS, SendGrid, or custom backend
-
-    const emailData = {
-        to: 'tracykmussotte@gmail.com', // Admin email
-        subject: 'New Registration - 2026 International Meeting',
-        name: `${data.firstName} ${data.lastName}`,
-        email: data.email,
-        phone: data.phone,
-        pastor: data.pastorName,
-        services: Array.isArray(data.services) ? data.services.join(', ') : data.services,
-        airportTransport: data.airportTransport,
-        localTransport: data.localTransport,
-        hasChildren: data.hasChildren,
-        timestamp: new Date(data.timestamp).toLocaleString()
-    };
-
-    // EmailJS integration (free service)
-    // You'll need to set up EmailJS account and get your keys
     try {
-        // Placeholder for email service
-        console.log('Email notification data:', emailData);
-        // await emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', emailData);
+        // Admin notification
+        const adminTemplateParams = {
+            to_email: 'tracykmussotte@gmail.com',
+            from_name: `${data.firstName} ${data.lastName}`,
+            reply_to: data.email || data.phone,
+            subject: 'New Registration - 2026 International Meeting',
+            message: `
+New registration received:
+
+Name: ${data.firstName} ${data.lastName}
+Phone: ${data.phone}
+Email: ${data.email || 'Not provided'}
+Pastor: ${data.pastorName}
+Assembly: ${data.assemblyName || 'Not provided'}
+
+Services Attending: ${Array.isArray(data.services) ? data.services.join(', ') : data.services}
+
+Airport Transportation: ${data.airportTransport}
+Local Transportation: ${data.localTransport}
+
+Children Under 5: ${data.hasChildren}
+${data.hasChildren === 'Yes' ? `Number of Children: ${data.numChildren}` : ''}
+
+Submitted: ${new Date().toLocaleString()}
+            `.trim()
+        };
+
+        // Confirmation email to registrant (if email provided)
+        if (data.email) {
+            const confirmTemplateParams = {
+                to_email: data.email,
+                to_name: `${data.firstName} ${data.lastName}`,
+                subject: 'Registration Confirmed - 2026 International Meeting',
+                message: `
+Dear ${data.firstName} ${data.lastName},
+
+Thank you for registering for the Sarasota Gospel Temple 2026 International Meeting!
+
+EVENT DETAILS:
+📅 Dates: April 9-11, 2026
+📍 Location: 1900 Gandy Blvd N, St. Petersburg, FL 33702
+📞 Contact: 941-667-0526
+
+YOUR REGISTRATION:
+Services Attending: ${Array.isArray(data.services) ? data.services.join(', ') : data.services}
+Transportation Needed: ${data.airportTransport}
+
+We look forward to seeing you at the meeting! If you need to update your registration, please contact us at 941-667-0526.
+
+Blessings,
+Sarasota Gospel Temple
+                `.trim()
+            };
+
+            // Send both emails
+            if (typeof emailjs !== 'undefined') {
+                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, adminTemplateParams);
+                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, confirmTemplateParams);
+                console.log('Registration notification emails sent');
+            }
+        } else {
+            // Send only admin notification if no email provided
+            if (typeof emailjs !== 'undefined') {
+                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, adminTemplateParams);
+                console.log('Registration notification email sent to admin');
+            }
+        }
     } catch (error) {
         console.error('Email error:', error);
-        // Don't throw error - form still submitted successfully
+        // Don't throw - form was still submitted successfully
     }
 }
 
@@ -399,6 +416,11 @@ async function sendEmailNotification(data) {
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Registration form initialized');
+
+    // Initialize EmailJS
+    if (typeof emailjs !== 'undefined') {
+        initEmailJS();
+    }
 
     // Set focus on first input
     document.getElementById('firstName').focus();

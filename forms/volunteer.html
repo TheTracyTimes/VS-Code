@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volunteer Sign-Up | 2026 International Meeting | Sarasota Gospel Temple</title>
+    <link rel="stylesheet" href="../css/design-system.css">
+    <style>
+        /* Page-specific styles */
+        .event-info {
+            background-color: var(--off-white);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-xl);
+            border-left: 4px solid var(--burnt-orange);
+        }
+
+        .event-info h3 {
+            margin-top: 0;
+            font-size: 20px;
+        }
+
+        .event-info p {
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .event-info strong {
+            color: var(--navy-blue);
+        }
+
+        .committee-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: var(--spacing-sm);
+        }
+
+        .availability-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: var(--spacing-sm);
+        }
+
+        .matrix-section {
+            display: none;
+            background-color: var(--off-white);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-md);
+            margin-top: var(--spacing-lg);
+        }
+
+        .matrix-section.active {
+            display: block;
+        }
+
+        .matrix-row {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+            padding: var(--spacing-sm);
+            background-color: white;
+            border-radius: var(--radius-sm);
+        }
+
+        .matrix-label {
+            flex: 1;
+            font-weight: 600;
+            color: var(--navy-blue);
+        }
+
+        .matrix-select {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .info-box {
+            background-color: #e3f2fd;
+            border-left: 4px solid var(--navy-blue);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-sm);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .info-box p {
+            margin: 0;
+            font-size: 14px;
+            color: var(--charcoal);
+        }
+    </style>
+</head>
+<body>
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="container">
+            <h1>Volunteer Sign-Up</h1>
+            <p class="subtitle">2026 International Meeting | Join Our Team</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container-narrow" style="padding-top: 48px; padding-bottom: 48px;">
+
+        <!-- Event Information Card -->
+        <div class="event-info">
+            <h3>Thank You for Volunteering!</h3>
+            <p><strong>Event:</strong> 2026 International Meeting</p>
+            <p><strong>Dates:</strong> April 9-11, 2026</p>
+            <p><strong>Location:</strong> 1900 Gandy Blvd N, St. Petersburg, FL 33702</p>
+            <p><strong>Questions?</strong> Call 941-667-0526</p>
+        </div>
+
+        <!-- Volunteer Form Card -->
+        <div class="card">
+            <h2 class="section-title">Volunteer Information</h2>
+
+            <div class="info-box">
+                <p>We appreciate your willingness to serve! Please complete the form below and we'll contact you with more details about your volunteer assignment.</p>
+            </div>
+
+            <form id="volunteerForm">
+
+                <!-- Basic Information -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First Name <span class="required">*</span></label>
+                        <input type="text" id="firstName" name="firstName" required>
+                        <span class="error-message">Please enter your first name</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lastName">Last Name <span class="required">*</span></label>
+                        <input type="text" id="lastName" name="lastName" required>
+                        <span class="error-message">Please enter your last name</span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phone">Phone Number (with country code) <span class="required">*</span></label>
+                        <input type="tel" id="phone" name="phone" placeholder="+1-941-555-1234" required>
+                        <span class="helper-text">Include country code (e.g., +1 for USA)</span>
+                        <span class="error-message">Please enter a valid phone number</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" placeholder="your@email.com" required>
+                        <span class="error-message">Please enter a valid email address</span>
+                    </div>
+                </div>
+
+                <!-- Committee Selection -->
+                <div class="form-group">
+                    <label>Committee Selection <span class="required">*</span></label>
+                    <p class="helper-text">Select all committees you're willing to serve on</p>
+
+                    <div class="committee-grid">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="comm1" name="committees" value="Dining Room" onchange="updateCommitteeSelection()">
+                            <label for="comm1">Dining Room</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="comm2" name="committees" value="Nursery" onchange="updateCommitteeSelection()">
+                            <label for="comm2">Nursery</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="comm3" name="committees" value="Usher" onchange="updateCommitteeSelection()">
+                            <label for="comm3">Usher</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="comm4" name="committees" value="Transportation" onchange="updateCommitteeSelection()">
+                            <label for="comm4">Transportation</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="comm5" name="committees" value="Cleaning" onchange="updateCommitteeSelection()">
+                            <label for="comm5">Cleaning</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="comm6" name="committees" value="Interpretation" onchange="updateCommitteeSelection()">
+                            <label for="comm6">Interpretation</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="comm7" name="committees" value="Media" onchange="updateCommitteeSelection()">
+                            <label for="comm7">Media</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="comm8" name="committees" value="Singers" onchange="updateCommitteeSelection()">
+                            <label for="comm8">Singers</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="comm9" name="committees" value="Musician" onchange="updateCommitteeSelection()">
+                            <label for="comm9">Musician</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="comm10" name="committees" value="Medical" onchange="updateCommitteeSelection()">
+                            <label for="comm10">Medical</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="comm11" name="committees" value="Floater (Wherever Needed)" onchange="updateCommitteeSelection()">
+                            <label for="comm11">Floater (Wherever Needed)</label>
+                        </div>
+                    </div>
+                    <span class="error-message">Please select at least one committee</span>
+                </div>
+
+                <!-- Availability -->
+                <div class="form-group">
+                    <label>Availability <span class="required">*</span></label>
+                    <p class="helper-text">Select all time slots when you're available to volunteer</p>
+
+                    <div class="availability-grid">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="avail1" name="availability" value="Thursday Morning, April 9th" onchange="updateAvailabilitySelection()">
+                            <label for="avail1">Thursday Morning, April 9th</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="avail2" name="availability" value="Thursday Afternoon, April 9th" onchange="updateAvailabilitySelection()">
+                            <label for="avail2">Thursday Afternoon, April 9th</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="avail3" name="availability" value="Friday Morning, April 10th" onchange="updateAvailabilitySelection()">
+                            <label for="avail3">Friday Morning, April 10th</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="avail4" name="availability" value="Friday Afternoon, April 10th" onchange="updateAvailabilitySelection()">
+                            <label for="avail4">Friday Afternoon, April 10th</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="avail5" name="availability" value="Saturday Morning, April 11th" onchange="updateAvailabilitySelection()">
+                            <label for="avail5">Saturday Morning, April 11th</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="avail6" name="availability" value="Saturday Afternoon, April 11th" onchange="updateAvailabilitySelection()">
+                            <label for="avail6">Saturday Afternoon, April 11th</label>
+                        </div>
+                    </div>
+                    <span class="error-message">Please select at least one time slot</span>
+                </div>
+
+                <!-- Committee-Availability Matrix (Conditional) -->
+                <div id="matrixSection" class="matrix-section">
+                    <h3 style="margin-top: 0; margin-bottom: var(--spacing-md); color: var(--navy-blue);">
+                        Assign Committee to Each Time Slot
+                    </h3>
+                    <p class="helper-text" style="margin-bottom: var(--spacing-lg);">
+                        Since you selected multiple committees, please specify which committee you'd like to serve on for each time slot.
+                    </p>
+                    <div id="matrixRows">
+                        <!-- Matrix rows will be dynamically inserted here -->
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div style="margin-top: var(--spacing-xl);">
+                    <button type="submit" class="btn btn-primary btn-full-width" id="submitBtn">
+                        Submit Volunteer Application
+                    </button>
+                </div>
+
+                <!-- Success Message (Hidden by default) -->
+                <div id="successMessage" class="success-message" style="display: none;">
+                    <h3>Thank you for volunteering!</h3>
+                    <p>Your volunteer registration has been received. We'll contact you at <strong id="confirmEmail"></strong> with more details about your role.</p>
+                    <p><strong>Committee(s):</strong> <span id="confirmCommittees"></span></p>
+                    <p><strong>Availability:</strong> <span id="confirmAvailability"></span></p>
+                    <p style="margin-top: 24px;">Blessings,<br>Sarasota Gospel Temple</p>
+                </div>
+
+            </form>
+        </div>
+    </main>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="../config/firebase-config.js"></script>
+
+    <!-- EmailJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <!-- JavaScript -->
+    <script src="../js/volunteer-form.js"></script>
+</body>
+</html>
