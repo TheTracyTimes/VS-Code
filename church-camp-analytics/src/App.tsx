@@ -1,229 +1,47 @@
-import { useState, useEffect } from 'react';
-import RegistrationForm from './components/RegistrationForm';
-import Dashboard from './components/Dashboard';
-import DoveAnimation from './components/DoveAnimation';
-import type { Registration } from './types';
-import { calculateAnalytics, generateSampleData } from './utils/analytics';
-import './App.css';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import PublicHome from './pages/PublicHome';
+import Payment from './pages/Payment';
+import AdminLogin from './pages/AdminLogin';
+import AdminDashboard from './pages/AdminDashboard';
+
+// Protected Route Component
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { isAuthenticated } = useAuth();
+  return isAuthenticated ? <>{children}</> : <Navigate to="/admin" />;
+};
+
+function AppRoutes() {
+  return (
+    <Routes>
+      {/* Public Routes */}
+      <Route path="/" element={<PublicHome />} />
+      <Route path="/payment" element={<Payment />} />
+
+      {/* Admin Routes */}
+      <Route path="/admin" element={<AdminLogin />} />
+      <Route
+        path="/admin/dashboard"
+        element={
+          <ProtectedRoute>
+            <AdminDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Catch all - redirect to home */}
+      <Route path="*" element={<Navigate to="/" />} />
+    </Routes>
+  );
+}
 
 function App() {
-  const [registrations, setRegistrations] = useState<Registration[]>([]);
-  const [view, setView] = useState<'form' | 'dashboard'>('dashboard');
-  const [showNotification, setShowNotification] = useState(false);
-  const [showDove, setShowDove] = useState(() => {
-    // Show dove only on first visit
-    const hasVisited = localStorage.getItem('hasVisitedCampAnalytics');
-    return !hasVisited;
-  });
-
-  // Load registrations from localStorage on mount
-  useEffect(() => {
-    const saved = localStorage.getItem('campRegistrations');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      // Convert timestamp strings back to Date objects
-      const withDates = parsed.map((r: Registration) => ({
-        ...r,
-        timestamp: new Date(r.timestamp),
-      }));
-      setRegistrations(withDates);
-    } else {
-      // Load sample data on first visit
-      const sample = generateSampleData();
-      setRegistrations(sample);
-      localStorage.setItem('campRegistrations', JSON.stringify(sample));
-    }
-  }, []);
-
-  // Save to localStorage whenever registrations change
-  useEffect(() => {
-    if (registrations.length > 0) {
-      localStorage.setItem('campRegistrations', JSON.stringify(registrations));
-    }
-  }, [registrations]);
-
-  const handleNewRegistration = (regData: Omit<Registration, 'id' | 'timestamp'>) => {
-    const newRegistration: Registration = {
-      ...regData,
-      id: `reg-${Date.now()}`,
-      timestamp: new Date(),
-    };
-
-    setRegistrations([...registrations, newRegistration]);
-    setView('dashboard');
-    showSuccessNotification();
-  };
-
-  const showSuccessNotification = () => {
-    setShowNotification(true);
-    setTimeout(() => setShowNotification(false), 3000);
-  };
-
-  const handleDoveComplete = () => {
-    setShowDove(false);
-    localStorage.setItem('hasVisitedCampAnalytics', 'true');
-  };
-
-  const loadSampleData = () => {
-    const sample = generateSampleData();
-    setRegistrations(sample);
-    localStorage.setItem('campRegistrations', JSON.stringify(sample));
-  };
-
-  const clearAllData = () => {
-    if (window.confirm('Are you sure you want to clear all registration data? This cannot be undone.')) {
-      setRegistrations([]);
-      localStorage.removeItem('campRegistrations');
-    }
-  };
-
-  const exportToJSON = () => {
-    const dataStr = JSON.stringify(registrations, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `camp-registrations-${new Date().toISOString().split('T')[0]}.json`;
-    link.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const exportToCSV = () => {
-    if (registrations.length === 0) {
-      alert('No data to export');
-      return;
-    }
-
-    const headers = [
-      'ID',
-      'Timestamp',
-      'First Name',
-      'Last Name',
-      'Gender',
-      'Age',
-      'Chaperone Name',
-      'Phone',
-      'Email',
-      'Nationality',
-      'Assembly',
-      'Transportation',
-      'Allergies',
-      'Emergency Contact Name',
-      'Emergency Contact Phone',
-      'Comments',
-      'Concerns',
-      'Questions',
-      'Payment Option',
-    ];
-
-    const rows = registrations.map(r => [
-      r.id,
-      new Date(r.timestamp).toISOString(),
-      r.firstName,
-      r.lastName,
-      r.gender,
-      r.age,
-      r.chaperoneName,
-      r.phone,
-      r.email,
-      r.nationality,
-      r.assembly,
-      r.transportation,
-      r.allergies,
-      r.emergencyContactName,
-      r.emergencyContactPhone,
-      r.comments,
-      r.concerns,
-      r.questions,
-      r.paymentOption,
-    ]);
-
-    const csvContent = [
-      headers.join(','),
-      ...rows.map(row => row.map(cell => `"${cell}"`).join(',')),
-    ].join('\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `camp-registrations-${new Date().toISOString().split('T')[0]}.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const analytics = calculateAnalytics(registrations);
-
   return (
-    <div className="app">
-      {/* Dove Animation - Shows on first visit */}
-      {showDove && <DoveAnimation onComplete={handleDoveComplete} />}
-
-      {/* Header */}
-      <header className="app-header">
-        <div className="header-content">
-          <h1>⛺ Church Camp Analytics</h1>
-          <p className="tagline">Interactive Registration & Data Visualization Platform</p>
-        </div>
-
-        <nav className="app-nav">
-          <button
-            className={`nav-button ${view === 'dashboard' ? 'active' : ''}`}
-            onClick={() => setView('dashboard')}
-          >
-            📊 Dashboard
-          </button>
-          <button
-            className={`nav-button ${view === 'form' ? 'active' : ''}`}
-            onClick={() => setView('form')}
-          >
-            📝 New Registration
-          </button>
-        </nav>
-      </header>
-
-      {/* Success Notification */}
-      {showNotification && (
-        <div className="notification success">
-          ✓ Registration submitted successfully!
-        </div>
-      )}
-
-      {/* Main Content */}
-      <main className="app-main">
-        {view === 'dashboard' ? (
-          <>
-            <div className="dashboard-actions">
-              <button onClick={loadSampleData} className="action-button secondary">
-                🔄 Load Sample Data
-              </button>
-              <button onClick={exportToJSON} className="action-button secondary">
-                💾 Export JSON
-              </button>
-              <button onClick={exportToCSV} className="action-button secondary">
-                📄 Export CSV
-              </button>
-              <button onClick={clearAllData} className="action-button danger">
-                🗑️ Clear All Data
-              </button>
-            </div>
-            <Dashboard analytics={analytics} />
-          </>
-        ) : (
-          <RegistrationForm onSubmit={handleNewRegistration} />
-        )}
-      </main>
-
-      {/* Footer */}
-      <footer className="app-footer">
-        <p>
-          Built with React + TypeScript + Recharts | Designed for learning data analytics and UI/UX design
-        </p>
-        <p className="footer-note">
-          This interactive platform helps visualize registration data in real-time for better camp planning and cost analysis.
-        </p>
-      </footer>
-    </div>
+    <BrowserRouter>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 
