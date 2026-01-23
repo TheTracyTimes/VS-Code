@@ -28,62 +28,69 @@ const DoveAnimation: React.FC<DoveAnimationProps> = ({ onComplete }) => {
   return (
     <div className="dove-container" onClick={handleDismiss}>
       <div className="dove-wrapper">
-        <svg
-          className="dove"
-          viewBox="0 0 200 200"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          {/* Dove body */}
-          <ellipse cx="100" cy="100" rx="30" ry="40" fill="white" stroke="#ddd" strokeWidth="2" />
+        {/* Circular Logo Background */}
+        <div className="logo-circle">
+          <svg
+            className="dove"
+            viewBox="0 0 200 200"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            {/* Dove body - simplified, clean white */}
+            <ellipse cx="95" cy="105" rx="28" ry="35" fill="white" />
 
-          {/* Dove head */}
-          <circle cx="100" cy="75" r="18" fill="white" stroke="#ddd" strokeWidth="2" />
+            {/* Dove head */}
+            <circle cx="95" cy="78" r="16" fill="white" />
 
-          {/* Beak */}
-          <path d="M 110 75 L 120 75 L 115 78 Z" fill="#FFD700" />
+            {/* Beak - small yellow */}
+            <path d="M 105 78 L 112 78 L 108 80 Z" fill="#FDB515" />
 
-          {/* Eye */}
-          <circle cx="105" cy="72" r="3" fill="#333" />
+            {/* Eye */}
+            <circle cx="100" cy="76" r="2.5" fill="#003DA5" />
 
-          {/* Left wing (animated) */}
-          <path
-            className="wing-left"
-            d="M 70 90 Q 40 80 30 70 Q 45 85 70 95 Z"
-            fill="white"
-            stroke="#ddd"
-            strokeWidth="2"
-          />
+            {/* Left wing - simplified smooth curve */}
+            <path
+              className="wing-left"
+              d="M 70 95 Q 45 88 35 78 Q 42 85 50 90 Q 60 95 70 98 Z"
+              fill="white"
+            />
 
-          {/* Right wing (animated) */}
-          <path
-            className="wing-right"
-            d="M 130 90 Q 160 80 170 70 Q 155 85 130 95 Z"
-            fill="white"
-            stroke="#ddd"
-            strokeWidth="2"
-          />
+            {/* Right wing - simplified smooth curve */}
+            <path
+              className="wing-right"
+              d="M 120 95 Q 145 88 155 78 Q 148 85 140 90 Q 130 95 120 98 Z"
+              fill="white"
+            />
 
-          {/* Tail */}
-          <path d="M 100 135 L 85 155 L 95 140 L 100 140 L 105 140 L 115 155 Z" fill="white" stroke="#ddd" strokeWidth="2" />
+            {/* Tail feathers - simplified */}
+            <path
+              d="M 95 135 L 85 150 L 90 138 L 95 138 L 100 138 L 105 150 Z"
+              fill="white"
+            />
 
-          {/* Olive branch in beak */}
-          <g className="olive-branch">
-            {/* Branch stem */}
-            <path d="M 120 75 L 145 70" stroke="#8B4513" strokeWidth="2" fill="none" />
+            {/* Olive branch - cleaner design */}
+            <g className="olive-branch">
+              {/* Branch stem */}
+              <path d="M 112 78 L 140 68" stroke="#6B8E23" strokeWidth="2.5" fill="none" />
 
-            {/* Leaves */}
-            <ellipse cx="125" cy="68" rx="4" ry="6" fill="#90EE90" transform="rotate(-30 125 68)" />
-            <ellipse cx="130" cy="69" rx="4" ry="6" fill="#90EE90" transform="rotate(30 130 69)" />
-            <ellipse cx="135" cy="67" rx="4" ry="6" fill="#90EE90" transform="rotate(-30 135 67)" />
-            <ellipse cx="140" cy="68" rx="4" ry="6" fill="#90EE90" transform="rotate(30 140 68)" />
-            <ellipse cx="145" cy="66" rx="4" ry="6" fill="#90EE90" transform="rotate(-30 145 66)" />
-          </g>
-        </svg>
+              {/* Leaves - simplified oval shapes */}
+              <ellipse cx="118" cy="73" rx="3.5" ry="5" fill="#90C050" transform="rotate(-35 118 73)" />
+              <ellipse cx="122" cy="74" rx="3.5" ry="5" fill="#90C050" transform="rotate(25 122 74)" />
+              <ellipse cx="128" cy="71" rx="3.5" ry="5" fill="#90C050" transform="rotate(-30 128 71)" />
+              <ellipse cx="132" cy="72" rx="3.5" ry="5" fill="#90C050" transform="rotate(30 132 72)" />
+              <ellipse cx="137" cy="69" rx="3.5" ry="5" fill="#90C050" transform="rotate(-25 137 69)" />
+              <ellipse cx="141" cy="68" rx="3.5" ry="5" fill="#90C050" transform="rotate(20 141 68)" />
+            </g>
+          </svg>
+
+          {/* Church name text around circle */}
+          <div className="circle-text-top">ASSEMBLÉE ÉVANGÉLIQUE</div>
+          <div className="circle-text-bottom">DE LAVAL</div>
+        </div>
 
         <div className="dove-message">
-          <h3>Welcome to Church Camp Analytics</h3>
-          <p className="dove-subtitle">Peace be with you</p>
-          <p className="dove-hint">Click anywhere to continue</p>
+          <h3>Bienvenue au Camp de l'Église</h3>
+          <p className="dove-subtitle">La paix soit avec vous</p>
+          <p className="dove-hint">Cliquez n'importe où pour continuer</p>
         </div>
       </div>
     </div>
