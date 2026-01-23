@@ -63,6 +63,11 @@ from .song_extraction import (
     IndividualSongScoreGenerator,
     extract_songs_and_create_scores
 )
+from .part_grouping import (
+    PartGrouper,
+    GroupedScoreExporter,
+    create_grouped_conductor_score
+)
 
 __version__ = "0.1.0"
 __all__ = [
@@ -106,5 +111,8 @@ __all__ = [
     "create_individual_books_from_score",
     "SongExtractor",
     "IndividualSongScoreGenerator",
-    "extract_songs_and_create_scores"
+    "extract_songs_and_create_scores",
+    "PartGrouper",
+    "GroupedScoreExporter",
+    "create_grouped_conductor_score"
 ]
