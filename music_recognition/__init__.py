@@ -49,6 +49,15 @@ from .part_generator import (
     PartGenerator,
     AutoScoreBuilder
 )
+from .title_extraction import (
+    TitleExtractor,
+    PartSplitter,
+    extract_titles_from_pdf
+)
+from .individual_books import (
+    IndividualBookGenerator,
+    create_individual_books_from_score
+)
 
 __version__ = "0.1.0"
 __all__ = [
@@ -84,5 +93,10 @@ __all__ = [
     "PDFMusicReader",
     "PartMerger",
     "PartGenerator",
-    "AutoScoreBuilder"
+    "AutoScoreBuilder",
+    "TitleExtractor",
+    "PartSplitter",
+    "extract_titles_from_pdf",
+    "IndividualBookGenerator",
+    "create_individual_books_from_score"
 ]
