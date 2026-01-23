@@ -58,6 +58,7 @@ The system can automatically generate the following derived parts:
 | **Tuba** | Baritone B.C. | Transpose 1 octave down |
 | **Alto Clarinet** | 3rd Alto Sax | Direct copy (both Eb) |
 | **Soprano Sax** | 1st Clarinet/Trumpet | Direct copy (both Bb) |
+| **Eb Baritone Sax** | Low brass parts | Based on Baritone B.C., Baritone T.C., Tuba - transposed to baritone sax range |
 
 ### 3. Octave Transposition Utilities
 
@@ -329,8 +330,8 @@ complete_score = AutoScoreBuilder.build_complete_score(score)
 
 # The complete score now includes:
 # - All original parts
-# - Flute 2 (from 2nd parts)
-# - Flute 3 (from 3rd parts)
+# - Flute 2 (based on 2nd parts, transposed to flute range)
+# - Flute 3 (based on 3rd parts, transposed to flute range)
 # - Oboe (= Flute 2)
 # - Violin (= Flute 1 octave down)
 # - Viola (= Flute 3 1 octave down, treble clef)
@@ -339,6 +340,7 @@ complete_score = AutoScoreBuilder.build_complete_score(score)
 # - Tuba (= Baritone 1 octave down)
 # - Alto Clarinet (= 3rd Alto Sax)
 # - Soprano Sax (= 1st Clarinet/Trumpet)
+# - Eb Baritone Sax (based on low brass, transposed to bari sax range)
 
 print(f"Generated {len(complete_score.parts)} total parts")
 ```

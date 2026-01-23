@@ -162,6 +162,7 @@ def generate_derived_parts(score: MultiPartScore) -> MultiPartScore:
     print("  • Tuba (= Baritone B.C. 1 octave down)")
     print("  • Alto Clarinet (= 3rd Alto Sax)")
     print("  • Soprano Sax (= 1st Clarinet/Trumpet)")
+    print("  • Eb Baritone Sax (based on low brass, transposed to bari sax range)")
 
     original_count = len(score.parts)
     new_count = len(complete_score.parts)
