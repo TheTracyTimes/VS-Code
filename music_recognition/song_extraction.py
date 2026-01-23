@@ -187,7 +187,8 @@ class IndividualSongScoreGenerator:
     def create_song_parts_and_scores(self, multipart_score: MultiPartScore,
                                     song_info: List[Dict],
                                     parts_output_dir: str = 'output/song_parts',
-                                    scores_output_dir: str = 'output/song_scores') -> Dict[str, Dict]:
+                                    scores_output_dir: str = 'output/song_scores',
+                                    split_combined: bool = True) -> Dict[str, Dict]:
         """
         Create both individual part books AND full scores for each song.
 
@@ -196,6 +197,8 @@ class IndividualSongScoreGenerator:
             song_info: List of song dictionaries defining each song
             parts_output_dir: Directory for individual part books per song
             scores_output_dir: Directory for full scores per song
+            split_combined: If True, split combined parts into separate books.
+                          If False, keep combined parts together.
 
         Returns:
             Dictionary with 'parts' and 'scores' subdictionaries
@@ -235,7 +238,7 @@ class IndividualSongScoreGenerator:
 
             print(f"\nProcessing song: {song_title}")
             print("  Creating individual part books...")
-            part_files = create_individual_books_from_score(song_score, song_parts_dir)
+            part_files = create_individual_books_from_score(song_score, song_parts_dir, split_combined=split_combined)
             results['parts'][song_title] = part_files
 
             # Create full score for this song
@@ -258,7 +261,8 @@ class IndividualSongScoreGenerator:
 
 def extract_songs_and_create_scores(multipart_score: MultiPartScore,
                                     song_info: List[Dict],
-                                    output_base_dir: str = 'output/songs') -> Dict[str, Dict]:
+                                    output_base_dir: str = 'output/songs',
+                                    split_combined: bool = True) -> Dict[str, Dict]:
     """
     Main function to extract songs and create all outputs.
 
@@ -266,6 +270,8 @@ def extract_songs_and_create_scores(multipart_score: MultiPartScore,
         multipart_score: MultiPartScore with all parts and all songs
         song_info: List of song definitions
         output_base_dir: Base directory for all outputs
+        split_combined: If True (default), split combined parts into separate books.
+                       If False, keep combined parts together.
 
     Returns:
         Dictionary with results
@@ -278,8 +284,11 @@ def extract_songs_and_create_scores(multipart_score: MultiPartScore,
         ...     {'title': 'Grand Finale', 'start_measure': 65, 'end_measure': 96}
         ... ]
         >>>
-        >>> # Create all outputs
-        >>> results = extract_songs_and_create_scores(complete_score, songs)
+        >>> # Create all outputs with combined parts split (default)
+        >>> results = extract_songs_and_create_scores(complete_score, songs, split_combined=True)
+        >>>
+        >>> # OR keep combined parts together
+        >>> results = extract_songs_and_create_scores(complete_score, songs, split_combined=False)
         >>>
         >>> # Results in:
         >>> # output/songs/
@@ -305,7 +314,8 @@ def extract_songs_and_create_scores(multipart_score: MultiPartScore,
         multipart_score,
         song_info,
         parts_output_dir=parts_dir,
-        scores_output_dir=scores_dir
+        scores_output_dir=scores_dir,
+        split_combined=split_combined
     )
 
     print(f"\n{'='*70}")
