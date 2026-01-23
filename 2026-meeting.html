@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="2026 International Meeting - April 9-11, 2026. Register now for three days of worship, fellowship, and spiritual renewal.">
+    <title>2026 International Meeting | Sarasota Gospel Temple</title>
+    <link rel="stylesheet" href="css/design-system.css">
+    <link rel="stylesheet" href="css/pages.css">
+    <style>
+        .meeting-hero {
+            background: linear-gradient(135deg, var(--navy-blue) 0%, #1a3a6b 100%);
+            color: var(--off-white);
+            padding: var(--spacing-xxl) 0;
+            text-align: center;
+        }
+
+        .meeting-hero h1 {
+            color: var(--off-white);
+            font-size: 56px;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .meeting-hero .date {
+            font-size: 32px;
+            color: var(--burnt-orange);
+            font-weight: 700;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .meeting-hero .location {
+            font-size: 20px;
+            opacity: 0.9;
+        }
+
+        .forms-section {
+            padding: var(--spacing-xxl) 0;
+            background-color: var(--off-white);
+        }
+
+        .forms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-xl);
+            margin-top: var(--spacing-xl);
+        }
+
+        .form-card {
+            background: white;
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+            border-top: 4px solid var(--navy-blue);
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--burnt-orange);
+            transform: scaleX(0);
+            transition: transform var(--transition-normal);
+        }
+
+        .form-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .form-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.15);
+        }
+
+        .form-icon {
+            font-size: 64px;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .form-card h3 {
+            color: var(--navy-blue);
+            margin-bottom: var(--spacing-md);
+            font-size: 24px;
+        }
+
+        .form-card p {
+            color: var(--dark-gray);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .form-card .btn {
+            width: 100%;
+        }
+
+        .event-details {
+            padding: var(--spacing-xxl) 0;
+            background-color: var(--beige);
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-xl);
+        }
+
+        .detail-card {
+            background: white;
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .detail-card h4 {
+            color: var(--navy-blue);
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .detail-icon {
+            font-size: 24px;
+        }
+
+        .detail-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .detail-card li {
+            padding: var(--spacing-sm) 0;
+            border-bottom: 1px solid var(--off-white);
+            color: var(--charcoal);
+        }
+
+        .detail-card li:last-child {
+            border-bottom: none;
+        }
+
+        .important-info {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-sm);
+            margin: var(--spacing-xl) 0;
+        }
+
+        .important-info h3 {
+            color: #856404;
+            margin-top: 0;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .important-info p {
+            color: var(--charcoal);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .schedule-section {
+            padding: var(--spacing-xxl) 0;
+            background-color: var(--off-white);
+        }
+
+        .schedule-day {
+            background: white;
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .day-header {
+            background: var(--navy-blue);
+            color: var(--off-white);
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: var(--radius-sm);
+            margin: calc(var(--spacing-xl) * -1) calc(var(--spacing-xl) * -1) var(--spacing-lg);
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .schedule-item {
+            display: flex;
+            gap: var(--spacing-lg);
+            padding: var(--spacing-md) 0;
+            border-bottom: 1px solid var(--off-white);
+        }
+
+        .schedule-item:last-child {
+            border-bottom: none;
+        }
+
+        .schedule-time {
+            font-weight: 700;
+            color: var(--burnt-orange);
+            min-width: 100px;
+        }
+
+        .schedule-event {
+            flex: 1;
+        }
+
+        .schedule-event h4 {
+            color: var(--navy-blue);
+            margin: 0 0 var(--spacing-xs) 0;
+        }
+
+        .schedule-event p {
+            color: var(--dark-gray);
+            font-size: 14px;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="mainNav">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="nav-brand">
+                    <a href="index.html">
+                        <h2>SGT</h2>
+                        <span class="brand-text">Sarasota Gospel Temple</span>
+                    </a>
+                </div>
+                <button class="nav-toggle" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="ministries.html">Ministries</a></li>
+                    <li><a href="2026-meeting.html" class="meeting-link active">2026 Meeting</a></li>
+                    <li><a href="events.html">Events</a></li>
+                    <li><a href="give.html">Give</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Meeting Hero -->
+    <section class="meeting-hero">
+        <div class="container">
+            <h1>2026 International Meeting</h1>
+            <p class="date">April 9-11, 2026</p>
+            <p class="location">📍 1900 Gandy Blvd N, St. Petersburg, FL 33702</p>
+        </div>
+    </section>
+
+    <!-- Forms Access Section -->
+    <section class="forms-section">
+        <div class="container">
+            <h2 class="text-center">Get Involved</h2>
+            <p class="text-center lead">Register, volunteer, or become a vendor for this special event</p>
+
+            <div class="forms-grid">
+                <!-- Registration Card -->
+                <div class="form-card">
+                    <div class="form-icon">📋</div>
+                    <h3>Attendee Registration</h3>
+                    <p>Register for the 2026 International Meeting. Select your services, request transportation, and sign up for child care.</p>
+                    <a href="forms/registration.html" class="btn btn-primary">Register Now</a>
+                </div>
+
+                <!-- Volunteer Card -->
+                <div class="form-card">
+                    <div class="form-icon">🙋</div>
+                    <h3>Volunteer Sign-Up</h3>
+                    <p>Serve during the meeting! Choose your committee and availability. We need help with dining, ushering, media, and more.</p>
+                    <a href="forms/volunteer.html" class="btn btn-secondary">Volunteer</a>
+                </div>
+
+                <!-- Vendor Card -->
+                <div class="form-card">
+                    <div class="form-icon">🏪</div>
+                    <h3>Vendor Application</h3>
+                    <p>Interested in having a booth at our marketplace? Apply to be a vendor and share your goods or services.</p>
+                    <a href="forms/vendor.html" class="btn btn-outline">Become a Vendor</a>
+                </div>
+            </div>
+
+            <div class="important-info">
+                <h3>⚠️ Important Deadlines</h3>
+                <p><strong>Registration Deadline:</strong> March 25, 2026</p>
+                <p><strong>Volunteer Sign-Up:</strong> March 15, 2026</p>
+                <p><strong>Vendor Applications:</strong> February 28, 2026 (subject to approval)</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Event Details -->
+    <section class="event-details">
+        <div class="container">
+            <h2 class="text-center">Event Details</h2>
+
+            <div class="details-grid">
+                <div class="detail-card">
+                    <h4><span class="detail-icon">📅</span> Schedule Overview</h4>
+                    <ul>
+                        <li><strong>Thursday:</strong> Morning & Night Service</li>
+                        <li><strong>Friday:</strong> Morning & Night Service</li>
+                        <li><strong>Saturday:</strong> Morning Service & Youth Night</li>
+                    </ul>
+                </div>
+
+                <div class="detail-card">
+                    <h4><span class="detail-icon">✈️</span> Transportation</h4>
+                    <ul>
+                        <li>Airport pickup available</li>
+                        <li>Local transportation during event</li>
+                        <li>Request during registration</li>
+                    </ul>
+                </div>
+
+                <div class="detail-card">
+                    <h4><span class="detail-icon">👶</span> Child Care</h4>
+                    <ul>
+                        <li>Nursery available during services</li>
+                        <li>VBS (Vacation Bible School)</li>
+                        <li>Age-appropriate activities</li>
+                    </ul>
+                </div>
+
+                <div class="detail-card">
+                    <h4><span class="detail-icon">🏨</span> Accommodations</h4>
+                    <ul>
+                        <li>Hotel information coming soon</li>
+                        <li>Local lodging options</li>
+                        <li>Group rates available</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Schedule -->
+    <section class="schedule-section">
+        <div class="container-narrow">
+            <h2 class="text-center">Detailed Schedule</h2>
+
+            <div class="schedule-day">
+                <div class="day-header">Thursday, April 9th</div>
+                <div class="schedule-item">
+                    <div class="schedule-time">10:00 AM</div>
+                    <div class="schedule-event">
+                        <h4>Morning Service</h4>
+                        <p>Opening worship and message</p>
+                    </div>
+                </div>
+                <div class="schedule-item">
+                    <div class="schedule-time">12:00 PM</div>
+                    <div class="schedule-event">
+                        <h4>Lunch Break</h4>
+                        <p>Fellowship and refreshments</p>
+                    </div>
+                </div>
+                <div class="schedule-item">
+                    <div class="schedule-time">7:00 PM</div>
+                    <div class="schedule-event">
+                        <h4>Night Service</h4>
+                        <p>Evening worship and teaching</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="schedule-day">
+                <div class="day-header">Friday, April 10th</div>
+                <div class="schedule-item">
+                    <div class="schedule-time">10:00 AM</div>
+                    <div class="schedule-event">
+                        <h4>Morning Service</h4>
+                        <p>Worship and word</p>
+                    </div>
+                </div>
+                <div class="schedule-item">
+                    <div class="schedule-time">12:00 PM</div>
+                    <div class="schedule-event">
+                        <h4>Lunch Break</h4>
+                        <p>Fellowship meal</p>
+                    </div>
+                </div>
+                <div class="schedule-item">
+                    <div class="schedule-time">7:00 PM</div>
+                    <div class="schedule-event">
+                        <h4>Night Service</h4>
+                        <p>Special speaker and ministry time</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="schedule-day">
+                <div class="day-header">Saturday, April 11th</div>
+                <div class="schedule-item">
+                    <div class="schedule-time">10:00 AM</div>
+                    <div class="schedule-event">
+                        <h4>Morning Service</h4>
+                        <p>Worship and final message</p>
+                    </div>
+                </div>
+                <div class="schedule-item">
+                    <div class="schedule-time">7:00 PM</div>
+                    <div class="schedule-event">
+                        <h4>Youth Night</h4>
+                        <p>Special service for young people</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="cta-section">
+        <div class="container-narrow text-center">
+            <h2>Questions About the Meeting?</h2>
+            <p class="lead">We're here to help! Contact us for more information.</p>
+            <div class="cta-buttons">
+                <a href="tel:941-667-0526" class="btn btn-primary btn-large">📞 Call 941-667-0526</a>
+                <a href="contact.html" class="btn btn-outline btn-large">Contact Us</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>Sarasota Gospel Temple</h3>
+                    <p>A City of Refuge</p>
+                    <div class="footer-social">
+                        <a href="https://www.facebook.com/people/Sarasota-Gospel-Temple/61557296390196/" target="_blank" aria-label="Facebook">📘</a>
+                        <a href="https://www.instagram.com/sarasotagospeltemple/" target="_blank" aria-label="Instagram">📷</a>
+                        <a href="https://www.youtube.com/@sarasotagospeltemple" target="_blank" aria-label="YouTube">📺</a>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="ministries.html">Ministries</a></li>
+                        <li><a href="events.html">Events</a></li>
+                        <li><a href="gallery.html">Gallery</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Get Involved</h4>
+                    <ul>
+                        <li><a href="2026-meeting.html">2026 Meeting</a></li>
+                        <li><a href="forms/volunteer.html">Volunteer</a></li>
+                        <li><a href="give.html">Give</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Contact</h4>
+                    <p>1900 Gandy Blvd N<br>
+                    St. Petersburg, FL 33702</p>
+                    <p><strong>Phone:</strong> <a href="tel:941-667-0526">941-667-0526</a></p>
+                    <p><strong>Email:</strong> <a href="mailto:tracykmussotte@gmail.com">tracykmussotte@gmail.com</a></p>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 Sarasota Gospel Temple. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="js/main.js"></script>
+</body>
+</html>

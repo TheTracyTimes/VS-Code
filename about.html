@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Learn about Sarasota Gospel Temple - our history, mission, and leadership. A City of Refuge serving St. Petersburg, FL.">
+    <title>About Us | Sarasota Gospel Temple</title>
+    <link rel="stylesheet" href="css/design-system.css">
+    <link rel="stylesheet" href="css/pages.css">
+    <style>
+        .page-hero {
+            background: linear-gradient(135deg, var(--navy-blue) 0%, #1a3a6b 100%);
+            color: var(--off-white);
+            padding: var(--spacing-xxl) 0;
+            text-align: center;
+        }
+
+        .page-hero h1 {
+            color: var(--off-white);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .history-section {
+            padding: var(--spacing-xxl) 0;
+            background-color: var(--off-white);
+        }
+
+        .mission-statement {
+            background-color: var(--navy-blue);
+            color: var(--off-white);
+            padding: var(--spacing-xxl);
+            border-radius: var(--radius-lg);
+            text-align: center;
+            margin: var(--spacing-xxl) 0;
+        }
+
+        .mission-statement h2 {
+            color: var(--off-white);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .mission-statement p {
+            font-size: 20px;
+            line-height: 1.8;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .elders-section {
+            padding: var(--spacing-xxl) 0;
+            background-color: var(--beige);
+        }
+
+        .elders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-xl);
+            margin-top: var(--spacing-xl);
+        }
+
+        .elder-card {
+            background-color: white;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+        }
+
+        .elder-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .elder-photo {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, var(--navy-blue) 0%, var(--dark-gray) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            color: var(--off-white);
+            position: relative;
+        }
+
+        .elder-photo::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background-color: var(--burnt-orange);
+        }
+
+        .elder-info {
+            padding: var(--spacing-lg);
+            text-align: center;
+        }
+
+        .elder-info h3 {
+            color: var(--navy-blue);
+            margin-bottom: var(--spacing-xs);
+            font-size: 20px;
+        }
+
+        .elder-title {
+            color: var(--burnt-orange);
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .elder-bio {
+            color: var(--dark-gray);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .values-section {
+            padding: var(--spacing-xxl) 0;
+            background-color: var(--off-white);
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-xl);
+        }
+
+        .value-card {
+            text-align: center;
+            padding: var(--spacing-xl);
+        }
+
+        .value-icon {
+            font-size: 48px;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .value-card h3 {
+            color: var(--navy-blue);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .value-card p {
+            color: var(--dark-gray);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="mainNav">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="nav-brand">
+                    <a href="index.html">
+                        <h2>SGT</h2>
+                        <span class="brand-text">Sarasota Gospel Temple</span>
+                    </a>
+                </div>
+                <button class="nav-toggle" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html" class="active">About</a></li>
+                    <li><a href="ministries.html">Ministries</a></li>
+                    <li><a href="2026-meeting.html" class="meeting-link">2026 Meeting</a></li>
+                    <li><a href="events.html">Events</a></li>
+                    <li><a href="give.html">Give</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <h1>About Us</h1>
+            <p>A City of Refuge | A Community of Faith</p>
+        </div>
+    </section>
+
+    <!-- History Section -->
+    <section class="history-section">
+        <div class="container-narrow">
+            <h2 class="text-center">Our History</h2>
+            <p class="lead">Sarasota Gospel Temple has been a beacon of faith and hope in the community, dedicated to spreading the Gospel and serving those in need.</p>
+
+            <p>Founded on the principles of love, faith, and service, our church has grown into a vibrant community where believers come together to worship God, support one another, and make a positive impact in our community.</p>
+
+            <p>We are proud to be a place where families can grow spiritually, where the Word of God is taught with clarity and conviction, and where everyone is welcomed with open arms.</p>
+
+            <div class="mission-statement">
+                <h2>Our Mission</h2>
+                <p>"To be a City of Refuge where people can find hope, healing, and a relationship with Jesus Christ. We are committed to worshiping God, teaching His Word, and serving our community with love and compassion."</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Elders Section -->
+    <section class="elders-section">
+        <div class="container">
+            <h2 class="text-center">Our Elders</h2>
+            <p class="text-center lead">Meet the spiritual leaders guiding our church family</p>
+
+            <div class="elders-grid">
+                <!-- Elder 1 -->
+                <div class="elder-card">
+                    <div class="elder-photo">
+                        👨‍👩
+                    </div>
+                    <div class="elder-info">
+                        <h3>Brother & Sister Edwige Achile</h3>
+                        <p class="elder-title">Elder</p>
+                        <p class="elder-bio">Serving faithfully in ministry and dedicated to the spiritual growth of our congregation.</p>
+                    </div>
+                </div>
+
+                <!-- Elder 2 -->
+                <div class="elder-card">
+                    <div class="elder-photo">
+                        👨‍👩
+                    </div>
+                    <div class="elder-info">
+                        <h3>Brother & Sister Patrick Eveillard</h3>
+                        <p class="elder-title">Elder</p>
+                        <p class="elder-bio">Committed to teaching God's Word and shepherding the flock with wisdom and love.</p>
+                    </div>
+                </div>
+
+                <!-- Elder 3 -->
+                <div class="elder-card">
+                    <div class="elder-photo">
+                        👨‍👩
+                    </div>
+                    <div class="elder-info">
+                        <h3>Brother & Sister Josue Oscar</h3>
+                        <p class="elder-title">Elder</p>
+                        <p class="elder-bio">Passionate about prayer and leading our church in spiritual maturity.</p>
+                    </div>
+                </div>
+
+                <!-- Elder 4 -->
+                <div class="elder-card">
+                    <div class="elder-photo">
+                        👨‍👩
+                    </div>
+                    <div class="elder-info">
+                        <h3>Brother & Sister Elfils Jeune</h3>
+                        <p class="elder-title">Elder</p>
+                        <p class="elder-bio">Dedicated to serving the community and helping believers grow in their faith.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Values Section -->
+    <section class="values-section">
+        <div class="container">
+            <h2 class="text-center">What We Believe</h2>
+            <p class="text-center lead">Core values that guide our church family</p>
+
+            <div class="values-grid">
+                <div class="value-card">
+                    <div class="value-icon">📖</div>
+                    <h3>Biblical Truth</h3>
+                    <p>We believe in the authority and inspiration of the Holy Scriptures</p>
+                </div>
+
+                <div class="value-card">
+                    <div class="value-icon">🙏</div>
+                    <h3>Prayer</h3>
+                    <p>We are a praying church, seeking God's guidance in all things</p>
+                </div>
+
+                <div class="value-card">
+                    <div class="value-icon">❤️</div>
+                    <h3>Love & Unity</h3>
+                    <p>We love one another as Christ loved us, in unity and fellowship</p>
+                </div>
+
+                <div class="value-card">
+                    <div class="value-icon">🌍</div>
+                    <h3>Service</h3>
+                    <p>We serve our community and share the Gospel with the world</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container-narrow text-center">
+            <h2>Join Our Church Family</h2>
+            <p class="lead">Experience authentic worship and genuine fellowship. We'd love to meet you!</p>
+            <div class="cta-buttons">
+                <a href="contact.html#visit" class="btn btn-primary btn-large">Plan Your Visit</a>
+                <a href="contact.html" class="btn btn-outline btn-large">Contact Us</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>Sarasota Gospel Temple</h3>
+                    <p>A City of Refuge</p>
+                    <div class="footer-social">
+                        <a href="https://www.facebook.com/people/Sarasota-Gospel-Temple/61557296390196/" target="_blank" aria-label="Facebook">📘</a>
+                        <a href="https://www.instagram.com/sarasotagospeltemple/" target="_blank" aria-label="Instagram">📷</a>
+                        <a href="https://www.youtube.com/@sarasotagospeltemple" target="_blank" aria-label="YouTube">📺</a>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="ministries.html">Ministries</a></li>
+                        <li><a href="events.html">Events</a></li>
+                        <li><a href="gallery.html">Gallery</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Get Involved</h4>
+                    <ul>
+                        <li><a href="2026-meeting.html">2026 Meeting</a></li>
+                        <li><a href="forms/volunteer.html">Volunteer</a></li>
+                        <li><a href="give.html">Give</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Contact</h4>
+                    <p>1900 Gandy Blvd N<br>
+                    St. Petersburg, FL 33702</p>
+                    <p><strong>Phone:</strong> <a href="tel:941-667-0526">941-667-0526</a></p>
+                    <p><strong>Email:</strong> <a href="mailto:tracykmussotte@gmail.com">tracykmussotte@gmail.com</a></p>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 Sarasota Gospel Temple. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="js/main.js"></script>
+</body>
+</html>
