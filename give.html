@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Support Sarasota Gospel Temple through online giving. Give via PayPal, Zelle, or GoFundMe.">
+    <title>Give | Sarasota Gospel Temple</title>
+    <link rel="stylesheet" href="css/design-system.css">
+    <link rel="stylesheet" href="css/pages.css">
+    <style>
+        .giving-options {
+            padding: var(--spacing-xxl) 0;
+            background-color: var(--off-white);
+        }
+
+        .giving-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-xl);
+            margin-top: var(--spacing-xl);
+        }
+
+        .giving-card {
+            background: white;
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+            transition: all var(--transition-normal);
+            border-top: 4px solid var(--navy-blue);
+        }
+
+        .giving-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.15);
+        }
+
+        .giving-icon {
+            font-size: 64px;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .giving-card h3 {
+            color: var(--navy-blue);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .giving-card p {
+            color: var(--dark-gray);
+            margin-bottom: var(--spacing-lg);
+            line-height: 1.6;
+        }
+
+        .giving-card .btn {
+            width: 100%;
+        }
+
+        .giving-details {
+            background-color: var(--beige);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-sm);
+            margin: var(--spacing-md) 0;
+            font-family: monospace;
+            color: var(--charcoal);
+            font-size: 14px;
+        }
+
+        .scripture-section {
+            padding: var(--spacing-xxl) 0;
+            background-color: var(--navy-blue);
+            color: var(--off-white);
+            text-align: center;
+        }
+
+        .scripture-section h2 {
+            color: var(--off-white);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .scripture-quote {
+            font-size: 24px;
+            font-style: italic;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto var(--spacing-md);
+        }
+
+        .scripture-reference {
+            color: var(--burnt-orange);
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .impact-section {
+            padding: var(--spacing-xxl) 0;
+            background-color: var(--beige);
+        }
+
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-xl);
+        }
+
+        .impact-card {
+            text-align: center;
+            padding: var(--spacing-lg);
+        }
+
+        .impact-number {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--burnt-orange);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .impact-label {
+            color: var(--charcoal);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="mainNav">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="nav-brand">
+                    <a href="index.html">
+                        <h2>SGT</h2>
+                        <span class="brand-text">Sarasota Gospel Temple</span>
+                    </a>
+                </div>
+                <button class="nav-toggle" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="ministries.html">Ministries</a></li>
+                    <li><a href="2026-meeting.html" class="meeting-link">2026 Meeting</a></li>
+                    <li><a href="events.html">Events</a></li>
+                    <li><a href="give.html" class="active">Give</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <h1>Give Online</h1>
+            <p>Your generosity makes a difference</p>
+        </div>
+    </section>
+
+    <!-- Giving Options -->
+    <section class="giving-options">
+        <div class="container">
+            <h2 class="text-center">Ways to Give</h2>
+            <p class="text-center lead">Thank you for supporting the ministry of Sarasota Gospel Temple. Your gifts help us continue spreading the Gospel and serving our community.</p>
+
+            <div class="giving-grid">
+                <!-- PayPal -->
+                <div class="giving-card">
+                    <div class="giving-icon">💳</div>
+                    <h3>PayPal</h3>
+                    <p>Give securely using PayPal. You can make a one-time donation or set up recurring giving.</p>
+                    <div class="giving-details">
+                        PayPal.Me/SarasotaGospelTemple
+                    </div>
+                    <a href="https://www.paypal.com" target="_blank" rel="noopener" class="btn btn-primary">Give via PayPal</a>
+                </div>
+
+                <!-- Zelle -->
+                <div class="giving-card">
+                    <div class="giving-icon">💵</div>
+                    <h3>Zelle</h3>
+                    <p>Send your gift directly from your bank account using Zelle. Fast, easy, and secure.</p>
+                    <div class="giving-details">
+                        tracykmussotte@gmail.com
+                    </div>
+                    <button class="btn btn-secondary" onclick="copyToClipboard('tracykmussotte@gmail.com')">Copy Email</button>
+                    <p style="font-size: 12px; margin-top: 8px; color: var(--dark-gray);">Use your bank's Zelle feature</p>
+                </div>
+
+                <!-- GoFundMe -->
+                <div class="giving-card">
+                    <div class="giving-icon">🎯</div>
+                    <h3>GoFundMe</h3>
+                    <p>Support specific campaigns and projects through our GoFundMe page.</p>
+                    <a href="https://www.gofundme.com" target="_blank" rel="noopener" class="btn btn-outline">Visit GoFundMe</a>
+                    <p style="font-size: 12px; margin-top: 12px; color: var(--dark-gray);">Special campaigns and building projects</p>
+                </div>
+            </div>
+
+            <div class="important-info" style="margin-top: var(--spacing-xl);">
+                <h3>💡 Giving Information</h3>
+                <p><strong>Tax Deductible:</strong> Sarasota Gospel Temple is a 501(c)(3) organization. Your donations may be tax-deductible.</p>
+                <p><strong>Questions?</strong> Contact us at 941-667-0526 or tracykmussotte@gmail.com</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scripture Section -->
+    <section class="scripture-section">
+        <div class="container">
+            <h2>The Joy of Giving</h2>
+            <p class="scripture-quote">"Each of you should give what you have decided in your heart to give, not reluctantly or under compulsion, for God loves a cheerful giver."</p>
+            <p class="scripture-reference">2 Corinthians 9:7</p>
+        </div>
+    </section>
+
+    <!-- Impact Section -->
+    <section class="impact-section">
+        <div class="container">
+            <h2 class="text-center">Your Impact</h2>
+            <p class="text-center lead">See how your generosity makes a difference in our community</p>
+
+            <div class="impact-grid">
+                <div class="impact-card">
+                    <div class="impact-number">100%</div>
+                    <p class="impact-label">Of Your Gift Goes to Ministry</p>
+                </div>
+                <div class="impact-card">
+                    <div class="impact-number">🙏</div>
+                    <p class="impact-label">Worship Services & Events</p>
+                </div>
+                <div class="impact-card">
+                    <div class="impact-number">👨‍👩‍👧‍👦</div>
+                    <p class="impact-label">Youth & Family Programs</p>
+                </div>
+                <div class="impact-card">
+                    <div class="impact-number">🌍</div>
+                    <p class="impact-label">Community Outreach</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Other Ways to Give -->
+    <section class="welcome-section">
+        <div class="container-narrow">
+            <h2 class="text-center">Other Ways to Give</h2>
+
+            <div class="ministry-detail">
+                <h3><span class="icon">✉️</span> Mail a Check</h3>
+                <p>Send your donation by mail to:</p>
+                <p><strong>Sarasota Gospel Temple</strong><br>
+                1900 Gandy Blvd N<br>
+                St. Petersburg, FL 33702</p>
+                <p>Make checks payable to "Sarasota Gospel Temple"</p>
+            </div>
+
+            <div class="ministry-detail">
+                <h3><span class="icon">🏦</span> Give In Person</h3>
+                <p>You can give during any of our worship services or drop by the church office during business hours.</p>
+                <p><strong>Service Times:</strong><br>
+                Sunday: 10:00 AM & 6:00 PM<br>
+                Wednesday: 7:00 PM</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container-narrow text-center">
+            <h2>Thank You for Your Generosity</h2>
+            <p class="lead">Your faithful giving allows us to continue fulfilling our mission. May God bless you abundantly!</p>
+            <div class="cta-buttons">
+                <a href="contact.html" class="btn btn-primary btn-large">Contact Us</a>
+                <a href="about.html" class="btn btn-outline btn-large">Learn More About Us</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>Sarasota Gospel Temple</h3>
+                    <p>A City of Refuge</p>
+                    <div class="footer-social">
+                        <a href="https://www.facebook.com/people/Sarasota-Gospel-Temple/61557296390196/" target="_blank" aria-label="Facebook">📘</a>
+                        <a href="https://www.instagram.com/sarasotagospeltemple/" target="_blank" aria-label="Instagram">📷</a>
+                        <a href="https://www.youtube.com/@sarasotagospeltemple" target="_blank" aria-label="YouTube">📺</a>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="ministries.html">Ministries</a></li>
+                        <li><a href="events.html">Events</a></li>
+                        <li><a href="gallery.html">Gallery</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Get Involved</h4>
+                    <ul>
+                        <li><a href="2026-meeting.html">2026 Meeting</a></li>
+                        <li><a href="forms/volunteer.html">Volunteer</a></li>
+                        <li><a href="give.html">Give</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Contact</h4>
+                    <p>1900 Gandy Blvd N<br>
+                    St. Petersburg, FL 33702</p>
+                    <p><strong>Phone:</strong> <a href="tel:941-667-0526">941-667-0526</a></p>
+                    <p><strong>Email:</strong> <a href="mailto:tracykmussotte@gmail.com">tracykmussotte@gmail.com</a></p>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 Sarasota Gospel Temple. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="js/main.js"></script>
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Email address copied to clipboard: ' + text);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+            });
+        }
+    </script>
+</body>
+</html>
