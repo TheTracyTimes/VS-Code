@@ -58,6 +58,11 @@ from .individual_books import (
     IndividualBookGenerator,
     create_individual_books_from_score
 )
+from .song_extraction import (
+    SongExtractor,
+    IndividualSongScoreGenerator,
+    extract_songs_and_create_scores
+)
 
 __version__ = "0.1.0"
 __all__ = [
@@ -98,5 +103,8 @@ __all__ = [
     "PartSplitter",
     "extract_titles_from_pdf",
     "IndividualBookGenerator",
-    "create_individual_books_from_score"
+    "create_individual_books_from_score",
+    "SongExtractor",
+    "IndividualSongScoreGenerator",
+    "extract_songs_and_create_scores"
 ]
