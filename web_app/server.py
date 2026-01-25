@@ -151,6 +151,131 @@ async def root():
     return FileResponse("web_app/static/index.html")
 
 
+@app.get("/api/system-info")
+async def get_system_info():
+    """Get comprehensive system information and capabilities."""
+    import platform
+    import psutil
+
+    # Check what's installed
+    modules_info = {}
+
+    # PyTorch
+    try:
+        import torch
+        modules_info['pytorch'] = {
+            'installed': True,
+            'version': torch.__version__,
+            'cuda_available': torch.cuda.is_available(),
+            'cuda_version': torch.version.cuda if torch.cuda.is_available() else None
+        }
+    except ImportError:
+        modules_info['pytorch'] = {'installed': False}
+
+    # OpenCV
+    try:
+        import cv2
+        modules_info['opencv'] = {
+            'installed': True,
+            'version': cv2.__version__
+        }
+    except ImportError:
+        modules_info['opencv'] = {'installed': False}
+
+    # NumPy
+    try:
+        import numpy
+        modules_info['numpy'] = {
+            'installed': True,
+            'version': numpy.__version__
+        }
+    except ImportError:
+        modules_info['numpy'] = {'installed': False}
+
+    # music21
+    try:
+        import music21
+        modules_info['music21'] = {
+            'installed': True,
+            'version': music21.__version__
+        }
+    except ImportError:
+        modules_info['music21'] = {'installed': False}
+
+    # ReportLab
+    try:
+        import reportlab
+        modules_info['reportlab'] = {
+            'installed': True,
+            'version': reportlab.Version
+        }
+    except ImportError:
+        modules_info['reportlab'] = {'installed': False}
+
+    # FastAPI
+    try:
+        import fastapi
+        modules_info['fastapi'] = {
+            'installed': True,
+            'version': fastapi.__version__
+        }
+    except ImportError:
+        modules_info['fastapi'] = {'installed': False}
+
+    # System info
+    system_info = {
+        'platform': platform.system(),
+        'platform_version': platform.version(),
+        'processor': platform.processor(),
+        'python_version': platform.python_version(),
+        'cpu_count': psutil.cpu_count(),
+        'total_memory_gb': round(psutil.virtual_memory().total / (1024**3), 2),
+        'available_memory_gb': round(psutil.virtual_memory().available / (1024**3), 2),
+        'disk_free_gb': round(psutil.disk_usage('/').free / (1024**3), 2)
+    }
+
+    # Capabilities
+    capabilities = {
+        'real_processing': REAL_PROCESSING,
+        'pdf_upload': True,
+        'websocket_progress': True,
+        'multi_file_upload': True,
+        'part_generation': REAL_PROCESSING,
+        'song_extraction': REAL_PROCESSING,
+        'demo_mode': not REAL_PROCESSING
+    }
+
+    # Processing specs
+    processing_specs = {
+        'max_instruments': 30,
+        'supported_formats': ['PDF'],
+        'max_file_size_mb': 100,
+        'max_songs': 125,
+        'generated_parts': [
+            'C Flute 2', 'C Flute 3', 'Oboe', 'Violin', 'Viola',
+            'Cello', 'Bassoon', 'Tuba', 'Eb Alto Clarinet', 'Eb Baritone Sax'
+        ],
+        'output_formats': ['PDF'],
+        'features': [
+            'Handwritten music recognition',
+            'Automatic part generation',
+            'Combined part splitting',
+            'Individual song extraction',
+            'Real-time progress tracking',
+            'Batch processing'
+        ]
+    }
+
+    return {
+        'mode': 'FULL' if REAL_PROCESSING else 'DEMO',
+        'modules': modules_info,
+        'system': system_info,
+        'capabilities': capabilities,
+        'processing': processing_specs,
+        'version': '1.0.0'
+    }
+
+
 @app.post("/api/projects", response_model=ProjectResponse)
 async def create_project(project: ProjectCreate):
     """Create a new music recognition project."""

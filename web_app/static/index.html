@@ -331,6 +331,119 @@
         .error-message.active {
             display: block;
         }
+
+        .system-info {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .system-info h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .mode-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
+
+        .mode-full {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .mode-demo {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .spec-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .spec-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .spec-list li:last-child {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-ok {
+            background: #28a745;
+        }
+
+        .status-missing {
+            background: #dc3545;
+        }
+
+        .toggle-specs {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        .toggle-specs:hover {
+            background: #5a6268;
+        }
+
+        .specs-detail {
+            display: none;
+            margin-top: 15px;
+        }
+
+        .specs-detail.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -339,6 +452,22 @@
         <div class="header">
             <h1>🎵 Handwritten Music Recognition</h1>
             <p>Upload your scanned music sheets and automatically generate digital scores and part books</p>
+        </div>
+
+        <!-- System Information -->
+        <div class="system-info" id="system-info">
+            <h3>
+                System Status
+                <span class="mode-badge" id="mode-badge">Loading...</span>
+            </h3>
+            <div class="info-grid" id="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Loading...</div>
+                    <div class="info-value">Please wait</div>
+                </div>
+            </div>
+            <button class="toggle-specs" onclick="toggleSpecs()">Show Detailed Specifications</button>
+            <div class="specs-detail" id="specs-detail"></div>
         </div>
 
         <!-- Main Card -->
@@ -443,6 +572,147 @@
         let currentProject = null;
         let selectedFiles = [];
         let ws = null;
+        let systemInfo = null;
+
+        // Load system information on page load
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadSystemInfo();
+        });
+
+        async function loadSystemInfo() {
+            try {
+                const response = await fetch('/api/system-info');
+                systemInfo = await response.json();
+                displaySystemInfo();
+            } catch (error) {
+                console.error('Error loading system info:', error);
+            }
+        }
+
+        function displaySystemInfo() {
+            if (!systemInfo) return;
+
+            // Update mode badge
+            const modeBadge = document.getElementById('mode-badge');
+            modeBadge.textContent = systemInfo.mode + ' MODE';
+            modeBadge.className = 'mode-badge ' + (systemInfo.mode === 'FULL' ? 'mode-full' : 'mode-demo');
+
+            // Create info grid
+            const infoGrid = document.getElementById('info-grid');
+            infoGrid.innerHTML = '';
+
+            // System info
+            addInfoItem(infoGrid, 'Processing Mode', systemInfo.mode === 'FULL' ?
+                '✅ Real Music Recognition' : '⚠️ Demo Mode (Sample Files)');
+
+            addInfoItem(infoGrid, 'Python Version', systemInfo.system.python_version);
+
+            addInfoItem(infoGrid, 'CPU Cores', systemInfo.system.cpu_count);
+
+            addInfoItem(infoGrid, 'Memory',
+                `${systemInfo.system.available_memory_gb} GB available / ${systemInfo.system.total_memory_gb} GB total`);
+
+            addInfoItem(infoGrid, 'Disk Space', `${systemInfo.system.disk_free_gb} GB free`);
+
+            addInfoItem(infoGrid, 'Platform', `${systemInfo.system.platform}`);
+
+            // PyTorch status
+            if (systemInfo.modules.pytorch.installed) {
+                addInfoItem(infoGrid, 'PyTorch',
+                    `✅ v${systemInfo.modules.pytorch.version}` +
+                    (systemInfo.modules.pytorch.cuda_available ? ' (CUDA enabled)' : ''));
+            } else {
+                addInfoItem(infoGrid, 'PyTorch', '❌ Not installed (Demo mode)');
+            }
+
+            // OpenCV status
+            if (systemInfo.modules.opencv.installed) {
+                addInfoItem(infoGrid, 'OpenCV', `✅ v${systemInfo.modules.opencv.version}`);
+            } else {
+                addInfoItem(infoGrid, 'OpenCV', '❌ Not installed');
+            }
+
+            // Create detailed specs
+            createDetailedSpecs();
+        }
+
+        function addInfoItem(container, label, value) {
+            const item = document.createElement('div');
+            item.className = 'info-item';
+            item.innerHTML = `
+                <div class="info-label">${label}</div>
+                <div class="info-value">${value}</div>
+            `;
+            container.appendChild(item);
+        }
+
+        function createDetailedSpecs() {
+            const specsDetail = document.getElementById('specs-detail');
+            specsDetail.innerHTML = '';
+
+            if (!systemInfo) return;
+
+            let html = '<h4 style="margin-bottom: 15px;">Installed Modules</h4>';
+            html += '<ul class="spec-list">';
+
+            for (const [name, info] of Object.entries(systemInfo.modules)) {
+                const status = info.installed ? 'status-ok' : 'status-missing';
+                const version = info.installed && info.version ? ` (v${info.version})` : '';
+                html += `
+                    <li>
+                        <span class="status-badge ${status}"></span>
+                        ${name}${version}
+                    </li>
+                `;
+            }
+
+            html += '</ul>';
+
+            html += '<h4 style="margin: 20px 0 15px 0;">Capabilities</h4>';
+            html += '<ul class="spec-list">';
+
+            html += `<li><span class="status-badge ${systemInfo.capabilities.real_processing ? 'status-ok' : 'status-missing'}"></span>Real Music Recognition</li>`;
+            html += `<li><span class="status-badge status-ok"></span>PDF Upload (up to ${systemInfo.processing.max_file_size_mb}MB)</li>`;
+            html += `<li><span class="status-badge status-ok"></span>Multi-File Upload</li>`;
+            html += `<li><span class="status-badge status-ok"></span>Real-time Progress Tracking</li>`;
+            html += `<li><span class="status-badge ${systemInfo.capabilities.part_generation ? 'status-ok' : 'status-missing'}"></span>Automatic Part Generation (${systemInfo.processing.generated_parts.length} parts)</li>`;
+            html += `<li><span class="status-badge ${systemInfo.capabilities.song_extraction ? 'status-ok' : 'status-missing'}"></span>Individual Song Extraction</li>`;
+
+            html += '</ul>';
+
+            html += '<h4 style="margin: 20px 0 15px 0;">Generated Parts</h4>';
+            html += '<div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">';
+            html += '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px;">';
+
+            systemInfo.processing.generated_parts.forEach(part => {
+                html += `<div style="font-size: 0.9em;">✓ ${part}</div>`;
+            });
+
+            html += '</div></div>';
+
+            html += '<h4 style="margin: 20px 0 15px 0;">Processing Specifications</h4>';
+            html += '<ul class="spec-list">';
+            html += `<li>Maximum Instruments: ${systemInfo.processing.max_instruments}</li>`;
+            html += `<li>Maximum Songs: ${systemInfo.processing.max_songs}</li>`;
+            html += `<li>Supported Input: ${systemInfo.processing.supported_formats.join(', ')}</li>`;
+            html += `<li>Output Format: ${systemInfo.processing.output_formats.join(', ')}</li>`;
+            html += '</ul>';
+
+            specsDetail.innerHTML = html;
+        }
+
+        function toggleSpecs() {
+            const specsDetail = document.getElementById('specs-detail');
+            const btn = document.querySelector('.toggle-specs');
+
+            if (specsDetail.classList.contains('active')) {
+                specsDetail.classList.remove('active');
+                btn.textContent = 'Show Detailed Specifications';
+            } else {
+                specsDetail.classList.add('active');
+                btn.textContent = 'Hide Detailed Specifications';
+            }
+        }
 
         // Drag and drop handlers
         const uploadZone = document.getElementById('upload-zone');
