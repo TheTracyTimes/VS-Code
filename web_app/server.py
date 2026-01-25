@@ -148,7 +148,7 @@ manager = ConnectionManager()
 @app.get("/")
 async def root():
     """Serve the main web application."""
-    return FileResponse("web_app/static/index.html")
+    return FileResponse("static/index.html")
 
 
 @app.get("/api/system-info")
@@ -587,7 +587,7 @@ async def delete_project(project_id: str):
 
 
 # Mount static files (HTML, CSS, JS)
-app.mount("/static", StaticFiles(directory="web_app/static"), name="static")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 if __name__ == "__main__":
