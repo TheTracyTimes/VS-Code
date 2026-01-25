@@ -1,0 +1,24 @@
+# Web Application Dependencies
+
+# FastAPI and server
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+websockets==12.0
+
+# Async support
+aiofiles==23.2.1
+
+# CORS support
+python-jose[cryptography]==3.3.0
+
+# File handling
+python-magic==0.4.27
+
+# Existing music recognition dependencies
+# (these should already be in your main requirements.txt)
+# numpy>=1.24.0
+# opencv-python>=4.8.0
+# Pillow>=10.0.0
+# reportlab>=4.0.0
+# music21>=9.1.0
