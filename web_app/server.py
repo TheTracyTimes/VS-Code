@@ -28,19 +28,44 @@ from pathlib import Path
 import shutil
 from datetime import datetime
 
-# Import our music recognition modules
+# Import our music recognition modules (when available)
+# For now, we'll use mock implementations so the app runs immediately
 import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from music_recognition import (
-    PDFMusicReader,
-    MusicRecognitionSystem,
-    MultiPartScore,
-    AutoScoreBuilder,
-    create_individual_books_from_score,
-    extract_songs_and_create_scores
-)
-from music_recognition.song_index import SongIndex, create_god_of_mercy_church_band_index
+# Try to import real modules, fall back to mocks if not available
+try:
+    from music_recognition import (
+        PDFMusicReader,
+        MusicRecognitionSystem,
+        MultiPartScore,
+        AutoScoreBuilder,
+        create_individual_books_from_score,
+        extract_songs_and_create_scores
+    )
+    from music_recognition.song_index import SongIndex, create_god_of_mercy_church_band_index
+    REAL_PROCESSING = True
+except ImportError as e:
+    print(f"⚠️  Music recognition modules not fully available: {e}")
+    print("⚠️  Running in DEMO MODE with mock processing")
+    print("⚠️  Install dependencies: pip install torch opencv-python numpy")
+    REAL_PROCESSING = False
+
+    # Mock implementations for demo
+    class SongIndex:
+        def __init__(self):
+            self.songs = []
+        def count(self):
+            return len(self.songs)
+
+    def create_god_of_mercy_church_band_index():
+        index = SongIndex()
+        index.songs = [
+            {"title": "Hallelujah, I'm Going Home", "number": "003"},
+            {"title": "Goodbye, World, Goodbye", "number": "004"},
+            {"title": "Make Somebody Glad", "number": "005"},
+        ]
+        return index
 
 
 # Initialize FastAPI app
@@ -221,86 +246,131 @@ async def process_project_background(project_id: str, options: ProcessingOptions
             "progress": 0
         })
 
-        # Initialize recognition system
-        reader = PDFMusicReader()
-        system = MusicRecognitionSystem()
-        score = MultiPartScore(title=project["name"])
+        if REAL_PROCESSING:
+            # Real processing with actual music recognition
+            reader = PDFMusicReader()
+            system = MusicRecognitionSystem()
+            score = MultiPartScore(title=project["name"])
 
-        # Step 1: Digitize all uploaded PDFs
-        await manager.send_progress(project_id, {
-            "stage": "digitizing",
-            "message": f"Digitizing {project['uploaded_files']} PDF files...",
-            "progress": 10
-        })
-
-        total_files = len(project["uploaded_file_paths"])
-        for idx, file_path in enumerate(project["uploaded_file_paths"]):
-            file_name = os.path.basename(file_path)
-
+            # Step 1: Digitize all uploaded PDFs
             await manager.send_progress(project_id, {
                 "stage": "digitizing",
-                "message": f"Processing {file_name}...",
-                "progress": 10 + int(40 * (idx / total_files))
+                "message": f"Digitizing {project['uploaded_files']} PDF files...",
+                "progress": 10
             })
 
-            # Extract from PDF (mock for now - actual implementation would use the real system)
-            # extraction = reader.process_pdf_score(file_path)
-            # For demo, we'll simulate this
-            await asyncio.sleep(0.5)  # Simulate processing time
+            total_files = len(project["uploaded_file_paths"])
+            for idx, file_path in enumerate(project["uploaded_file_paths"]):
+                file_name = os.path.basename(file_path)
+                await manager.send_progress(project_id, {
+                    "stage": "digitizing",
+                    "message": f"Processing {file_name}...",
+                    "progress": 10 + int(40 * (idx / total_files))
+                })
+                extraction = reader.process_pdf_score(file_path)
+                # Process extraction...
 
-        # Step 2: Generate derived parts
-        if options.generate_derived_parts:
+            # Step 2: Generate derived parts
+            if options.generate_derived_parts:
+                await manager.send_progress(project_id, {
+                    "stage": "generating",
+                    "message": "Generating derived parts...",
+                    "progress": 50
+                })
+                complete_score = AutoScoreBuilder.build_complete_score(score)
+
+            # Step 3: Create individual books
+            await manager.send_progress(project_id, {
+                "stage": "exporting",
+                "message": "Creating individual part books...",
+                "progress": 70
+            })
+            output_dir = os.path.join(project["output_dir"], "individual_books")
+            books = create_individual_books_from_score(
+                complete_score,
+                output_dir,
+                split_combined=options.split_combined
+            )
+
+            # Step 4: Extract songs
+            if options.extract_songs and options.song_boundaries:
+                await manager.send_progress(project_id, {
+                    "stage": "extracting",
+                    "message": f"Extracting {len(options.song_boundaries)} songs...",
+                    "progress": 85
+                })
+                songs_dir = os.path.join(project["output_dir"], "songs")
+                results = extract_songs_and_create_scores(
+                    complete_score,
+                    [s.dict() for s in options.song_boundaries],
+                    output_base_dir=songs_dir,
+                    split_combined=options.split_combined
+                )
+        else:
+            # DEMO MODE: Simulate processing and create sample output files
+            await manager.send_progress(project_id, {
+                "stage": "digitizing",
+                "message": "Demo: Simulating PDF digitization...",
+                "progress": 20
+            })
+            await asyncio.sleep(1)
+
             await manager.send_progress(project_id, {
                 "stage": "generating",
-                "message": "Generating derived parts (Flute 2, Flute 3, Violin, etc.)...",
+                "message": "Demo: Simulating part generation...",
                 "progress": 50
             })
+            await asyncio.sleep(1)
 
-            # complete_score = AutoScoreBuilder.build_complete_score(score)
-            await asyncio.sleep(1)  # Simulate processing
-
-        # Step 3: Create individual books
-        await manager.send_progress(project_id, {
-            "stage": "exporting",
-            "message": "Creating individual part books...",
-            "progress": 70
-        })
-
-        output_dir = os.path.join(project["output_dir"], "individual_books")
-        # books = create_individual_books_from_score(
-        #     complete_score,
-        #     output_dir,
-        #     split_combined=options.split_combined
-        # )
-        await asyncio.sleep(1)  # Simulate processing
-
-        # Step 4: Extract songs (if requested)
-        if options.extract_songs and options.song_boundaries:
+            # Create demo output files
             await manager.send_progress(project_id, {
-                "stage": "extracting",
-                "message": f"Extracting {len(options.song_boundaries)} songs...",
-                "progress": 85
+                "stage": "exporting",
+                "message": "Demo: Creating sample output files...",
+                "progress": 75
             })
 
-            songs_dir = os.path.join(project["output_dir"], "songs")
-            # results = extract_songs_and_create_scores(
-            #     complete_score,
-            #     [s.dict() for s in options.song_boundaries],
-            #     output_base_dir=songs_dir,
-            #     split_combined=options.split_combined
-            # )
-            await asyncio.sleep(1)  # Simulate processing
+            output_dir = os.path.join(project["output_dir"], "individual_books")
+            os.makedirs(output_dir, exist_ok=True)
+
+            # Create sample PDF files (empty PDFs for demo)
+            from reportlab.pdfgen import canvas as pdf_canvas
+            from reportlab.lib.pagesizes import letter
+
+            sample_parts = [
+                "Trombone_1.pdf", "Trombone_2.pdf", "F_French_Horn.pdf",
+                "Eb_Alto_Sax_1.pdf", "C_Flute_1.pdf", "C_Flute_2_Generated.pdf",
+                "C_Flute_3_Generated.pdf", "Violin_Generated.pdf", "Viola_Generated.pdf"
+            ]
+
+            for part_name in sample_parts:
+                file_path = os.path.join(output_dir, part_name)
+                c = pdf_canvas.Canvas(file_path, pagesize=letter)
+                c.setFont("Helvetica-Bold", 24)
+                c.drawString(100, 750, project["name"])
+                c.setFont("Helvetica", 16)
+                c.drawString(100, 700, f"Part: {part_name.replace('_', ' ').replace('.pdf', '')}")
+                c.drawString(100, 650, "This is a demo file.")
+                c.drawString(100, 620, "Install music recognition dependencies for real processing:")
+                c.setFont("Courier", 12)
+                c.drawString(100, 590, "pip install torch opencv-python numpy music21")
+                c.save()
+
+            await asyncio.sleep(1)
 
         # Complete
         project["status"] = "completed"
         await manager.send_progress(project_id, {
             "stage": "completed",
-            "message": "Processing complete! Your music books are ready to download.",
+            "message": "Processing complete! Your music books are ready to download." +
+                       (" (Demo files)" if not REAL_PROCESSING else ""),
             "progress": 100
         })
 
     except Exception as e:
+        import traceback
         project["status"] = "error"
+        error_details = traceback.format_exc()
+        print(f"Error in background processing: {error_details}")
         await manager.send_progress(project_id, {
             "stage": "error",
             "message": f"Error: {str(e)}",
