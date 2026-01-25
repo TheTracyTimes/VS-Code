@@ -1,3 +1,4 @@
+# Music Recognition Core Dependencies
 torch>=2.0.0
 torchvision>=0.15.0
 opencv-python>=4.8.0
@@ -9,4 +10,13 @@ music21>=9.1.0
 scikit-learn>=1.3.0
 tqdm>=4.65.0
 albumentations>=1.3.0
-reportlab>=4.0.0  # For PDF export
+reportlab>=4.0.0
+scipy>=1.11.0
+
+# Web Application Dependencies
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+websockets==12.0
+aiofiles==23.2.1
+python-jose[cryptography]==3.3.0
