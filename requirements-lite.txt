@@ -1,0 +1,35 @@
+# Lightweight Installation (NO PyTorch Required!)
+# Use this for the web app without heavy dependencies
+
+# Web App Core (Required - Only 50MB total!)
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+websockets==12.0
+aiofiles==23.2.1
+
+# PDF Generation (Required)
+reportlab>=4.0.0
+
+# Image Processing (Optional - adds OCR capabilities)
+# opencv-python>=4.8.0
+# numpy>=1.24.0
+# Pillow>=10.0.0
+
+# Music Notation (Optional - adds music21 support)
+# music21>=9.1.0
+# scipy>=1.11.0
+
+# ============================================
+# HEAVY DEPENDENCIES (Optional - Not Needed!)
+# ============================================
+# Only uncomment if you need AI-powered recognition
+# WARNING: Downloads 2-3GB of data
+#
+# torch>=2.0.0
+# torchvision>=0.15.0
+# scikit-image>=0.21.0
+# matplotlib>=3.7.0
+# scikit-learn>=1.3.0
+# tqdm>=4.65.0
+# albumentations>=1.3.0
