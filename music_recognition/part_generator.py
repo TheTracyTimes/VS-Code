@@ -459,17 +459,19 @@ class PartGenerator:
             viola.clef = 'G'  # Treble clef
             derived_parts['Viola'] = viola
 
-        # Violin = C Flute 1 octave down
+        # Violin = C Flute 1 octave down (treble clef)
         violin = self.copy_part_with_octave_shift('C Flute', -1)
         if violin:
+            violin.clef = 'G'  # Treble clef
             derived_parts['Violin'] = violin
 
-        # Tuba = Baritone B.C. octave down
+        # Tuba = Baritone B.C. octave down (bass clef)
         tuba = self.copy_part_with_octave_shift('Baritone', -1)
         if tuba:
+            tuba.clef = 'F'  # Bass clef
             derived_parts['Tuba'] = tuba
 
-        # 3rd Alto Sax = Alto Clarinet (copy with transposition)
+        # 3rd Alto Sax = Alto Clarinet (copy with transposition, treble clef)
         alto_sax_3 = None
         for part_name, (score, instrument) in self.multipart_score.parts.items():
             if '3rd' in part_name and 'alto sax' in part_name.lower():
@@ -478,16 +480,24 @@ class PartGenerator:
 
         if alto_sax_3:
             # Both are Eb instruments, so just copy
-            derived_parts['Alto Clarinet'] = alto_sax_3
+            alto_clarinet = MusicScore()
+            alto_clarinet.time_signature = alto_sax_3.time_signature
+            alto_clarinet.key_signature = alto_sax_3.key_signature
+            alto_clarinet.clef = 'G'  # Treble clef
+            alto_clarinet.tempo = alto_sax_3.tempo
+            alto_clarinet.measures = alto_sax_3.measures
+            derived_parts['Alto Clarinet'] = alto_clarinet
 
-        # Trombone 1 = Cello (copy)
+        # Trombone 1 = Cello (copy, bass clef)
         cello = self.copy_part_with_octave_shift('1st Trombone', 0)
         if cello:
+            cello.clef = 'F'  # Bass clef
             derived_parts['Cello'] = cello
 
-        # Trombone 2 = Bassoon (copy)
+        # Trombone 2 = Bassoon (copy, bass clef)
         bassoon = self.copy_part_with_octave_shift('2nd Trombone', 0)
         if bassoon:
+            bassoon.clef = 'F'  # Bass clef
             derived_parts['Bassoon'] = bassoon
 
         # Generate Eb Baritone Sax from low brass parts

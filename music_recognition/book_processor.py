@@ -27,6 +27,7 @@ from .system import MusicRecognitionSystem
 from .digital_book import MusicXMLExporter, MIDIGenerator
 from .song_extraction import SongExtractor, extract_songs_and_create_scores
 from .song_index import create_god_of_mercy_church_band_index
+from .clef_reference import ClefReference, GENERATED_PARTS_CLEFS
 
 
 class InstrumentBookProcessor:
@@ -140,18 +141,37 @@ class InstrumentBookProcessor:
             # Draw staff lines (5 horizontal lines)
             self._draw_staff_lines(c, left_margin, y_position, usable_width, staff_height)
 
-            # Draw clef, time signature, key signature
+            # Draw clef, key signature, time signature at start of each system
+            current_x = left_margin + 10
             if staff_idx == 0 or (staff_idx % 4 == 0):  # Repeat at start of systems
-                self._draw_clef(c, left_margin + 10, y_position, score.clef)
-                # TODO: Draw time signature and key signature
+                # Draw clef
+                self._draw_clef(c, current_x, y_position, score.clef)
+                current_x += 30  # Space after clef
+
+                # Draw key signature (if present)
+                if hasattr(score, 'key_signature') and score.key_signature:
+                    current_x = self._draw_key_signature(
+                        c,
+                        current_x,
+                        y_position,
+                        score.key_signature,
+                        score.clef,
+                        staff_height
+                    )
+
+                # TODO: Draw time signature after key signature
+                # current_x += 20  # Space for time signature
 
             # Draw measure and notes
             if staff_idx < len(score.measures):
-                measure_width = usable_width * 0.8  # Leave space for clefs, etc.
+                # Calculate measure width, accounting for clef and key signature space
+                measure_start_x = max(current_x + 10, left_margin + 80)
+                measure_width = (left_margin + usable_width) - measure_start_x - 20
+
                 self._draw_measure(
                     c,
                     score.measures[staff_idx],
-                    left_margin + 80,  # Offset for clef
+                    measure_start_x,
                     y_position,
                     measure_width,
                     staff_height
@@ -167,14 +187,76 @@ class InstrumentBookProcessor:
             c.line(x, line_y, x + width, line_y)
 
     def _draw_clef(self, c: canvas.Canvas, x: float, y: float, clef: str):
-        """Draw clef symbol (simplified text representation)."""
+        """
+        Draw clef symbol using ClefReference for proper placement.
+
+        Args:
+            c: Canvas
+            x: X position
+            y: Y position (top of staff)
+            clef: Clef type ('G', 'F', or 'C')
+        """
+        clef_info = ClefReference.get_clef_info(clef)
         c.setFont("Helvetica-Bold", 24)
+
+        # Adjust vertical position based on clef type
         if clef == 'G' or clef == 'treble':
-            c.drawString(x, y - 25, "𝄞")  # Treble clef
+            c.drawString(x, y - 25, clef_info['symbol'])  # Treble clef
         elif clef == 'F' or clef == 'bass':
-            c.drawString(x, y - 20, "𝄢")  # Bass clef
+            c.drawString(x, y - 20, clef_info['symbol'])  # Bass clef
         elif clef == 'C' or clef == 'alto':
-            c.drawString(x, y - 22, "𝄡")  # Alto clef
+            c.drawString(x, y - 22, clef_info['symbol'])  # Alto clef
+
+    def _draw_key_signature(
+        self,
+        c: canvas.Canvas,
+        x: float,
+        y: float,
+        key: str,
+        clef: str,
+        staff_height: float
+    ) -> float:
+        """
+        Draw key signature with proper placement for the clef.
+
+        Args:
+            c: Canvas
+            x: Starting X position
+            y: Y position (top of staff)
+            key: Key signature (e.g., "G major", "2#", "3b")
+            clef: Clef type ('G', 'F', or 'C')
+            staff_height: Height of staff
+
+        Returns:
+            X position after key signature (for next element)
+        """
+        if not key or key == 'C major' or key == '0':
+            return x  # No accidentals to draw
+
+        # Get key signature positions for this clef
+        positions = ClefReference.get_key_signature_positions(clef, key)
+
+        if not positions:
+            return x
+
+        # Draw each sharp or flat in the key signature
+        c.setFont("Helvetica", 16)
+        current_x = x
+        spacing = 10  # Space between accidentals
+
+        line_spacing = staff_height / 4  # Distance between staff lines
+
+        for accidental, note, position in positions:
+            # Calculate Y position based on staff position
+            # Position 1 = bottom line, position 5 = top line
+            # Each position is half a line spacing
+            y_offset = staff_height - (position * line_spacing / 2)
+            accidental_y = y - y_offset
+
+            c.drawString(current_x, accidental_y, accidental)
+            current_x += spacing
+
+        return current_x + 5  # Add small gap after key signature
 
     def _draw_measure(
         self,
