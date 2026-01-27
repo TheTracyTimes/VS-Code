@@ -162,6 +162,12 @@ async def root():
     return FileResponse("static/index.html")
 
 
+@app.get("/score-viewer")
+async def score_viewer():
+    """Serve the score viewer page."""
+    return FileResponse("static/score_viewer.html")
+
+
 @app.get("/api/system-info")
 async def get_system_info():
     """Get comprehensive system information and capabilities."""

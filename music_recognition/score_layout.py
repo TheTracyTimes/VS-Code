@@ -1,6 +1,7 @@
 """
 Advanced score layout with barline alignment and song collections.
 Handles both full score books and individual song extraction.
+Includes header/footer management for professional PDF output.
 """
 
 from reportlab.lib.pagesizes import letter
@@ -10,6 +11,38 @@ from reportlab.lib import colors
 from typing import List, Dict, Tuple, Optional
 from pathlib import Path
 from .staff_paper import StaffPaperGenerator
+
+
+def add_headers_and_footers(
+    c: canvas.Canvas,
+    part_name: str,
+    page_number: int,
+    page_width: float = None,
+    page_height: float = None
+):
+    """
+    Add headers and footers to PDF page.
+
+    Args:
+        c: ReportLab canvas
+        part_name: Instrument part name (e.g., "C Flute 1")
+        page_number: Current page number
+        page_width: Page width in points (default: letter width)
+        page_height: Page height in points (default: letter height)
+    """
+    if page_width is None:
+        page_width = letter[0]
+    if page_height is None:
+        page_height = letter[1]
+
+    # Top left: Part name
+    c.setFont("Helvetica", 10)
+    c.drawString(0.5 * inch, page_height - 0.5 * inch, part_name)
+
+    # Bottom right: Page number
+    c.setFont("Helvetica", 9)
+    page_text = f"{page_number}"
+    c.drawRightString(page_width - 0.5 * inch, 0.5 * inch, page_text)
 
 
 class AlignedScoreLayout:

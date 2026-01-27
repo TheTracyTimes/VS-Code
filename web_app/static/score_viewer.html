@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Score Viewer - God of Mercy Church Band Hymnal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .content {
+            display: flex;
+            height: calc(100vh - 200px);
+        }
+
+        .sidebar {
+            width: 300px;
+            background: #f8f9fa;
+            border-right: 1px solid #dee2e6;
+            overflow-y: auto;
+        }
+
+        .song-list {
+            padding: 20px;
+        }
+
+        .song-item {
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .song-item:hover {
+            background: #e9ecef;
+            border-left-color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .song-item.active {
+            background: #667eea;
+            color: white;
+            border-left-color: #764ba2;
+        }
+
+        .song-title {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .song-number {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .controls {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .part-selector {
+            margin-bottom: 15px;
+        }
+
+        .part-selector label {
+            font-weight: 600;
+            margin-right: 10px;
+        }
+
+        .part-selector select {
+            padding: 8px 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 14px;
+            min-width: 200px;
+        }
+
+        .playback-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .score-display {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 30px;
+            min-height: 400px;
+            text-align: center;
+        }
+
+        .score-display iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+        }
+
+        .loading {
+            color: #6c757d;
+            font-size: 16px;
+            padding: 40px;
+        }
+
+        .downloads {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e9ecef;
+            border-radius: 8px;
+        }
+
+        .downloads h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .download-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .download-link {
+            padding: 8px 15px;
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 6px;
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .download-link:hover {
+            background: #667eea;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎵 God of Mercy Church Band Hymnal</h1>
+            <p>Digital Score Viewer & Audio Playback</p>
+        </div>
+
+        <div class="content">
+            <div class="sidebar">
+                <div class="song-list" id="songList">
+                    <div class="loading">Loading songs...</div>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div class="controls">
+                    <div class="part-selector">
+                        <label for="partSelect">Select Part:</label>
+                        <select id="partSelect">
+                            <option value="all">All Parts (Full Score)</option>
+                            <option value="C_Flute_1">C Flute 1</option>
+                            <option value="C_Flute_2">C Flute 2</option>
+                            <option value="C_Flute_3">C Flute 3</option>
+                            <option value="Bb_Clarinet_1">Bb Clarinet 1</option>
+                            <option value="Bb_Clarinet_2">Bb Clarinet 2</option>
+                            <option value="Bb_Clarinet_3">Bb Clarinet 3</option>
+                            <option value="Eb_Alto_Clarinet">Eb Alto Clarinet</option>
+                            <option value="Bb_Bass_Clarinet">Bb Bass Clarinet</option>
+                            <option value="Bb_Soprano_Saxophone">Bb Soprano Saxophone</option>
+                            <option value="Eb_Alto_Saxophone_1">Eb Alto Saxophone 1</option>
+                            <option value="Eb_Alto_Saxophone_2">Eb Alto Saxophone 2</option>
+                            <option value="Eb_Alto_Saxophone_3">Eb Alto Saxophone 3</option>
+                            <option value="Bb_Tenor_Saxophone">Bb Tenor Saxophone</option>
+                            <option value="Eb_Baritone_Saxophone">Eb Baritone Saxophone</option>
+                            <option value="Bb_Trumpet_1">Bb Trumpet 1</option>
+                            <option value="Bb_Trumpet_2">Bb Trumpet 2</option>
+                            <option value="Bb_Trumpet_3">Bb Trumpet 3</option>
+                            <option value="F_French_Horn">F French Horn</option>
+                            <option value="C_Trombone_1">C Trombone 1</option>
+                            <option value="C_Trombone_2">C Trombone 2</option>
+                            <option value="C_Baritone_BC">C Baritone BC</option>
+                            <option value="Bb_Baritone_TC">Bb Baritone TC</option>
+                            <option value="Tuba">Tuba</option>
+                            <option value="Violin">Violin</option>
+                            <option value="Viola">Viola</option>
+                            <option value="Cello">Cello</option>
+                            <option value="Oboe">Oboe</option>
+                            <option value="Bassoon">Bassoon</option>
+                        </select>
+                    </div>
+
+                    <div class="playback-controls">
+                        <button class="btn btn-primary" id="playBtn" onclick="playAudio()">
+                            ▶️ Play
+                        </button>
+                        <button class="btn btn-secondary" id="pauseBtn" onclick="pauseAudio()">
+                            ⏸️ Pause
+                        </button>
+                        <button class="btn btn-secondary" id="stopBtn" onclick="stopAudio()">
+                            ⏹️ Stop
+                        </button>
+                        <button class="btn btn-success" id="playAllBtn" onclick="playAllParts()">
+                            🎼 Play All Parts
+                        </button>
+                    </div>
+                </div>
+
+                <div class="score-display" id="scoreDisplay">
+                    <div class="loading">Select a song from the left to view the score</div>
+                </div>
+
+                <div class="downloads" id="downloads" style="display: none;">
+                    <h3>Download Files:</h3>
+                    <div class="download-links" id="downloadLinks"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSong = null;
+        let currentPart = 'all';
+        let projectId = new URLSearchParams(window.location.search).get('project');
+
+        // Load songs list
+        async function loadSongs() {
+            try {
+                const response = await fetch(`/api/projects/${projectId}/songs`);
+                const data = await response.json();
+
+                const songList = document.getElementById('songList');
+                songList.innerHTML = '';
+
+                data.songs.forEach((song, index) => {
+                    const songItem = document.createElement('div');
+                    songItem.className = 'song-item';
+                    songItem.innerHTML = `
+                        <div class="song-title">${song.title}</div>
+                        <div class="song-number">Song #${index + 1}</div>
+                    `;
+                    songItem.onclick = () => selectSong(song);
+                    songList.appendChild(songItem);
+                });
+            } catch (error) {
+                console.error('Error loading songs:', error);
+                document.getElementById('songList').innerHTML = '<div class="loading">Error loading songs</div>';
+            }
+        }
+
+        function selectSong(song) {
+            currentSong = song;
+
+            // Update active state
+            document.querySelectorAll('.song-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.song-item').classList.add('active');
+
+            // Load score
+            loadScore();
+        }
+
+        async function loadScore() {
+            if (!currentSong) return;
+
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            const downloads = document.getElementById('downloads');
+            const part = document.getElementById('partSelect').value;
+
+            scoreDisplay.innerHTML = '<div class="loading">Loading score...</div>';
+
+            try {
+                // Load MusicXML or conductor score
+                const response = await fetch(`/api/projects/${projectId}/songs/${currentSong.folder}/view?part=${part}`);
+                const data = await response.json();
+
+                if (data.parts && data.parts.length > 0) {
+                    // Show PDF or render notation
+                    scoreDisplay.innerHTML = `
+                        <h2>${currentSong.title}</h2>
+                        <p>Part: ${part === 'all' ? 'Full Score' : part.replace(/_/g, ' ')}</p>
+                        <p style="color: #6c757d; margin-top: 20px;">
+                            Score viewing coming soon! Files are ready for download.
+                        </p>
+                    `;
+
+                    // Show download links
+                    const downloadLinks = document.getElementById('downloadLinks');
+                    downloadLinks.innerHTML = '';
+
+                    data.parts.forEach(partData => {
+                        if (part === 'all' || part === partData.name.replace(/ /g, '_')) {
+                            const mxmlLink = document.createElement('a');
+                            mxmlLink.href = partData.musicxml;
+                            mxmlLink.className = 'download-link';
+                            mxmlLink.textContent = `📄 ${partData.name} (MusicXML)`;
+                            downloadLinks.appendChild(mxmlLink);
+
+                            if (partData.midi) {
+                                const midiLink = document.createElement('a');
+                                midiLink.href = partData.midi;
+                                midiLink.className = 'download-link';
+                                midiLink.textContent = `🎵 ${partData.name} (MIDI)`;
+                                downloadLinks.appendChild(midiLink);
+                            }
+                        }
+                    });
+
+                    downloads.style.display = 'block';
+                } else {
+                    scoreDisplay.innerHTML = '<div class="loading">No digital files available for this song yet.</div>';
+                    downloads.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error loading score:', error);
+                scoreDisplay.innerHTML = '<div class="loading">Error loading score</div>';
+            }
+        }
+
+        function playAudio() {
+            alert('Audio playback coming soon! MIDI files are ready for download.');
+        }
+
+        function pauseAudio() {
+            alert('Pause function coming soon!');
+        }
+
+        function stopAudio() {
+            alert('Stop function coming soon!');
+        }
+
+        function playAllParts() {
+            alert('Play all parts together coming soon!');
+        }
+
+        // Event listeners
+        document.getElementById('partSelect').addEventListener('change', loadScore);
+
+        // Load songs on page load
+        if (projectId) {
+            loadSongs();
+        } else {
+            document.getElementById('songList').innerHTML = '<div class="loading">No project selected</div>';
+        }
+    </script>
+</body>
+</html>

@@ -41,7 +41,8 @@ from .score_layout import (
     AlignedScoreLayout,
     SongCollectionLayout,
     create_full_score_book,
-    create_song_collection
+    create_song_collection,
+    add_headers_and_footers
 )
 from .pdf_reader import PDFMusicReader
 from .part_generator import (
@@ -68,6 +69,7 @@ from .part_grouping import (
     GroupedScoreExporter,
     create_grouped_conductor_score
 )
+from .book_processor import InstrumentBookProcessor
 
 __version__ = "0.1.0"
 __all__ = [
@@ -114,5 +116,7 @@ __all__ = [
     "extract_songs_and_create_scores",
     "PartGrouper",
     "GroupedScoreExporter",
-    "create_grouped_conductor_score"
+    "create_grouped_conductor_score",
+    "add_headers_and_footers",
+    "InstrumentBookProcessor"
 ]
