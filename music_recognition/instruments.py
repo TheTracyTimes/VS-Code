@@ -61,7 +61,7 @@ class BandInstruments:
 
     # Bb Clarinets
     Bb_CLARINET_1 = InstrumentConfig(
-        name="1st B♭ Clarinet",
+        name="1st Clarinet",
         short_name="Cl. 1",
         clef=ClefType.TREBLE,
         transposition=TransposeInterval.Bb_DOWN,
@@ -71,7 +71,7 @@ class BandInstruments:
     )
 
     Bb_CLARINET_2 = InstrumentConfig(
-        name="2nd B♭ Clarinet",
+        name="2nd Clarinet",
         short_name="Cl. 2",
         clef=ClefType.TREBLE,
         transposition=TransposeInterval.Bb_DOWN,
@@ -81,7 +81,7 @@ class BandInstruments:
     )
 
     Bb_CLARINET_3 = InstrumentConfig(
-        name="3rd B♭ Clarinet",
+        name="3rd Clarinet",
         short_name="Cl. 3",
         clef=ClefType.TREBLE,
         transposition=TransposeInterval.Bb_DOWN,
@@ -201,7 +201,7 @@ class BandInstruments:
 
     # Low Brass
     C_TROMBONE_1 = InstrumentConfig(
-        name="1st C Trombone",
+        name="1st Trombone",
         short_name="Tbn. 1",
         clef=ClefType.BASS,
         transposition=TransposeInterval.NONE,
@@ -211,7 +211,7 @@ class BandInstruments:
     )
 
     C_TROMBONE_2 = InstrumentConfig(
-        name="2nd C Trombone",
+        name="2nd Trombone",
         short_name="Tbn. 2",
         clef=ClefType.BASS,
         transposition=TransposeInterval.NONE,
@@ -221,7 +221,7 @@ class BandInstruments:
     )
 
     C_TROMBONE_3 = InstrumentConfig(
-        name="3rd C Trombone",
+        name="3rd Trombone",
         short_name="Tbn. 3",
         clef=ClefType.BASS,
         transposition=TransposeInterval.NONE,
