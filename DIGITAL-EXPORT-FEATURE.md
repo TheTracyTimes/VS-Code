@@ -15,13 +15,20 @@ The system digitizes handwritten music sheets into **clean, professional notatio
 For each of the 288 songs in your hymnal, the system generates:
 
 ### PDF Output (Printable):
-- 28 individual part books (clean digitized sheet music)
-- 1 full conductor score (all parts on one score)
+- **1 digitized multi-part book** - Clean version preserving original layout (10-12 staves/page)
+- **1 full conductor score** - All 28 parts combined in traditional score format
 
 ### Digital Export Files:
-- **28 MusicXML files** - Industry-standard notation format
-- **28 MIDI files** - Audio playback files
+- **28 MusicXML files** - Industry-standard notation format (one per instrument)
+- **28 MIDI files** - Audio playback files (one per instrument)
 - **index.json** - Metadata listing all parts
+
+### Layout Preservation:
+- Songs stay on the **same pages** as uploaded handwritten PDFs
+- **10-12 staves per page** (matches original handwritten layout)
+- **Variable measure widths** - Not all measures are the same size
+- **Consistent notation** - Clef, time signature, and key signature stay the same throughout
+- **Song names in staves** - Preserve any song titles or text written in the staves
 
 ---
 
@@ -36,31 +43,32 @@ web_output/
       │   └── ...
       │
       └── songs/                      # Individual songs (288 songs)
-          ├── parts/                  # Individual part books per song
-          │   ├── 001_Hallelujah_Im_Going_Home/
-          │   │   ├── C_Flute_1.pdf
-          │   │   ├── Bb_Clarinet_1.pdf
-          │   │   ├── ... (28 PDFs total)
-          │   │   └── digital_export/      # Clean digital files
-          │   │       ├── index.json       # Part metadata
-          │   │       ├── musicxml/
-          │   │       │   ├── C_Flute_1.musicxml
-          │   │       │   ├── Bb_Clarinet_1.musicxml
-          │   │       │   └── ... (28 files)
-          │   │       └── midi/
-          │   │           ├── C_Flute_1.mid
-          │   │           ├── Bb_Clarinet_1.mid
-          │   │           └── ... (28 files)
-          │   │
-          │   ├── 002_Make_Somebody_Glad/
-          │   │   └── ... (same structure)
-          │   │
-          │   └── ... (288 song folders)
+          ├── books/                  # Digitized multi-part books
+          │   ├── 001_Hallelujah_Im_Going_Home.pdf        # Clean digitized book (10-12 staves/page)
+          │   ├── 002_Make_Somebody_Glad.pdf
+          │   └── ... (288 digitized books)
           │
-          └── scores/                 # Full conductor scores
-              ├── 001_Hallelujah_Im_Going_Home_Score.pdf
-              ├── 002_Make_Somebody_Glad_Score.pdf
-              └── ... (288 scores)
+          ├── scores/                 # Full conductor scores
+          │   ├── 001_Hallelujah_Im_Going_Home_Score.pdf  # All 28 parts combined
+          │   ├── 002_Make_Somebody_Glad_Score.pdf
+          │   └── ... (288 scores)
+          │
+          └── digital_export/         # MusicXML and MIDI exports
+              ├── 001_Hallelujah_Im_Going_Home/
+              │   ├── index.json
+              │   ├── musicxml/
+              │   │   ├── C_Flute_1.musicxml
+              │   │   ├── Bb_Clarinet_1.musicxml
+              │   │   └── ... (28 MusicXML files)
+              │   └── midi/
+              │       ├── C_Flute_1.mid
+              │       ├── Bb_Clarinet_1.mid
+              │       └── ... (28 MIDI files)
+              │
+              ├── 002_Make_Somebody_Glad/
+              │   └── ... (same structure)
+              │
+              └── ... (288 song folders)
 ```
 
 ---
@@ -72,9 +80,9 @@ Upload your 18 handwritten PDFs and process them in the web interface
 
 ### Step 2: Download Files
 After processing completes, download the generated files:
-- 288 song folders (each with 28 parts)
-- MusicXML and MIDI files for each part
-- Full conductor scores
+- **288 digitized PDF books** - Clean multi-part books (10-12 staves/page)
+- **288 conductor score PDFs** - Full scores with all parts
+- **288 folders with MusicXML/MIDI** - 28 files each for individual instrument playback
 
 ### Step 3: Open in Music Software
 
@@ -239,10 +247,16 @@ Conductor scores can be arranged in two ways:
 
 ### Processing Workflow
 
-When processing your 18 handwritten PDFs, the system automatically creates:
-1. **Clean digitized PDFs** - Professional notation (28 parts + 288 scores)
-2. **MusicXML files** - Editable notation format (8,064 files)
-3. **MIDI files** - Audio playback format (8,064 files)
+When processing your 18 handwritten multi-part PDFs, the system automatically:
+1. **Digitizes** each page → Clean notation preserving layout (10-12 staves/page, same pages)
+2. **Extracts** 288 individual songs with proper page boundaries
+3. **Creates** for each song:
+   - 1 digitized PDF book (preserving multi-part layout, song names in staves)
+   - 1 full conductor score PDF (all 28 parts combined)
+   - 28 MusicXML files (one per instrument - editable)
+   - 28 MIDI files (one per instrument - playback)
+
+**Important**: Clef, time signature, and key signature stay consistent throughout each song.
 
 All generated automatically!
 
@@ -266,9 +280,10 @@ Each song provides multiple download options:
 - Choose format: MusicXML, MIDI, or PDF
 
 ### From File System:
-Navigate to: `web_output/[Project]/songs/[Song Name]/digital_book/`
-- **musicxml/** folder - All notation files
-- **midi/** folder - All audio files
+Navigate to: `web_output/[Project]/songs/digital_export/[Song Name]/`
+- **musicxml/** folder - All 28 notation files
+- **midi/** folder - All 28 audio files
+- **index.json** - Metadata for all parts
 
 ---
 
@@ -277,20 +292,23 @@ Navigate to: `web_output/[Project]/songs/[Song Name]/digital_book/`
 With the digital export feature, you get:
 
 - ✅ **288 songs** extracted and digitized from handwritten hymnal
-- ✅ **28 parts per song** (8,064 total individual parts!)
-- ✅ **288 full conductor scores** (all parts combined)
-- ✅ **PDF format** - Clean, professional sheet music for printing
-- ✅ **MusicXML format** - Editable in MuseScore, Finale, Sibelius, Dorico
-- ✅ **MIDI format** - Audio playback in any music software
+- ✅ **Layout preserved** - Songs stay on same pages, 10-12 staves/page
+- ✅ **Song names in staves** - Preserves titles and text from original
+- ✅ **Consistent notation** - Clef, time, and key signatures stay the same
+- ✅ **28 parts per song** - Complete instrumentation for each song
+- ✅ **288 digitized PDF books** - Clean multi-part books matching original layout
+- ✅ **288 full conductor scores** - All parts combined in score format
+- ✅ **8,064 MusicXML files** - Editable in MuseScore, Finale, Sibelius, Dorico
+- ✅ **8,064 MIDI files** - Audio playback in any music software
 - ✅ **Complete instrumentation** - Woodwinds (16), Brass (9), Strings (3)
 - ✅ **Ready to use** - Open files directly in professional software
 
 **Total Files Generated:**
-- 8,352 PDF files (8,064 parts + 288 scores)
-- 8,064 MusicXML files (editable notation)
-- 8,064 MIDI files (audio playback)
-- 288 index.json files (metadata)
-- **24,768 total files!**
+- **576 PDF files** (288 digitized books + 288 conductor scores)
+- **8,064 MusicXML files** (28 parts × 288 songs - editable notation)
+- **8,064 MIDI files** (28 parts × 288 songs - audio playback)
+- **288 index.json files** (metadata)
+- **16,992 total files!**
 
 ---
 
