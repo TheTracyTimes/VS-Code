@@ -30,6 +30,13 @@ install-lite.bat
 
 ### 1. Start the Server
 
+**Easy way (recommended):**
+```
+bash restart-server.sh
+```
+
+**Manual way:**
+
 **Windows:**
 ```
 cd web_app
@@ -39,7 +46,7 @@ python server.py
 **Mac:**
 ```
 cd web_app
-python3 server.py
+python3.11 server.py
 ```
 
 ### 2. Open Browser
@@ -50,7 +57,7 @@ localhost:8000
 ```
 
 ### 3. When Done
-Press `Ctrl + C` in the terminal
+Press `Ctrl + C` in the terminal (or run `bash kill-server.sh`)
 
 ---
 
@@ -69,11 +76,15 @@ Press `Ctrl + C` in the terminal
 
 | What You Want | Command |
 |---------------|---------|
-| **First install** | `install-lite.bat` (Win) or `./install-lite.sh` (Mac) |
-| **Start app** | `cd web_app` then `python server.py` |
-| **Stop app** | `Ctrl + C` |
+| **First install** | `install-lite.bat` (Win) or `bash install-lite.sh` (Mac) |
+| **Start app** | `cd web_app` then `python3.11 server.py` |
+| **Restart app** | `bash restart-server.sh` |
+| **Stop app** | `Ctrl + C` or `bash kill-server.sh` |
 | **Open app** | Browser: `localhost:8000` |
-| **Full install** | `install-full.bat` (Win) or `./install-full.sh` (Mac) |
+| **Full install** | `install-full.bat` (Win) or `bash install-full.sh` (Mac) |
+| **PDF support** | `bash install-pdf-support.sh` |
+| **Check files** | `python3 verify_installation.py` |
+| **Fix missing files** | `bash restore_files.sh` |
 
 ---
 
@@ -81,10 +92,13 @@ Press `Ctrl + C` in the terminal
 
 | Problem | Solution |
 |---------|----------|
-| **"command not found"** | Mac: Use `python3` instead of `python` |
+| **"command not found"** | Mac: Use `python3.11` instead of `python` |
 | **Won't install** | Check internet, try again |
-| **Port in use** | Try `localhost:8001` |
+| **Port 8000 in use** | Run `bash restart-server.sh` |
 | **Page won't load** | Make sure terminal is still open |
+| **Missing files** | Run `bash restore_files.sh` |
+| **PDF not working** | Run `bash install-pdf-support.sh` |
+| **Still DEMO mode** | Use `python3.11 server.py` not `python3` |
 
 ---
 
