@@ -53,17 +53,22 @@ class StaffDetector:
         """
         Find vertical positions of staff lines.
 
+        A musical staff consists of EXACTLY 5 horizontal lines.
+        This method groups detected lines into staff systems of 5 lines each.
+
         Args:
             image: Binary input image
 
         Returns:
-            List of staff groups, each containing 5 line positions
+            List of staff groups, each containing exactly 5 line positions
         """
         if image.dtype == np.float32 or image.dtype == np.float64:
             image = (image * 255).astype(np.uint8)
 
+        # Project horizontally to find line positions
         horizontal_projection = np.sum(image, axis=1)
 
+        # Find peaks (staff lines)
         threshold = np.max(horizontal_projection) * 0.3
         line_positions = []
 
@@ -79,24 +84,61 @@ class StaffDetector:
                 line_center = (line_start + i) // 2
                 line_positions.append(line_center)
 
+        # Group lines into staves (5 lines per staff)
         staff_groups = []
         current_group = []
 
+        # Calculate expected spacing between lines in a staff
+        # Lines should be roughly evenly spaced within a staff
+        max_line_spacing = self.staff_space_height * 2.5  # Allow some variation
+
         for i, pos in enumerate(line_positions):
             if not current_group:
+                # Start new staff
                 current_group.append(pos)
             else:
-                if pos - current_group[-1] < self.staff_space_height * 3:
+                spacing = pos - current_group[-1]
+
+                # Check if this line belongs to current staff
+                if spacing < max_line_spacing and len(current_group) < 5:
                     current_group.append(pos)
                 else:
-                    if len(current_group) >= 4:
+                    # Current staff is complete or spacing is too large
+                    # Validate and save if it has exactly 5 lines
+                    if len(current_group) == 5:
                         staff_groups.append(current_group)
+                    elif len(current_group) == 4:
+                        # Sometimes detection misses one line - add interpolated line
+                        avg_spacing = (current_group[-1] - current_group[0]) / 4
+                        # Add a 5th line at the expected position
+                        current_group.append(int(current_group[-1] + avg_spacing))
+                        staff_groups.append(current_group)
+
+                    # Start new staff
                     current_group = [pos]
 
-        if len(current_group) >= 4:
+        # Handle last group
+        if len(current_group) == 5:
+            staff_groups.append(current_group)
+        elif len(current_group) == 4:
+            # Add interpolated 5th line
+            avg_spacing = (current_group[-1] - current_group[0]) / 4
+            current_group.append(int(current_group[-1] + avg_spacing))
             staff_groups.append(current_group)
 
-        return staff_groups
+        # Validate all staves have exactly 5 lines with consistent spacing
+        validated_groups = []
+        for group in staff_groups:
+            if len(group) == 5:
+                # Check spacing consistency
+                spacings = [group[i+1] - group[i] for i in range(4)]
+                avg_spacing = sum(spacings) / len(spacings)
+
+                # All spacings should be within 50% of average
+                if all(abs(s - avg_spacing) < avg_spacing * 0.5 for s in spacings):
+                    validated_groups.append(group)
+
+        return validated_groups
 
     def remove_staff_lines(self, image: np.ndarray, staff_positions: List[List[int]]) -> np.ndarray:
         """
