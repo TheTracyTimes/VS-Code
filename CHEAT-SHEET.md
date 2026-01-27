@@ -85,6 +85,8 @@ Press `Ctrl + C` in the terminal (or run `bash kill-server.sh`)
 | **PDF support** | `bash install-pdf-support.sh` |
 | **Check files** | `python3 verify_installation.py` |
 | **Fix missing files** | `bash restore_files.sh` |
+| **Test staff detection** | `python3.11 test_staff_detection.py` |
+| **Upgrade multipart** | `bash upgrade-multipart.sh` |
 
 ---
 
