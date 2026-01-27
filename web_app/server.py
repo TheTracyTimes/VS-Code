@@ -608,4 +608,12 @@ if __name__ == "__main__":
     print("\n🎵 Open your browser to: http://localhost:8000")
     print("\nPress Ctrl+C to stop the server\n")
 
-    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
+    # Configure uvicorn with increased limits for multiple file uploads
+    uvicorn.run(
+        app,
+        host="0.0.0.0",
+        port=8000,
+        log_level="info",
+        limit_max_requests=10000,  # Allow many concurrent requests
+        timeout_keep_alive=120,     # Keep connections alive longer
+    )

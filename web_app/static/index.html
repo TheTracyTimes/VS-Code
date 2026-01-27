@@ -745,7 +745,10 @@
         });
 
         function handleFiles(files) {
+            console.log(`Browser selected ${files.length} files`);
             selectedFiles = Array.from(files).filter(f => f.name.endsWith('.pdf'));
+            console.log(`After filtering for PDFs: ${selectedFiles.length} files`);
+            console.log('Files:', selectedFiles.map(f => f.name));
             updateFileList();
             document.getElementById('upload-btn').disabled = selectedFiles.length === 0;
         }
