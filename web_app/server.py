@@ -80,6 +80,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Configure multipart form limits (allow up to 100 files, 200MB total)
+# This ensures we can upload many PDF files at once
+import multipart
+from multipart.multipart import parse_options_header
+
+# Increase multipart limits
+MAX_FILES = 100  # Maximum number of files in a single upload
+MAX_FILE_SIZE = 100 * 1024 * 1024  # 100 MB per file
+MAX_TOTAL_SIZE = 200 * 1024 * 1024  # 200 MB total upload size
+
 # Configuration
 UPLOAD_DIR = "web_uploads"
 OUTPUT_DIR = "web_output"
