@@ -1,89 +1,144 @@
-# 🎵 Start Here - Music Recognition Web App
+# 🚨 IMPORTANT: READ THIS FIRST
 
-## Get Started in 60 Seconds (No PyTorch!)
+## What's Wrong?
 
-### 1. Install (50MB, 1 minute)
+Your Mac is **missing most of the codebase files!**
 
-**Mac/Linux:**
-```bash
-./install-lite.sh
+The diagnostic found that you only have 5 files in `music_recognition/` when you should have **24 files**.
+
+This is why you're stuck in **DEMO MODE** even though PyTorch is installed correctly.
+
+---
+
+## The Missing Critical File
+
+The most important missing file is:
+```
+music_recognition/system.py
 ```
 
-**Windows:**
+This file contains the `MusicRecognitionSystem` class that powers the AI music recognition. Without it, the web app can't run in FULL MODE.
+
+---
+
+## Quick Fix (3 Steps)
+
+### 1️⃣ Pull the Latest Changes
+
 ```bash
-install-lite.bat
+cd ~/GitHub/VS-Code
+git pull origin claude/handwritten-music-llm-qDHLY
 ```
 
-### 2. Run
+### 2️⃣ Run the Verification Script
+
+```bash
+python3 verify_installation.py
+```
+
+This will tell you exactly what files are missing.
+
+### 3️⃣ If Files Are Still Missing
+
+Run the automatic recovery script:
+
+```bash
+bash restore_files.sh
+```
+
+This will:
+- ✅ Switch to the correct branch
+- ✅ Fetch latest changes
+- ✅ Restore deleted files
+- ✅ Pull everything
+- ✅ Verify installation
+
+---
+
+## After Files Are Restored
+
+Once you have all the files:
+
+### 1. Run the Diagnostic Again
+
+```bash
+python3.11 diagnostic_advanced.py
+```
+
+You should see:
+```
+✅ system.py loaded successfully!
+✅ MusicRecognitionSystem class found: True
+```
+
+### 2. Start the Server
 
 ```bash
 cd web_app
-python server.py
+python3.11 server.py
 ```
 
-### 3. Open Browser
+**IMPORTANT:** Use `python3.11` (not `python3`) because PyTorch needs Python 3.11!
+
+### 3. Open Your Browser
 
 ```
-http://localhost:8000
+localhost:8000
 ```
 
-**Done!** You now have a working web app! 🎉
+You should see:
+- ✅ **FULL MODE** badge (not DEMO MODE)
+- ✅ Real Music Recognition enabled
+- ✅ Automatic Part Generation (10 parts)
+- ✅ Individual Song Extraction
 
 ---
 
-## What You Can Do Right Now
+## Quick Reference
 
-✅ Upload PDFs (drag & drop)
-✅ See the beautiful interface
-✅ Watch progress bars
-✅ Download sample files
-✅ Show your team the workflow
-
-**All without PyTorch!**
-
----
-
-## Questions?
-
-**Q: Do I need PyTorch?**
-A: No! The web app works great without it.
-
-**Q: What's demo mode?**
-A: Creates sample PDFs so you can see how everything works.
-
-**Q: When do I need PyTorch?**
-A: Only if you want actual handwritten music recognition.
-
-**Q: How do I upgrade later?**
-A: Just run: `pip install torch`
-
-**Q: Is this the full system?**
-A: Yes! 95% of features work without PyTorch.
+| Problem | Command |
+|---------|---------|
+| **Get latest files** | `git pull origin claude/handwritten-music-llm-qDHLY` |
+| **Check what's missing** | `python3 verify_installation.py` |
+| **Auto-fix missing files** | `bash restore_files.sh` |
+| **Test if fixed** | `python3.11 diagnostic_advanced.py` |
+| **Start server** | `cd web_app && python3.11 server.py` |
 
 ---
 
-## More Info
+## Why Did This Happen?
 
-- **NO-PYTORCH-NEEDED.md** ← Read this!
-- **QUICKSTART.md** - Detailed guide
-- **web_app/README.md** - Full docs
+The files are in the Git repository - they just didn't get copied to your Mac. This can happen if:
+- Files were deleted locally
+- Incomplete git checkout
+- Wrong branch was checked out
+- Sparse checkout was configured
+
+The recovery scripts will fix all of these issues automatically.
 
 ---
 
-## The Simplest Possible Start
+## Need More Help?
 
-**Just run these commands:**
+Read these guides:
+- **FIX-MISSING-FILES.md** - Detailed recovery instructions
+- **CHEAT-SHEET.md** - Quick reference for daily use
+- **FULL-INSTALLATION.md** - Complete installation guide
+
+---
+
+## TL;DR (Too Long; Didn't Read)
 
 ```bash
-./install-lite.sh
-cd web_app
-python server.py
+# Run these 4 commands:
+cd ~/GitHub/VS-Code
+git pull origin claude/handwritten-music-llm-qDHLY
+bash restore_files.sh
+cd web_app && python3.11 server.py
 ```
 
-**Then click:** http://localhost:8000
-
-That's literally it! 🚀
+Then open: **localhost:8000**
 
 ---
 
-**Made for musicians who want simplicity, not complexity.**
+**Let's get you into FULL MODE! 🎵**
