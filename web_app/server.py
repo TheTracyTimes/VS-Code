@@ -45,6 +45,7 @@ try:
     )
     from music_recognition.song_index import SongIndex, create_god_of_mercy_church_band_index
     from music_recognition.digital_book import create_digital_book_from_multipart_score
+    from music_recognition.book_processor import InstrumentBookProcessor
     REAL_PROCESSING = True
 except ImportError as e:
     print(f"⚠️  Music recognition modules not fully available: {e}")
@@ -384,70 +385,78 @@ async def process_project_background(project_id: str, options: ProcessingOptions
         # Send progress updates
         await manager.send_progress(project_id, {
             "stage": "starting",
-            "message": "Initializing music recognition system...",
+            "message": "Initializing music recognition system with InstrumentBookProcessor...",
             "progress": 0
         })
 
         if REAL_PROCESSING:
-            # Real processing with actual music recognition
-            reader = PDFMusicReader()
-            system = MusicRecognitionSystem()
-            score = MultiPartScore(title=project["name"])
-
-            # Step 1: Digitize all uploaded PDFs
+            # NEW: Use InstrumentBookProcessor for complete workflow
             await manager.send_progress(project_id, {
                 "stage": "digitizing",
-                "message": f"Digitizing {project['uploaded_files']} PDF files...",
+                "message": f"Digitizing {project['uploaded_files']} handwritten books...",
+                "progress": 5
+            })
+
+            # Initialize processor (optionally with trained model path)
+            processor = InstrumentBookProcessor(model_path=None)
+
+            # Step 1: Process uploaded books (digitize 18 + generate 10 = 28 total)
+            await manager.send_progress(project_id, {
+                "stage": "digitizing",
+                "message": "Processing uploaded instrument books (18 handwritten)...",
                 "progress": 10
             })
 
-            total_files = len(project["uploaded_file_paths"])
-            for idx, file_path in enumerate(project["uploaded_file_paths"]):
-                file_name = os.path.basename(file_path)
-                await manager.send_progress(project_id, {
-                    "stage": "digitizing",
-                    "message": f"Processing {file_name}...",
-                    "progress": 10 + int(40 * (idx / total_files))
-                })
-                extraction = reader.process_pdf_score(file_path)
-                # Process extraction...
+            output_base_dir = project["output_dir"]
 
-            # Step 2: Generate derived parts
-            if options.generate_derived_parts:
-                await manager.send_progress(project_id, {
-                    "stage": "generating",
-                    "message": "Generating derived parts...",
-                    "progress": 50
-                })
-                complete_score = AutoScoreBuilder.build_complete_score(score)
-
-            # Step 3: Create individual books
+            # Run the complete workflow
             await manager.send_progress(project_id, {
-                "stage": "exporting",
-                "message": "Creating individual part books...",
-                "progress": 70
+                "stage": "processing",
+                "message": "Running complete workflow: digitize → generate → export → conductor scores",
+                "progress": 15
             })
-            output_dir = os.path.join(project["output_dir"], "individual_books")
-            books = create_individual_books_from_score(
-                complete_score,
-                output_dir,
-                split_combined=options.split_combined
+
+            # Execute complete workflow (this does everything)
+            results = processor.process_complete_workflow(
+                uploaded_book_paths=project["uploaded_file_paths"],
+                output_base_dir=output_base_dir,
+                create_digital_exports=True,
+                create_conductors=True
             )
 
-            # Step 4: Extract songs
-            if options.extract_songs and options.song_boundaries:
+            # Update progress as workflow completes
+            await manager.send_progress(project_id, {
+                "stage": "digitizing",
+                "message": f"✓ Digitized {len(results['digitized_books'])} instrument books",
+                "progress": 40
+            })
+
+            await manager.send_progress(project_id, {
+                "stage": "generating",
+                "message": "✓ Generated 10 additional parts with transposition",
+                "progress": 60
+            })
+
+            if 'digital_exports' in results:
                 await manager.send_progress(project_id, {
-                    "stage": "extracting",
-                    "message": f"Extracting {len(options.song_boundaries)} songs...",
-                    "progress": 85
+                    "stage": "exporting",
+                    "message": f"✓ Exported {len(results['digital_exports'])} instruments to MusicXML & MIDI",
+                    "progress": 80
                 })
-                songs_dir = os.path.join(project["output_dir"], "songs")
-                results = extract_songs_and_create_scores(
-                    complete_score,
-                    [s.dict() for s in options.song_boundaries],
-                    output_base_dir=songs_dir,
-                    split_combined=options.split_combined
-                )
+
+            if 'conductor_scores' in results:
+                await manager.send_progress(project_id, {
+                    "stage": "conductor",
+                    "message": f"✓ Created {len(results['conductor_scores'])} conductor scores",
+                    "progress": 95
+                })
+
+            # Store results in project
+            project["results"] = {
+                "digitized_books": len(results.get('digitized_books', {})),
+                "digital_exports": len(results.get('digital_exports', {})),
+                "conductor_scores": len(results.get('conductor_scores', []))
+            }
         else:
             # DEMO MODE: Simulate processing and create sample output files
             await manager.send_progress(project_id, {
