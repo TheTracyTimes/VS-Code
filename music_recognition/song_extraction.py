@@ -226,7 +226,8 @@ class IndividualSongScoreGenerator:
 
         results = {
             'parts': {},
-            'scores': {}
+            'scores': {},
+            'digital_books': {}
         }
 
         for song_title, song_score in song_scores_dict.items():
@@ -255,6 +256,22 @@ class IndividualSongScoreGenerator:
             )
             results['scores'][song_title] = score_path
             print(f"  ✓ Created: {safe_title}_Score.pdf")
+
+            # Create digital interactive book for this song
+            print("  Creating digital interactive book...")
+            try:
+                from .digital_book import create_digital_book_from_multipart_score
+                digital_book_dir = os.path.join(song_parts_dir, "digital_book")
+                digital_book_path = create_digital_book_from_multipart_score(
+                    song_score,
+                    output_dir=digital_book_dir,
+                    book_title=song_title
+                )
+                results['digital_books'][song_title] = digital_book_path
+                print(f"  ✓ Created digital book with MusicXML and MIDI files")
+            except Exception as e:
+                print(f"  ⚠️  Could not create digital book: {e}")
+                results['digital_books'][song_title] = None
 
         return results
 
