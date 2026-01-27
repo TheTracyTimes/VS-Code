@@ -223,7 +223,7 @@ class PartGenerator:
         """
         Generate Flute 2 part based on all 2nd parts.
 
-        Looks at: 2nd Alto Sax, 2nd Trumpet, 2nd Clarinet, 2nd Trombone.
+        Looks at: 2nd Alto Sax, 2nd Trumpet, 2nd Clarinet (NOT Trombone 2).
         - Converts all parts to concert pitch (proper key for flute)
         - Selects the most active melody at each measure
         - Adjusts to proper flute range (C4-C7)
@@ -231,12 +231,11 @@ class PartGenerator:
         Returns:
             Generated Flute 2 MusicScore in concert pitch and proper range
         """
-        # Define which parts to look for
+        # Define which parts to look for (Clarinet 2, Trumpet 2, Alto Sax 2 only)
         second_part_names = [
-            "2nd Bb Clarinet", "2nd B♭ Clarinet",
-            "2nd Bb Trumpet", "2nd B♭ Trumpet",
-            "2nd Eb Alto Sax", "2nd E♭ Alto Saxophone",
-            "2nd C Trombone", "2nd Trombone"
+            "2nd Clarinet", "2nd Bb Clarinet", "2nd B♭ Clarinet",
+            "2nd Trumpet", "2nd Bb Trumpet", "2nd B♭ Trumpet",
+            "2nd Alto Sax", "2nd Eb Alto Sax", "2nd E♭ Alto Saxophone"
         ]
 
         # Collect all available 2nd parts
@@ -315,7 +314,7 @@ class PartGenerator:
         """
         Generate Eb Baritone Saxophone part based on low brass parts.
 
-        Looks at: Baritone B.C., Baritone T.C., Tuba.
+        Looks at: Bb Baritone TC, C Baritone BC, C Trombone 1, C Trombone 2.
         - Converts all parts to concert pitch
         - Selects the most active melody at each measure
         - Adjusts to proper baritone sax range (D2-A4 concert pitch)
@@ -323,11 +322,12 @@ class PartGenerator:
         Returns:
             Generated Baritone Sax MusicScore in concert pitch and proper range
         """
-        # Define which parts to look for
+        # Define which parts to look for (specific 4 low brass parts)
         low_brass_names = [
-            "Baritone", "Euphonium", "Euph",
-            "Tuba",
-            "Bass Clarinet", "B. Cl."
+            "Bb Baritone TC", "Baritone TC", "Baritone T.C.", "Baritone (Treble Clef)",
+            "C Baritone BC", "Baritone BC", "Baritone B.C.", "Baritone (Bass Clef)", "Baritone", "Euphonium",
+            "1st Trombone", "C Trombone 1", "Trombone 1",
+            "2nd Trombone", "C Trombone 2", "Trombone 2"
         ]
 
         # Collect all available low brass parts
@@ -469,15 +469,8 @@ class PartGenerator:
         if bassoon:
             derived_parts['Bassoon'] = bassoon
 
-        # 1st Clarinet/Trumpet = Soprano Sax
-        # Try to find 1st Clarinet first, then 1st Trumpet
-        soprano_sax = self.copy_part_with_octave_shift('1st Clarinet', 0)
-        if soprano_sax is None:
-            soprano_sax = self.copy_part_with_octave_shift('1st Trumpet', 0)
-        if soprano_sax:
-            derived_parts['Soprano Sax'] = soprano_sax
-
         # Generate Eb Baritone Sax from low brass parts
+        # Uses: Bb Baritone TC, C Baritone BC, C Trombone 1, C Trombone 2
         baritone_sax = self.generate_baritone_sax()
         if baritone_sax:
             derived_parts['Baritone Sax'] = baritone_sax
