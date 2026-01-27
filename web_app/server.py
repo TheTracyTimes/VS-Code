@@ -617,3 +617,104 @@ if __name__ == "__main__":
         limit_max_requests=10000,  # Allow many concurrent requests
         timeout_keep_alive=120,     # Keep connections alive longer
     )
+
+
+@app.get("/api/projects/{project_id}/songs")
+async def list_songs(project_id: str):
+    """List all extracted songs with their parts."""
+    if project_id not in projects:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    project = projects[project_id]
+    output_dir = project["output_dir"]
+    songs_dir = os.path.join(output_dir, "songs")
+    
+    if not os.path.exists(songs_dir):
+        return {"songs": []}
+    
+    songs = []
+    for song_folder in os.listdir(songs_dir):
+        song_path = os.path.join(songs_dir, song_folder)
+        if os.path.isdir(song_path):
+            # Get list of parts for this song
+            parts = []
+            for filename in os.listdir(song_path):
+                if filename.endswith('.pdf'):
+                    parts.append({
+                        "name": filename.replace('.pdf', '').replace('_', ' '),
+                        "filename": filename,
+                        "path": os.path.join("songs", song_folder, filename)
+                    })
+            
+            # Check if digital book exists
+            digital_book_path = os.path.join(song_path, "digital_book", "index.html")
+            has_digital_book = os.path.exists(digital_book_path)
+            
+            songs.append({
+                "title": song_folder.replace('_', ' '),
+                "folder": song_folder,
+                "parts": parts,
+                "has_digital_book": has_digital_book
+            })
+    
+    # Sort songs alphabetically
+    songs.sort(key=lambda x: x['title'])
+    
+    return {"songs": songs, "count": len(songs)}
+
+
+@app.get("/api/projects/{project_id}/songs/{song_folder}/digital-book")
+async def get_digital_book(project_id: str, song_folder: str):
+    """Get the digital interactive book for a song."""
+    if project_id not in projects:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    project = projects[project_id]
+    book_path = os.path.join(
+        project["output_dir"],
+        "songs",
+        song_folder,
+        "digital_book",
+        "index.html"
+    )
+    
+    if not os.path.exists(book_path):
+        raise HTTPException(status_code=404, detail="Digital book not found")
+    
+    return FileResponse(book_path, media_type="text/html")
+
+
+@app.get("/api/projects/{project_id}/songs/{song_folder}/view")
+async def view_song_score(project_id: str, song_folder: str, part: str = "all"):
+    """View the score for a specific song (returns MusicXML or combined score)."""
+    if project_id not in projects:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    project = projects[project_id]
+    song_dir = os.path.join(project["output_dir"], "songs", song_folder)
+    
+    if not os.path.exists(song_dir):
+        raise HTTPException(status_code=404, detail="Song not found")
+    
+    # Check for digital book
+    digital_book_dir = os.path.join(song_dir, "digital_book")
+    if os.path.exists(digital_book_dir):
+        # Return list of available parts with MusicXML/MIDI
+        musicxml_dir = os.path.join(digital_book_dir, "musicxml")
+        midi_dir = os.path.join(digital_book_dir, "midi")
+        
+        parts_available = []
+        if os.path.exists(musicxml_dir):
+            for filename in os.listdir(musicxml_dir):
+                if filename.endswith('.musicxml'):
+                    part_name = filename.replace('.musicxml', '').replace('_', ' ')
+                    midi_file = filename.replace('.musicxml', '.mid')
+                    parts_available.append({
+                        "name": part_name,
+                        "musicxml": f"/api/projects/{project_id}/download/songs/{song_folder}/digital_book/musicxml/{filename}",
+                        "midi": f"/api/projects/{project_id}/download/songs/{song_folder}/digital_book/midi/{midi_file}" if os.path.exists(os.path.join(midi_dir, midi_file)) else None
+                    })
+        
+        return {"parts": parts_available}
+    
+    return {"message": "No digital book available. PDF files only."}
