@@ -257,20 +257,20 @@ class IndividualSongScoreGenerator:
             results['scores'][song_title] = score_path
             print(f"  ✓ Created: {safe_title}_Score.pdf")
 
-            # Create digital interactive book for this song
-            print("  Creating digital interactive book...")
+            # Create digital export files (MusicXML and MIDI)
+            print("  Creating digital export files (MusicXML/MIDI)...")
             try:
                 from .digital_book import create_digital_book_from_multipart_score
-                digital_book_dir = os.path.join(song_parts_dir, "digital_book")
-                digital_book_path = create_digital_book_from_multipart_score(
+                digital_export_dir = os.path.join(song_parts_dir, "digital_export")
+                digital_export_path = create_digital_book_from_multipart_score(
                     song_score,
-                    output_dir=digital_book_dir,
-                    book_title=song_title
+                    output_dir=digital_export_dir,
+                    song_title=song_title
                 )
-                results['digital_books'][song_title] = digital_book_path
-                print(f"  ✓ Created digital book with MusicXML and MIDI files")
+                results['digital_books'][song_title] = digital_export_path
+                print(f"  ✓ Created MusicXML and MIDI files for all 28 parts")
             except Exception as e:
-                print(f"  ⚠️  Could not create digital book: {e}")
+                print(f"  ⚠️  Could not create digital export: {e}")
                 results['digital_books'][song_title] = None
 
         return results

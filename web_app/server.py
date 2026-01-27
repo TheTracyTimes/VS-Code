@@ -647,15 +647,15 @@ async def list_songs(project_id: str):
                         "path": os.path.join("songs", "parts", song_folder, filename)
                     })
 
-            # Check if digital book exists
-            digital_book_path = os.path.join(song_path, "digital_book", "index.html")
-            has_digital_book = os.path.exists(digital_book_path)
+            # Check if digital export exists
+            digital_export_path = os.path.join(song_path, "digital_export", "index.json")
+            has_digital_export = os.path.exists(digital_export_path)
 
             songs.append({
                 "title": song_folder.replace('_', ' '),
                 "folder": song_folder,
                 "parts": parts,
-                "has_digital_book": has_digital_book
+                "has_digital_export": has_digital_export
             })
 
     # Sort songs alphabetically
@@ -664,9 +664,9 @@ async def list_songs(project_id: str):
     return {"songs": songs, "count": len(songs)}
 
 
-@app.get("/api/projects/{project_id}/songs/{song_folder}/digital-book")
-async def get_digital_book(project_id: str, song_folder: str):
-    """Get the digital interactive book for a song."""
+@app.get("/api/projects/{project_id}/songs/{song_folder}/digital-export")
+async def get_digital_export(project_id: str, song_folder: str):
+    """Get the digital export files (MusicXML/MIDI) for a song."""
     if project_id not in projects:
         raise HTTPException(status_code=404, detail="Project not found")
 
@@ -676,7 +676,7 @@ async def get_digital_book(project_id: str, song_folder: str):
         "songs",
         "parts",
         song_folder,
-        "digital_book",
+        "digital_export",
         "index.html"
     )
 
@@ -698,12 +698,12 @@ async def view_song_score(project_id: str, song_folder: str, part: str = "all"):
     if not os.path.exists(song_dir):
         raise HTTPException(status_code=404, detail="Song not found")
 
-    # Check for digital book
-    digital_book_dir = os.path.join(song_dir, "digital_book")
-    if os.path.exists(digital_book_dir):
+    # Check for digital export
+    digital_export_dir = os.path.join(song_dir, "digital_export")
+    if os.path.exists(digital_export_dir):
         # Return list of available parts with MusicXML/MIDI
-        musicxml_dir = os.path.join(digital_book_dir, "musicxml")
-        midi_dir = os.path.join(digital_book_dir, "midi")
+        musicxml_dir = os.path.join(digital_export_dir, "musicxml")
+        midi_dir = os.path.join(digital_export_dir, "midi")
 
         parts_available = []
         if os.path.exists(musicxml_dir):
@@ -713,10 +713,10 @@ async def view_song_score(project_id: str, song_folder: str, part: str = "all"):
                     midi_file = filename.replace('.musicxml', '.mid')
                     parts_available.append({
                         "name": part_name,
-                        "musicxml": f"/api/projects/{project_id}/download/songs/parts/{song_folder}/digital_book/musicxml/{filename}",
-                        "midi": f"/api/projects/{project_id}/download/songs/parts/{song_folder}/digital_book/midi/{midi_file}" if os.path.exists(os.path.join(midi_dir, midi_file)) else None
+                        "musicxml": f"/api/projects/{project_id}/download/songs/parts/{song_folder}/digital_export/musicxml/{filename}",
+                        "midi": f"/api/projects/{project_id}/download/songs/parts/{song_folder}/digital_export/midi/{midi_file}" if os.path.exists(os.path.join(midi_dir, midi_file)) else None
                     })
 
         return {"parts": parts_available}
 
-    return {"message": "No digital book available. PDF files only."}
+    return {"message": "No digital export available. PDF files only."}
