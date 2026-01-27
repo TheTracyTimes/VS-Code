@@ -10,18 +10,20 @@ The octave transposition for generated parts is **complete and working** in `mus
 
 #### Generated Parts with Octave Shifts:
 
-| Generated Part | Source | Transposition | Code Location |
-|----------------|--------|---------------|---------------|
-| **Viola** | Flute 3 | Down 1 octave | Lines 437-439 |
-| **Violin** | C Flute 1 | Down 1 octave | Lines 442-444 |
-| **Tuba** | Baritone BC | Down 1 octave | Lines 447-449 |
-| **Cello** | Trombone 1 | Same octave | Lines 463-465 |
-| **Bassoon** | Trombone 2 | Same octave | Lines 468-470 |
-| **Flute 2** | 2nd parts (merged) | Concert pitch | Lines 222-265 |
-| **Flute 3** | 3rd parts (merged) | Concert pitch | Lines 267-311 |
-| **Oboe** | Flute 2 | Same (copy) | Lines 429-430 |
-| **Alto Clarinet** | Alto Sax 3 | Same (Eb copy) | Lines 452-460 |
-| **Baritone Sax** | Low brass (merged) | Concert pitch | Lines 313-357 |
+| Generated Part | Source | Transposition | Natural Range (Concert Pitch) | Written Range | Code Location |
+|----------------|--------|---------------|-------------------------------|---------------|---------------|
+| **Viola** | Flute 3 | Down 1 octave | C3 to C6 | C3 to C6 (C clef/treble) | Lines 437-439 |
+| **Violin** | C Flute 1 | Down 1 octave | G3 to A6 | G3 to A6 (treble) | Lines 442-444 |
+| **Tuba** | Baritone BC | Down 1 octave | E1 to C4 | E1 to C4 (bass) | Lines 447-449 |
+| **Cello** | Trombone 1 | Same octave | C2 to C5 | C2 to C5 (bass/tenor) | Lines 463-465 |
+| **Bassoon** | Trombone 2 | Same octave | Bb1 to G4 | Bb1 to G4 (bass/tenor) | Lines 468-470 |
+| **Flute 2** | 2nd parts (merged) | Concert pitch | C4 to C7 | C4 to C7 (treble) | Lines 222-265 |
+| **Flute 3** | 3rd parts (merged) | Concert pitch | C4 to C7 | C4 to C7 (treble) | Lines 267-311 |
+| **Oboe** | Flute 2 | Same (copy) | Bb3 to G6 | Bb3 to G6 (treble) | Lines 429-430 |
+| **Alto Clarinet** | Alto Sax 3 | Same (Eb copy) | G3 to G6 concert | Eb4 to Eb7 written | Lines 452-460 |
+| **Baritone Sax** | Low brass (merged)* | **Eb transposition** | Db2 to Ab4 concert | **Bb2 to F5 written** | Lines 313-372 |
+
+**\*Low brass focus: Bb Baritone TC, C Baritone BC, and Tuba only** (excludes Trombones)
 
 #### How It Works:
 
@@ -246,7 +248,7 @@ output/
 │   ├── Bassoon.pdf           # GENERATED (Trombone 2)
 │   ├── Tuba.pdf              # GENERATED (Baritone - 1 octave)
 │   ├── Eb_Alto_Clarinet.pdf  # GENERATED (Alto Sax 3)
-│   ├── Eb_Baritone_Sax.pdf   # GENERATED (Low brass merged)
+│   ├── Eb_Baritone_Sax.pdf   # GENERATED (Baritone TC/BC + Tuba merged, Eb transposed)
 │   └── ... (all 28 instruments)
 │
 ├── digital_exports/          # MusicXML & MIDI for all 28 instruments

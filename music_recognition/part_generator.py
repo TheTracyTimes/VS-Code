@@ -20,8 +20,15 @@ class PartMerger:
     """Merges multiple parts to create a single derived part."""
 
     # Instrument ranges (in MIDI note numbers for easy comparison)
-    FLUTE_RANGE = (60, 84)  # C4 to C7
-    BARITONE_SAX_RANGE = (38, 69)  # D2 to A4 (concert pitch)
+    # All ranges are in CONCERT PITCH for consistency
+    FLUTE_RANGE = (60, 96)  # C4 to C7 (concert pitch)
+    BARITONE_SAX_RANGE = (37, 68)  # Db2 to Ab4 (concert pitch, written Bb2-F5)
+    VIOLA_RANGE = (48, 84)  # C3 to C6 (concert pitch)
+    VIOLIN_RANGE = (55, 93)  # G3 to A6 (concert pitch)
+    CELLO_RANGE = (36, 72)  # C2 to C5 (concert pitch)
+    OBOE_RANGE = (58, 91)  # Bb3 to G6 (concert pitch)
+    BASSOON_RANGE = (34, 67)  # Bb1 to G4 (concert pitch)
+    TUBA_RANGE = (28, 60)  # E1 to C4 (concert pitch)
 
     @staticmethod
     def get_midi_range(pitch_low: str, pitch_high: str) -> Tuple[int, int]:
@@ -314,20 +321,20 @@ class PartGenerator:
         """
         Generate Eb Baritone Saxophone part based on low brass parts.
 
-        Looks at: Bb Baritone TC, C Baritone BC, C Trombone 1, C Trombone 2.
+        Looks at: Bb Baritone TC, C Baritone BC, and Tuba.
         - Converts all parts to concert pitch
         - Selects the most active melody at each measure
-        - Adjusts to proper baritone sax range (D2-A4 concert pitch)
+        - Adjusts to proper baritone sax range (Db2-Ab4 concert pitch)
+        - Transposes to Eb (written range: Bb2-F5)
 
         Returns:
-            Generated Baritone Sax MusicScore in concert pitch and proper range
+            Generated Baritone Sax MusicScore (already transposed for Eb instrument)
         """
-        # Define which parts to look for (specific 4 low brass parts)
+        # Define which parts to look for (Bb Baritone TC, C Baritone BC, Tuba only)
         low_brass_names = [
             "Bb Baritone TC", "Baritone TC", "Baritone T.C.", "Baritone (Treble Clef)",
             "C Baritone BC", "Baritone BC", "Baritone B.C.", "Baritone (Bass Clef)", "Baritone", "Euphonium",
-            "1st Trombone", "C Trombone 1", "Trombone 1",
-            "2nd Trombone", "C Trombone 2", "Trombone 2"
+            "Tuba", "C Tuba", "BBb Tuba", "Eb Tuba"
         ]
 
         # Collect all available low brass parts
@@ -348,13 +355,27 @@ class PartGenerator:
         # Merge parts by selecting most active measures
         merged = PartMerger.merge_parts_by_activity(available_parts)
 
-        # Adjust to proper baritone sax range
+        # Adjust to proper baritone sax range (concert pitch)
         adjusted = PartMerger.adjust_score_to_range(merged, PartMerger.BARITONE_SAX_RANGE)
 
-        # Set appropriate clef for baritone sax (treble)
-        adjusted.clef = 'G'
+        # Transpose from concert pitch to Eb (up a major 6th for written pitch)
+        # Baritone Sax is in Eb, so it reads a major 6th higher than concert pitch
+        from .instruments import BandInstruments
+        bari_sax_instrument = BandInstruments.Eb_BARITONE_SAX
+        transposer = Transposer(bari_sax_instrument)
 
-        return adjusted
+        # Transpose TO written pitch (from concert pitch)
+        transposed = MusicScore()
+        transposed.time_signature = adjusted.time_signature
+        transposed.key_signature = adjusted.key_signature
+        transposed.clef = 'G'  # Treble clef for baritone sax
+        transposed.tempo = adjusted.tempo
+
+        for measure in adjusted.measures:
+            written_measure = transposer.transpose_measure(measure, from_concert=True)
+            transposed.measures.append(written_measure)
+
+        return transposed
 
     def _transpose_to_concert(self, score: MusicScore, transposer: Transposer) -> MusicScore:
         """
