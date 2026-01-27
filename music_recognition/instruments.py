@@ -231,20 +231,21 @@ class BandInstruments:
     )
 
     # Euphonium/Baritone
+    # Note: Baritone comes in two versions with DIFFERENT transpositions
     C_EUPHONIUM_BC = InstrumentConfig(
-        name="Euphonium (Bass Clef)",
-        short_name="Euph.",
+        name="C Baritone BC (Bass Clef)",
+        short_name="Bar. BC",
         clef=ClefType.BASS,
-        transposition=TransposeInterval.NONE,
+        transposition=TransposeInterval.NONE,  # C instrument - non-transposing
         range_low="E2",
         range_high="B4"
     )
 
     Bb_BARITONE_TC = InstrumentConfig(
-        name="Baritone (Treble Clef)",
-        short_name="Bar.",
+        name="Bb Baritone TC (Treble Clef)",
+        short_name="Bar. TC",
         clef=ClefType.TREBLE,
-        transposition=TransposeInterval.Bb_DOWN,
+        transposition=TransposeInterval.Bb_DOWN,  # Bb instrument - transposes down
         range_low="E2",
         range_high="B4"
     )
