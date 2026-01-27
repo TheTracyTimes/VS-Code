@@ -80,7 +80,7 @@ system = MusicRecognitionSystem()
 ### ⚙️ Processing Options
 - **Generate Derived Parts** (Flute 2, 3, Violin, Viola, etc.)
 - **Split Combined Parts** (separate "Clarinet/Trumpet" into 2 books)
-- **Extract Songs** (125 individual songs with boundaries)
+- **Extract Songs** (288 individual songs with boundaries)
 
 ### 📥 Easy Downloads
 - Beautiful grid of all generated PDFs
@@ -100,9 +100,9 @@ From your 12 uploaded PDFs:
 - **Total: 22-27 professional PDF part books**
 
 **Optional Song Extraction:**
-- 125 full conductor scores (one per song)
-- 125 folders with individual parts per song
-- **Total: 3,000+ PDFs** if all songs extracted!
+- 288 full conductor scores (one per song)
+- 288 folders with individual parts per song
+- **Total: 8,000+ PDFs** if all songs extracted!
 
 ---
 
@@ -226,7 +226,7 @@ Someone else is using port 8000. Change it in `server.py`.
 - Check disk space
 
 ### "Processing takes forever"
-- Normal for 12 PDFs + 125 songs
+- Normal for 12 PDFs + 288 songs
 - Watch progress bar for updates
 - Check terminal for detailed logs
 

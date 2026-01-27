@@ -304,7 +304,7 @@ With full installation, you can:
 ✅ **Digitize notation** - CNN recognizes actual notes
 ✅ **Generate 10 parts** - Automatic Flute 2, Violin, Viola, etc.
 ✅ **Split combined parts** - Separate "Clarinet/Trumpet" into 2 books
-✅ **Extract 125 songs** - Individual songs from full collection
+✅ **Extract 288 songs** - Individual songs from full collection
 ✅ **Download PDFs** - Professional part books ready to print
 
 ---

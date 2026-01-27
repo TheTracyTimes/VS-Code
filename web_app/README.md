@@ -8,7 +8,7 @@ A beautiful, easy-to-use web interface for digitizing handwritten music sheets a
 🎵 **Automatic Processing** - Digitize all sheets and generate derived parts automatically
 📊 **Real-time Progress** - Watch the progress as your music is being processed
 📥 **Easy Downloads** - Download all generated part books with one click
-🎼 **125 Songs** - Built-in song index for God of Mercy Church Band Hymnal
+🎼 **288 Songs** - Built-in song index for God of Mercy Church Band Hymnal
 ⚙️ **Flexible Options** - Choose to split or combine parts, extract individual songs
 
 ---
@@ -57,7 +57,7 @@ Choose your processing options:
 
 - ✅ **Generate derived parts** - Create Flute 2, Flute 3, Violin, Viola, Cello, Bassoon, Tuba, etc.
 - ✅ **Split combined parts** - Separate "Bb Clarinet/Trumpet 1/Soprano Sax" into 3 individual books
-- ⬜ **Extract individual songs** - Create separate scores for each of the 125 songs
+- ⬜ **Extract individual songs** - Create separate scores for each of the 288 songs
 
 Click "Start Processing" to begin!
 
@@ -139,13 +139,13 @@ web_output/
         ├── scores/
         │   ├── Hallelujah_Im_Going_Home.pdf
         │   ├── Goodbye_World_Goodbye.pdf
-        │   └── ... (125 songs)
+        │   └── ... (288 songs)
         └── parts/
             ├── Hallelujah_Im_Going_Home/
             │   ├── Trombone_1.pdf
             │   ├── Flute_2.pdf
             │   └── ... (all parts for this song)
-            └── ... (125 song folders)
+            └── ... (288 song folders)
 ```
 
 ---
@@ -174,7 +174,7 @@ The backend provides a full REST API:
 
 ### Song Index
 
-- `GET /api/song-index` - Get the 125-song index
+- `GET /api/song-index` - Get the 288-song index
 
 ---
 
@@ -286,7 +286,7 @@ uvicorn.run(app, host="0.0.0.0", port=8080, log_level="info")
 
 ### Processing Takes Too Long
 
-- Processing 12 PDFs with 125 songs can take several minutes
+- Processing 12 PDFs with 288 songs can take several minutes
 - Watch the progress bar for updates
 - Check console output for detailed logs
 

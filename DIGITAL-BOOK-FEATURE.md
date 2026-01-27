@@ -35,7 +35,7 @@ web_output/
       │   ├── Bb_Clarinet_1.pdf
       │   └── ...
       │
-      └── songs/                      # Individual songs (125 songs)
+      └── songs/                      # Individual songs (288 songs)
           ├── 001_Hallelujah_Im_Going_Home/
           │   ├── C_Flute_1.pdf       # PDF for printing
           │   ├── Bb_Clarinet_1.pdf
@@ -55,7 +55,7 @@ web_output/
           ├── 002_Make_Somebody_Glad/
           │   └── ... (same structure)
           │
-          └── ... (125 total songs)
+          └── ... (288 total songs)
 ```
 
 ---
@@ -66,7 +66,7 @@ web_output/
 Upload your 18 PDFs and process them in the web interface
 
 ### Step 2: View Songs List
-After processing, you'll see a list of all 125 extracted songs
+After processing, you'll see a list of all 288 extracted songs
 
 ### Step 3: Open a Song
 Click on any song to:
@@ -245,7 +245,7 @@ Both are generated at the same time!
 ### View Your Digital Books
 
 1. **Complete processing** in the web interface
-2. **Browse songs** - See list of 125 songs
+2. **Browse songs** - See list of 288 songs
 3. **Click "View Digital Book"** - Opens interactive viewer
 4. **Select an instrument** - Choose from 28 parts
 5. **Play and enjoy!** 🎵
@@ -272,8 +272,8 @@ Navigate to: `web_output/[Project]/songs/[Song Name]/digital_book/`
 
 With the digital book feature, you get:
 
-- ✅ **125 songs** extracted from your hymnal
-- ✅ **28 parts per song** (3,500 total parts!)
+- ✅ **288 songs** extracted from your hymnal
+- ✅ **28 parts per song** (8,064 total parts!)
 - ✅ **PDF format** for printing
 - ✅ **MusicXML format** for notation software
 - ✅ **MIDI format** for audio playback
@@ -282,11 +282,11 @@ With the digital book feature, you get:
 - ✅ **Professional compatible** - Works with MuseScore, Finale, etc.
 
 **Total Files Generated:**
-- 3,500 PDF files (printable)
-- 3,500 MusicXML files (notation)
-- 3,500 MIDI files (audio)
-- 125 interactive HTML viewers
-- **10,625 total files!**
+- 8,064 PDF files (printable)
+- 8,064 MusicXML files (notation)
+- 8,064 MIDI files (audio)
+- 288 interactive HTML viewers
+- **24,480 total files!**
 
 ---
 

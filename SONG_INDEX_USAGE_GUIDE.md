@@ -7,9 +7,9 @@ Your **God of Mercy Church Band Hymnal** table of contents is **extremely valuab
 ## What the Table of Contents Provides
 
 From your table of contents, we have:
-- **125+ Songs** in your collection
+- **288+ Songs** in your collection
 - **Song Titles**: "Hallelujah, I'm Going Home", "Goodbye, World, Goodbye", etc.
-- **Song Numbers**: 001, 002, 003, ... 125
+- **Song Numbers**: 001, 002, 003, ... 288
 - **Alphabetical Organization**: Quick lookup by song name
 
 ---
@@ -32,13 +32,13 @@ index.update_measure_boundaries({
     '003': {'start': 0, 'end': 32},      # Hallelujah, I'm Going Home
     '004': {'start': 33, 'end': 64},     # Goodbye, World, Goodbye
     '005': {'start': 65, 'end': 96},     # Make Somebody Glad
-    # ... continue for all 125 songs
+    # ... continue for all 288 songs
 })
 
 # Get songs ready for extraction
 songs = index.get_songs_for_extraction()
 
-# Extract all 125 songs automatically!
+# Extract all 288 songs automatically!
 results = extract_songs_and_create_scores(complete_score, songs)
 ```
 
@@ -106,7 +106,7 @@ from music_recognition.song_index import create_god_of_mercy_church_band_index
 # Create index from your table of contents
 index = create_god_of_mercy_church_band_index()
 
-print(f"Loaded {index.count()} songs")  # Shows: Loaded 125+ songs
+print(f"Loaded {index.count()} songs")  # Shows: Loaded 288+ songs
 
 # Save for later use
 index.save_to_json('my_song_index.json')
@@ -162,7 +162,7 @@ measure_boundaries = {
     '003': {'start': 33, 'end': 48},      # Hallelujah, I'm Going Home
     '004': {'start': 49, 'end': 64},      # Goodbye, World, Goodbye
     '005': {'start': 65, 'end': 80},      # Make Somebody Glad
-    # ... continue for all 125 songs
+    # ... continue for all 288 songs
 }
 
 # Update index with boundaries
@@ -172,7 +172,7 @@ index.update_measure_boundaries(measure_boundaries)
 index.save_to_json('my_song_index.json')
 ```
 
-### Step 4: Extract All 125 Songs Automatically!
+### Step 4: Extract All 288 Songs Automatically!
 
 ```python
 from music_recognition import extract_songs_and_create_scores
@@ -204,7 +204,7 @@ output/god_of_mercy_songs/
         Thanks_To_Him.pdf
         Hallelujah_Im_Going_Home.pdf
         Goodbye_World_Goodbye.pdf
-        ... (125 scores total)
+        ... (288 scores total)
     parts/
         Make_me_an_Instrument/
             Trombone_1.pdf
@@ -215,7 +215,7 @@ output/god_of_mercy_songs/
             Trombone_1.pdf
             Flute_2.pdf
             ...
-        ... (125 song folders)
+        ... (288 song folders)
 ```
 
 ---
@@ -227,7 +227,7 @@ output/god_of_mercy_songs/
 | **Organization** | Songs are named properly instead of "Song_001.pdf" |
 | **Searchability** | Easy to find "Hallelujah, I'm Going Home" instead of "Song_003.pdf" |
 | **Professional Output** | Generated PDFs include proper table of contents |
-| **Scalability** | Handles all 125 songs without manual entry |
+| **Scalability** | Handles all 288 songs without manual entry |
 | **Metadata** | Preserves song numbers and titles from your hymnal |
 | **Automation** | Process all songs at once instead of one-by-one |
 
@@ -285,7 +285,7 @@ index.save_to_json('updated_index.json')
 
 Your table of contents **significantly improves** the workflow by providing:
 
-✅ **Complete song catalog** (125+ songs)
+✅ **Complete song catalog** (288+ songs)
 ✅ **Organized metadata** (titles, numbers)
 ✅ **Automated extraction** (process all songs at once)
 ✅ **Professional naming** (proper song titles in filenames)
