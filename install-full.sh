@@ -30,6 +30,36 @@ fi
 
 echo ""
 echo "============================================================"
+echo "  Checking System Dependencies..."
+echo "============================================================"
+echo ""
+
+# Check for poppler (needed for pdf2image)
+if command -v pdftoppm &> /dev/null; then
+    echo "✅ Poppler (PDF processing) is installed"
+else
+    echo "⚠️  Poppler not found - needed for PDF processing"
+    echo ""
+    echo "To install poppler:"
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        echo "  Mac: brew install poppler"
+    elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        echo "  Ubuntu/Debian: sudo apt-get install poppler-utils"
+        echo "  Fedora: sudo dnf install poppler-utils"
+    fi
+    echo ""
+    echo "You can continue without it, but PDF upload won't work."
+    echo ""
+    read -p "Continue anyway? (y/n): " continue_without_poppler
+    if [ "$continue_without_poppler" != "y" ] && [ "$continue_without_poppler" != "Y" ]; then
+        echo ""
+        echo "Installation cancelled. Install poppler first, then run this script again."
+        exit 0
+    fi
+fi
+
+echo ""
+echo "============================================================"
 echo "  Installing Full System..."
 echo "============================================================"
 echo ""

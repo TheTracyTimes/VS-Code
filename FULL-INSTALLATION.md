@@ -48,6 +48,36 @@ python --version
 python3 --version
 ```
 
+### Step 1.5: Install System Dependencies (For PDF Support)
+
+To process PDF files, you need **Poppler** installed on your system:
+
+**Mac:**
+```bash
+brew install poppler
+```
+
+**Ubuntu/Debian:**
+```bash
+sudo apt-get install poppler-utils
+```
+
+**Fedora:**
+```bash
+sudo dnf install poppler-utils
+```
+
+**Windows:**
+- Download from: https://github.com/oschwartz10612/poppler-windows/releases/
+- Extract and add to PATH
+
+**Don't have Homebrew on Mac?**
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+⚠️ **Can skip this step** if you don't plan to upload PDFs (images will still work).
+
 ### Step 2: Run the Full Installer
 
 **On Mac/Linux:**
