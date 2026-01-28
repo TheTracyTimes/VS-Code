@@ -219,6 +219,95 @@ def get_transposed_key_signature(original_key: str, semitones: int) -> str:
     return f"{new_tonic} major"
 
 
+class TimeSignature:
+    """
+    Helper class for time signature representation and drawing.
+    """
+
+    # Common time signatures
+    COMMON_TIME = 'C'       # 4/4 in common time notation
+    CUT_TIME = 'CUT'        # 2/2 in cut time notation (also called alla breve)
+
+    # Unicode symbols
+    COMMON_TIME_SYMBOL = '𝄴'  # Unicode for common time (C)
+    CUT_TIME_SYMBOL = '𝄵'     # Unicode for cut time (¢)
+
+    @staticmethod
+    def parse_time_signature(time_sig: str) -> dict:
+        """
+        Parse a time signature string.
+
+        Args:
+            time_sig: Time signature string (e.g., "4/4", "3/4", "6/8", "C", "CUT")
+
+        Returns:
+            Dictionary with parsed time signature information
+        """
+        if not time_sig:
+            return {'type': 'fraction', 'numerator': 4, 'denominator': 4}
+
+        time_sig = time_sig.strip().upper()
+
+        # Check for special symbols
+        if time_sig == 'C' or time_sig == 'COMMON':
+            return {
+                'type': 'symbol',
+                'symbol': TimeSignature.COMMON_TIME_SYMBOL,
+                'numerator': 4,
+                'denominator': 4
+            }
+        elif time_sig == 'CUT' or time_sig == 'CUT TIME' or time_sig == 'ALLA BREVE':
+            return {
+                'type': 'symbol',
+                'symbol': TimeSignature.CUT_TIME_SYMBOL,
+                'numerator': 2,
+                'denominator': 2
+            }
+        elif '/' in time_sig:
+            # Fraction time signature
+            parts = time_sig.split('/')
+            try:
+                numerator = int(parts[0].strip())
+                denominator = int(parts[1].strip())
+                return {
+                    'type': 'fraction',
+                    'numerator': numerator,
+                    'denominator': denominator
+                }
+            except (ValueError, IndexError):
+                # Default to 4/4 if parsing fails
+                return {'type': 'fraction', 'numerator': 4, 'denominator': 4}
+        else:
+            # Try to parse as just numerator (assume /4)
+            try:
+                numerator = int(time_sig)
+                return {
+                    'type': 'fraction',
+                    'numerator': numerator,
+                    'denominator': 4
+                }
+            except ValueError:
+                # Default to 4/4
+                return {'type': 'fraction', 'numerator': 4, 'denominator': 4}
+
+    @staticmethod
+    def get_width(time_sig_info: dict) -> float:
+        """
+        Get the approximate width needed to draw a time signature.
+
+        Args:
+            time_sig_info: Parsed time signature information
+
+        Returns:
+            Width in points
+        """
+        if time_sig_info['type'] == 'symbol':
+            return 20  # Symbol is fairly compact
+        else:
+            # Fraction needs more space
+            return 25
+
+
 if __name__ == '__main__':
     # Test clef reference
     print("Clef Reference System")
