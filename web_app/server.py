@@ -160,13 +160,15 @@ manager = ConnectionManager()
 @app.get("/")
 async def root():
     """Serve the main web application."""
-    return FileResponse("static/index.html")
+    index_path = os.path.join(os.path.dirname(__file__), "static", "index.html")
+    return FileResponse(index_path)
 
 
 @app.get("/score-viewer")
 async def score_viewer():
     """Serve the score viewer page."""
-    return FileResponse("static/score_viewer.html")
+    viewer_path = os.path.join(os.path.dirname(__file__), "static", "score_viewer.html")
+    return FileResponse(viewer_path)
 
 
 @app.get("/api/system-info")
@@ -613,7 +615,9 @@ async def delete_project(project_id: str):
 
 
 # Mount static files (HTML, CSS, JS)
-app.mount("/static", StaticFiles(directory="static"), name="static")
+import os
+static_dir = os.path.join(os.path.dirname(__file__), "static")
+app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 
 if __name__ == "__main__":
