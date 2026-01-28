@@ -34,11 +34,15 @@ env/
 *.pth
 *.pt
 checkpoints/
+models/
 models/saved/
 
 # Data
 data/
 datasets/
+sample_training_data/
+training_data/
+test_data/
 *.pkl
 *.pickle
 
