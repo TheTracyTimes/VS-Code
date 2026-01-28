@@ -6,9 +6,9 @@ This document explains how clefs and key signatures are properly handled for all
 
 ---
 
-## Generated Parts Clef Assignments
+## Generated Parts Clef Assignments (7 Total)
 
-### Treble Clef (G Clef) - 7 Parts
+### Treble Clef (G Clef) - 6 Parts
 | Instrument | Clef | Symbol | Reason |
 |------------|------|--------|--------|
 | **Viola** | G (Treble) | 𝄞 | Modern band arrangement standard (not alto clef) |
@@ -16,15 +16,18 @@ This document explains how clefs and key signatures are properly handled for all
 | **Flute 2** | G (Treble) | 𝄞 | Standard flute clef |
 | **Flute 3** | G (Treble) | 𝄞 | Standard flute clef |
 | **Oboe** | G (Treble) | 𝄞 | Standard oboe clef |
-| **Alto Clarinet** | G (Treble) | 𝄞 | Standard clarinet clef (Eb transposing) |
 | **Baritone Sax** | G (Treble) | 𝄞 | Standard sax clef (Eb transposing) |
 
-### Bass Clef (F Clef) - 3 Parts
+### Bass Clef (F Clef) - 1 Part
 | Instrument | Clef | Symbol | Reason |
 |------------|------|--------|--------|
-| **Cello** | F (Bass) | 𝄢 | Standard cello clef (can use tenor for high passages) |
-| **Bassoon** | F (Bass) | 𝄢 | Standard bassoon clef (can use tenor for high passages) |
 | **Tuba** | F (Bass) | 𝄢 | Standard tuba clef |
+
+### Handwritten Parts (Not Generated)
+The following parts are uploaded as handwritten PDFs and are NOT generated:
+- **Eb Alto Clarinet** (Treble Clef)
+- **Cello** (Bass Clef)
+- **Bassoon** (Bass Clef)
 
 ---
 
@@ -169,25 +172,24 @@ Key Signature: Bb Major (2 flats - Bb, Eb)
 
 When transposing music for different instruments, the key signature must be adjusted accordingly:
 
-### Transposing Instruments:
+### Transposing Instruments (Generated Parts):
 
 | Instrument | Transposition | Example |
 |------------|---------------|---------|
 | **Baritone Sax (Eb)** | Up major 6th | Concert C → Written A |
-| **Alto Clarinet (Eb)** | Up major 6th | Concert C → Written A |
 
-### Concert Pitch Instruments:
+### Concert Pitch Instruments (Generated Parts):
 
 | Instrument | Transposition | Example |
 |------------|---------------|---------|
 | Viola | None (C instrument) | Concert C → Written C |
 | Violin | None (C instrument) | Concert C → Written C |
-| Cello | None (C instrument) | Concert C → Written C |
-| Bassoon | None (C instrument) | Concert C → Written C |
 | Tuba | None (C instrument) | Concert C → Written C |
 | Flute 2 | None (C instrument) | Concert C → Written C |
 | Flute 3 | None (C instrument) | Concert C → Written C |
 | Oboe | None (C instrument) | Concert C → Written C |
+
+**Note:** Eb Alto Clarinet (Eb transposing), Cello (concert pitch), and Bassoon (concert pitch) are handwritten parts, not generated.
 
 ---
 

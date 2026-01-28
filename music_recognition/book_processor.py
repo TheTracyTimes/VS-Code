@@ -2,8 +2,8 @@
 Complete Instrument Book Processing
 
 Handles the workflow for processing uploaded instrument books:
-1. Digitize 18 uploaded handwritten books (preserving layout)
-2. Generate 10 additional books from the 18
+1. Digitize 21 uploaded handwritten books (preserving layout)
+2. Generate 7 additional books from the 21
 3. Output 28 clean digitized books with proper headers/footers
 4. Extract 288 songs and create conductor scores
 
@@ -87,7 +87,7 @@ class InstrumentBookProcessor:
         Process uploaded handwritten books and generate all 28 digitized books.
 
         Args:
-            uploaded_book_paths: List of paths to 18 uploaded PDF books
+            uploaded_book_paths: List of paths to 21 uploaded PDF books
             output_dir: Directory to save digitized books
 
         Returns:
@@ -433,7 +433,7 @@ class InstrumentBookProcessor:
         output_dir: str
     ) -> Dict[str, str]:
         """
-        Generate 10 additional instrument books from the existing 18.
+        Generate 7 additional instrument books from the existing 21.
 
         Uses PartGenerator to intelligently create derived parts with proper
         transposition and melody/harmony relationships.
@@ -748,13 +748,13 @@ class InstrumentBookProcessor:
     ) -> Dict[str, any]:
         """
         Execute the complete book processing workflow:
-        1. Digitize 18 uploaded handwritten books (clean notation, preserve layout)
-        2. Generate 10 additional books using PartGenerator
+        1. Digitize 21 uploaded handwritten books (clean notation, preserve layout)
+        2. Generate 7 additional books using PartGenerator
         3. Export all 28 books to MusicXML and MIDI
         4. Create 288 conductor scores with aligned barlines
 
         Args:
-            uploaded_book_paths: List of paths to 18 uploaded PDF books
+            uploaded_book_paths: List of paths to 21 uploaded PDF books
             output_base_dir: Base directory for all outputs
             create_digital_exports: Whether to export MusicXML/MIDI
             create_conductors: Whether to create conductor scores
@@ -825,7 +825,7 @@ class InstrumentBookProcessor:
         digitized_books = {}
         all_scores = {}
 
-        # Step 1: Digitize the 18 uploaded books
+        # Step 1: Digitize the 21 uploaded handwritten books
         for idx, book_path in enumerate(uploaded_book_paths, 1):
             print(f"[{idx}/{len(uploaded_book_paths)}] Digitizing: {Path(book_path).name}")
 
@@ -840,7 +840,7 @@ class InstrumentBookProcessor:
             all_scores[instrument_name] = page_scores
             print(f"  ✓ Created: {Path(digitized_path).name}\n")
 
-        # Step 2: Generate 10 additional books from the 18
+        # Step 2: Generate 7 additional books from the 21 handwritten books
         print("\nGenerating additional instrument books...")
         generated_books = self._generate_additional_books(
             digitized_books,

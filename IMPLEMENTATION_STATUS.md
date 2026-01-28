@@ -15,15 +15,14 @@ The octave transposition for generated parts is **complete and working** in `mus
 | **Viola** | Flute 3 | Down 1 octave | C3 to C6 | C3 to C6 (C clef/treble) | Lines 437-439 |
 | **Violin** | C Flute 1 | Down 1 octave | G3 to A6 | G3 to A6 (treble) | Lines 442-444 |
 | **Tuba** | Baritone BC | Down 1 octave | E1 to C4 | E1 to C4 (bass) | Lines 447-449 |
-| **Cello** | Trombone 1 | Same octave | C2 to C5 | C2 to C5 (bass/tenor) | Lines 463-465 |
-| **Bassoon** | Trombone 2 | Same octave | Bb1 to G4 | Bb1 to G4 (bass/tenor) | Lines 468-470 |
 | **Flute 2** | 2nd parts (merged) | Concert pitch | C4 to C7 | C4 to C7 (treble) | Lines 222-265 |
 | **Flute 3** | 3rd parts (merged) | Concert pitch | C4 to C7 | C4 to C7 (treble) | Lines 267-311 |
 | **Oboe** | Flute 2 | Same (copy) | Bb3 to G6 | Bb3 to G6 (treble) | Lines 429-430 |
-| **Alto Clarinet** | Alto Sax 3 | Same (Eb copy) | G3 to G6 concert | Eb4 to Eb7 written | Lines 452-460 |
 | **Baritone Sax** | Low brass (merged)* | **Eb transposition** | Db2 to Ab4 concert | **Bb2 to F5 written** | Lines 313-372 |
 
 **\*Low brass focus: Bb Baritone TC, C Baritone BC, and Tuba only** (excludes Trombones)
+
+**Note:** Eb Alto Clarinet, Cello, and Bassoon are **handwritten parts** (not generated)
 
 #### How It Works:
 
@@ -141,8 +140,8 @@ If step 1 is accurate, steps 2-4 are deterministic and will match perfectly.
 - Imported `InstrumentBookProcessor`
 - Updated `process_project_background()` to use complete workflow
 - Progress tracking for all stages:
-  - Digitizing 18 handwritten books
-  - Generating 10 additional parts
+  - Digitizing 21 handwritten books
+  - Generating 7 additional parts
   - Exporting to MusicXML/MIDI
   - Creating 288 conductor scores
 
@@ -163,11 +162,11 @@ python web_app/server.py
 
 2. **Open browser to:** `http://localhost:8000`
 
-3. **Upload 18 handwritten instrument books**
+3. **Upload 21 handwritten instrument books**
 
 4. **Click "Process"** - You'll see real-time progress:
    - ⚙️ Digitizing handwritten books...
-   - 🎼 Generating 10 additional parts...
+   - 🎼 Generating 7 additional parts...
    - 📄 Exporting to MusicXML & MIDI...
    - 🎵 Creating conductor scores...
 
@@ -207,12 +206,11 @@ python web_app/server.py
    - Create MultiPartScore from 18 parts
    - Use `PartGenerator.generate_all_derived_parts()`
    - Apply transpositions (concert pitch, octave shifts)
-   - Generate 10 additional parts:
+   - Generate 7 additional parts:
      * C Flute 2, C Flute 3
-     * Oboe, Bassoon
-     * Violin, Viola, Cello
+     * Oboe
+     * Violin, Viola
      * Tuba
-     * Eb Alto Clarinet
      * Eb Baritone Saxophone
 
 3. **Layout & Notation** (book_processor.py:138-290)
@@ -237,17 +235,17 @@ python web_app/server.py
 
 ```
 output/
-├── digitized_books/          # 28 clean PDFs (18 digitized + 10 generated)
-│   ├── C_Flute_1.pdf
+├── digitized_books/          # 28 clean PDFs (21 handwritten + 7 generated)
+│   ├── C_Flute_1.pdf         # Handwritten
 │   ├── C_Flute_2.pdf         # GENERATED
 │   ├── C_Flute_3.pdf         # GENERATED
 │   ├── Violin.pdf            # GENERATED (Flute 1 - 1 octave)
 │   ├── Viola.pdf             # GENERATED (Flute 3 - 1 octave)
-│   ├── Cello.pdf             # GENERATED (Trombone 1)
+│   ├── Cello.pdf             # Handwritten
 │   ├── Oboe.pdf              # GENERATED (Flute 2)
-│   ├── Bassoon.pdf           # GENERATED (Trombone 2)
+│   ├── Bassoon.pdf           # Handwritten
 │   ├── Tuba.pdf              # GENERATED (Baritone - 1 octave)
-│   ├── Eb_Alto_Clarinet.pdf  # GENERATED (Alto Sax 3)
+│   ├── Eb_Alto_Clarinet.pdf  # Handwritten
 │   ├── Eb_Baritone_Sax.pdf   # GENERATED (Baritone TC/BC + Tuba merged, Eb transposed)
 │   └── ... (all 28 instruments)
 │
