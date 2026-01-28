@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music Recognition - Handwritten Score Digitization</title>
+    <title>God of Mercy Church Band - Music Digitization</title>
     <style>
         * {
             margin: 0;
@@ -12,23 +12,24 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 900px;
             margin: 0 auto;
         }
 
         .header {
             background: white;
             border-radius: 15px;
-            padding: 30px;
+            padding: 40px;
             margin-bottom: 30px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
         }
 
         .header h1 {
@@ -39,13 +40,40 @@
 
         .header p {
             color: #666;
-            font-size: 1.1em;
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+            font-size: 0.9em;
         }
 
         .card {
             background: white;
             border-radius: 15px;
-            padding: 30px;
+            padding: 40px;
             margin-bottom: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
@@ -54,30 +82,6 @@
             color: #333;
             margin-bottom: 20px;
             font-size: 1.8em;
-        }
-
-        .step {
-            margin-bottom: 40px;
-        }
-
-        .step-number {
-            background: #667eea;
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            margin-right: 15px;
-        }
-
-        .step-title {
-            display: inline-block;
-            font-size: 1.3em;
-            color: #333;
-            font-weight: 600;
         }
 
         .upload-zone {
@@ -96,33 +100,30 @@
             background: #f0f2ff;
         }
 
-        .upload-zone.dragging {
-            border-color: #764ba2;
-            background: #e8ebff;
-        }
-
-        .upload-zone-icon {
+        .upload-icon {
             font-size: 4em;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
-        .upload-zone-text {
+        .upload-text {
             font-size: 1.2em;
-            color: #666;
+            color: #333;
             margin-bottom: 10px;
         }
 
-        .upload-zone-subtext {
+        .upload-hint {
             color: #999;
-            font-size: 0.9em;
+            font-size: 0.95em;
         }
 
         .file-list {
             margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
         }
 
         .file-item {
-            background: #f8f9fa;
+            background: #f8f9ff;
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 10px;
@@ -137,100 +138,68 @@
         }
 
         .file-size {
-            color: #666;
+            color: #999;
             font-size: 0.9em;
-            margin-left: 10px;
-        }
-
-        .file-remove {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 5px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9em;
-        }
-
-        .file-remove:hover {
-            background: #c82333;
         }
 
         .btn {
-            background: #667eea;
-            color: white;
+            padding: 15px 30px;
             border: none;
-            padding: 15px 40px;
             border-radius: 8px;
             font-size: 1.1em;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
-            font-weight: 600;
+            display: inline-block;
+            text-decoration: none;
         }
 
-        .btn:hover {
-            background: #764ba2;
+        .btn-primary {
+            background: #667eea;
+            color: white;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
-        .btn:disabled {
+        .btn-primary:disabled {
             background: #ccc;
             cursor: not-allowed;
             transform: none;
         }
 
         .btn-secondary {
-            background: #6c757d;
+            background: #28a745;
+            color: white;
+            margin-top: 20px;
         }
 
         .btn-secondary:hover {
-            background: #5a6268;
-        }
-
-        .options {
-            margin: 20px 0;
-        }
-
-        .checkbox-group {
-            margin: 15px 0;
-        }
-
-        .checkbox-group label {
-            display: flex;
-            align-items: center;
-            font-size: 1.1em;
-            color: #333;
-            cursor: pointer;
-        }
-
-        .checkbox-group input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            margin-right: 10px;
-            cursor: pointer;
+            background: #218838;
         }
 
         .progress-container {
-            margin-top: 30px;
+            margin-top: 20px;
             display: none;
         }
 
-        .progress-container.active {
-            display: block;
-        }
-
         .progress-bar {
-            background: #e9ecef;
-            height: 40px;
-            border-radius: 20px;
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
             overflow: hidden;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
 
         .progress-fill {
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
             height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
             width: 0%;
             transition: width 0.3s;
             display: flex;
@@ -241,208 +210,60 @@
         }
 
         .progress-message {
+            color: #666;
             text-align: center;
             font-size: 1.1em;
-            color: #666;
-            margin-bottom: 10px;
         }
 
-        .progress-stage {
-            text-align: center;
-            font-size: 0.9em;
-            color: #999;
-        }
-
-        .download-section {
-            margin-top: 30px;
+        .results {
             display: none;
         }
 
-        .download-section.active {
-            display: block;
-        }
-
-        .download-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .download-item {
-            background: #f8f9fa;
+        .result-item {
+            background: #f8f9ff;
             padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
+            border-radius: 10px;
+            margin-bottom: 15px;
         }
 
-        .download-item:hover {
-            background: #667eea;
-            color: white;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .download-icon {
-            font-size: 2.5em;
+        .result-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #333;
             margin-bottom: 10px;
         }
 
-        .download-name {
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .download-size {
-            font-size: 0.8em;
-            opacity: 0.7;
+        .result-info {
+            color: #666;
+            margin-bottom: 15px;
         }
 
         .hidden {
             display: none;
         }
 
-        .success-message {
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
             background: #d4edda;
+            color: #155724;
             border: 1px solid #c3e6cb;
-            color: #155724;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            display: none;
         }
 
-        .success-message.active {
-            display: block;
-        }
-
-        .error-message {
+        .alert-error {
             background: #f8d7da;
-            border: 1px solid #f5c6cb;
             color: #721c24;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            display: none;
+            border: 1px solid #f5c6cb;
         }
 
-        .error-message.active {
-            display: block;
-        }
-
-        .system-info {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .system-info h3 {
-            color: #667eea;
-            margin-bottom: 15px;
-            font-size: 1.3em;
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .info-item {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
-        }
-
-        .info-label {
-            font-weight: 600;
-            color: #666;
-            font-size: 0.9em;
-            margin-bottom: 5px;
-        }
-
-        .info-value {
-            color: #333;
-            font-size: 1.1em;
-        }
-
-        .mode-badge {
-            display: inline-block;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.9em;
-            margin-left: 10px;
-        }
-
-        .mode-full {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .mode-demo {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .spec-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .spec-list li {
-            padding: 8px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .spec-list li:last-child {
-            border-bottom: none;
-        }
-
-        .status-badge {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 8px;
-        }
-
-        .status-ok {
-            background: #28a745;
-        }
-
-        .status-missing {
-            background: #dc3545;
-        }
-
-        .toggle-specs {
-            background: #6c757d;
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9em;
-            margin-top: 10px;
-        }
-
-        .toggle-specs:hover {
-            background: #5a6268;
-        }
-
-        .specs-detail {
-            display: none;
-            margin-top: 15px;
-        }
-
-        .specs-detail.active {
-            display: block;
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
         }
     </style>
 </head>
@@ -450,512 +271,218 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <h1>🎵 Handwritten Music Recognition</h1>
-            <p>Upload your scanned music sheets and automatically generate digital scores and part books</p>
+            <h1>🎵 God of Mercy Church Band Hymnal</h1>
+            <p>Digital Music Book Processing System</p>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-number">21</div>
+                    <div class="stat-label">Handwritten Parts</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">Generated Parts</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">288</div>
+                    <div class="stat-label">Songs</div>
+                </div>
+            </div>
         </div>
 
-        <!-- System Information -->
-        <div class="system-info" id="system-info">
-            <h3>
-                System Status
-                <span class="mode-badge" id="mode-badge">Loading...</span>
-            </h3>
-            <div class="info-grid" id="info-grid">
-                <div class="info-item">
-                    <div class="info-label">Loading...</div>
-                    <div class="info-value">Please wait</div>
-                </div>
+        <!-- Upload Card -->
+        <div class="card" id="uploadCard">
+            <h2>Step 1: Upload Handwritten Parts</h2>
+            <p style="color: #666; margin-bottom: 20px;">
+                Upload 21 handwritten instrument book PDFs. Each book should contain all 288 songs.
+            </p>
+
+            <div class="upload-zone" id="uploadZone">
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Click to select files or drag and drop</div>
+                <div class="upload-hint">Upload 21 PDF files (one per instrument)</div>
+                <input type="file" id="fileInput" multiple accept=".pdf" style="display: none;">
             </div>
-            <button class="toggle-specs" onclick="toggleSpecs()">Show Detailed Specifications</button>
-            <div class="specs-detail" id="specs-detail"></div>
+
+            <div class="file-list" id="fileList"></div>
+
+            <button class="btn btn-primary" id="processBtn" disabled>
+                Process All Parts (Digitize + Generate + Export)
+            </button>
         </div>
 
-        <!-- Main Card -->
-        <div class="card">
-            <!-- Step 1: Create Project -->
-            <div class="step" id="step-1">
-                <div>
-                    <span class="step-number">1</span>
-                    <span class="step-title">Create Your Project</span>
-                </div>
-                <div style="margin-top: 20px; margin-left: 55px;">
-                    <input type="text" id="project-name" placeholder="Project Name (e.g., God of Mercy Church Band Hymnal)"
-                           style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1em; margin-bottom: 10px;">
-                    <input type="text" id="project-description" placeholder="Description (optional)"
-                           style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1em; margin-bottom: 15px;">
-                    <button class="btn" onclick="createProject()">Create Project</button>
-                </div>
-            </div>
-
-            <!-- Step 2: Upload PDFs -->
-            <div class="step hidden" id="step-2">
-                <div>
-                    <span class="step-number">2</span>
-                    <span class="step-title">Upload Your Music Sheets (12 PDFs)</span>
-                </div>
-                <div style="margin-left: 55px;">
-                    <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()">
-                        <div class="upload-zone-icon">📄</div>
-                        <div class="upload-zone-text">Drag & Drop your PDF files here</div>
-                        <div class="upload-zone-subtext">or click to browse</div>
-                    </div>
-                    <input type="file" id="file-input" multiple accept=".pdf,.PDF" style="display: none;" onchange="handleFiles(this.files)">
-
-                    <div class="file-list" id="file-list"></div>
-
-                    <div style="margin-top: 20px;">
-                        <button class="btn" id="upload-btn" onclick="uploadFiles()" disabled>Upload All Files</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Step 3: Processing Options -->
-            <div class="step hidden" id="step-3">
-                <div>
-                    <span class="step-number">3</span>
-                    <span class="step-title">Processing Options</span>
-                </div>
-                <div class="options" style="margin-left: 55px;">
-                    <div class="checkbox-group">
-                        <label>
-                            <input type="checkbox" id="option-derived" checked>
-                            Generate derived parts (Flute 2, Flute 3, Violin, Viola, Cello, etc.)
-                        </label>
-                    </div>
-                    <div class="checkbox-group">
-                        <label>
-                            <input type="checkbox" id="option-split" checked>
-                            Split combined parts into separate books
-                        </label>
-                    </div>
-                    <div class="checkbox-group">
-                        <label>
-                            <input type="checkbox" id="option-songs">
-                            Extract individual songs (requires song boundaries)
-                        </label>
-                    </div>
-                    <div style="margin-top: 30px;">
-                        <button class="btn" onclick="startProcessing()">Start Processing</button>
-                        <button class="btn btn-secondary" onclick="loadSongIndex()" style="margin-left: 10px;">Load Song Index</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Progress Section -->
-            <div class="progress-container" id="progress-container">
-                <h2>Processing Your Music Sheets</h2>
-                <div class="progress-message" id="progress-message">Initializing...</div>
+        <!-- Progress Card -->
+        <div class="card hidden" id="progressCard">
+            <h2>Processing...</h2>
+            <div class="progress-container" style="display: block;">
                 <div class="progress-bar">
-                    <div class="progress-fill" id="progress-fill">0%</div>
+                    <div class="progress-fill" id="progressFill">0%</div>
                 </div>
-                <div class="progress-stage" id="progress-stage">Starting...</div>
+                <div class="progress-message" id="progressMessage">Initializing...</div>
+            </div>
+        </div>
+
+        <!-- Results Card -->
+        <div class="card hidden" id="resultsCard">
+            <h2>✓ Processing Complete!</h2>
+
+            <div class="result-item">
+                <div class="result-title">28 Digitized Instrument Books</div>
+                <div class="result-info">
+                    21 handwritten parts cleaned + 7 parts generated
+                </div>
             </div>
 
-            <!-- Success Message -->
-            <div class="success-message" id="success-message">
-                <strong>✅ Processing Complete!</strong><br>
-                Your music books have been generated successfully. Download them below.
+            <div class="result-item">
+                <div class="result-title">Digital Exports (MusicXML & MIDI)</div>
+                <div class="result-info">
+                    56 files ready for MuseScore, Finale, Sibelius
+                </div>
             </div>
 
-            <!-- Error Message -->
-            <div class="error-message" id="error-message"></div>
-
-            <!-- Download Section -->
-            <div class="download-section" id="download-section">
-                <h2>Download Your Music Books</h2>
-                <div class="download-grid" id="download-grid"></div>
+            <div class="result-item">
+                <div class="result-title">288 Conductor Scores</div>
+                <div class="result-info">
+                    Full scores with all 28 parts aligned
+                </div>
             </div>
+
+            <button class="btn btn-secondary" onclick="window.location.href='/score-viewer'">
+                View & Listen to Songs →
+            </button>
         </div>
     </div>
 
     <script>
-        let currentProject = null;
         let selectedFiles = [];
+        let projectId = null;
         let ws = null;
-        let systemInfo = null;
 
-        // Load system information on page load
-        window.addEventListener('DOMContentLoaded', async () => {
-            await loadSystemInfo();
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('fileInput');
+        const fileList = document.getElementById('fileList');
+        const processBtn = document.getElementById('processBtn');
+        const uploadCard = document.getElementById('uploadCard');
+        const progressCard = document.getElementById('progressCard');
+        const resultsCard = document.getElementById('resultsCard');
+        const progressFill = document.getElementById('progressFill');
+        const progressMessage = document.getElementById('progressMessage');
+
+        // Click to upload
+        uploadZone.addEventListener('click', () => fileInput.click());
+
+        // File selection
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
         });
 
-        async function loadSystemInfo() {
-            try {
-                const response = await fetch('/api/system-info');
-                systemInfo = await response.json();
-                displaySystemInfo();
-            } catch (error) {
-                console.error('Error loading system info:', error);
-            }
-        }
-
-        function displaySystemInfo() {
-            if (!systemInfo) return;
-
-            // Update mode badge
-            const modeBadge = document.getElementById('mode-badge');
-            modeBadge.textContent = systemInfo.mode + ' MODE';
-            modeBadge.className = 'mode-badge ' + (systemInfo.mode === 'FULL' ? 'mode-full' : 'mode-demo');
-
-            // Create info grid
-            const infoGrid = document.getElementById('info-grid');
-            infoGrid.innerHTML = '';
-
-            // System info
-            addInfoItem(infoGrid, 'Processing Mode', systemInfo.mode === 'FULL' ?
-                '✅ Real Music Recognition' : '⚠️ Demo Mode (Sample Files)');
-
-            addInfoItem(infoGrid, 'Python Version', systemInfo.system.python_version);
-
-            addInfoItem(infoGrid, 'CPU Cores', systemInfo.system.cpu_count);
-
-            addInfoItem(infoGrid, 'Memory',
-                `${systemInfo.system.available_memory_gb} GB available / ${systemInfo.system.total_memory_gb} GB total`);
-
-            addInfoItem(infoGrid, 'Disk Space', `${systemInfo.system.disk_free_gb} GB free`);
-
-            addInfoItem(infoGrid, 'Platform', `${systemInfo.system.platform}`);
-
-            // PyTorch status
-            if (systemInfo.modules.pytorch.installed) {
-                addInfoItem(infoGrid, 'PyTorch',
-                    `✅ v${systemInfo.modules.pytorch.version}` +
-                    (systemInfo.modules.pytorch.cuda_available ? ' (CUDA enabled)' : ''));
-            } else {
-                addInfoItem(infoGrid, 'PyTorch', '❌ Not installed (Demo mode)');
-            }
-
-            // OpenCV status
-            if (systemInfo.modules.opencv.installed) {
-                addInfoItem(infoGrid, 'OpenCV', `✅ v${systemInfo.modules.opencv.version}`);
-            } else {
-                addInfoItem(infoGrid, 'OpenCV', '❌ Not installed');
-            }
-
-            // Create detailed specs
-            createDetailedSpecs();
-        }
-
-        function addInfoItem(container, label, value) {
-            const item = document.createElement('div');
-            item.className = 'info-item';
-            item.innerHTML = `
-                <div class="info-label">${label}</div>
-                <div class="info-value">${value}</div>
-            `;
-            container.appendChild(item);
-        }
-
-        function createDetailedSpecs() {
-            const specsDetail = document.getElementById('specs-detail');
-            specsDetail.innerHTML = '';
-
-            if (!systemInfo) return;
-
-            let html = '<h4 style="margin-bottom: 15px;">Installed Modules</h4>';
-            html += '<ul class="spec-list">';
-
-            for (const [name, info] of Object.entries(systemInfo.modules)) {
-                const status = info.installed ? 'status-ok' : 'status-missing';
-                const version = info.installed && info.version ? ` (v${info.version})` : '';
-                html += `
-                    <li>
-                        <span class="status-badge ${status}"></span>
-                        ${name}${version}
-                    </li>
-                `;
-            }
-
-            html += '</ul>';
-
-            html += '<h4 style="margin: 20px 0 15px 0;">Capabilities</h4>';
-            html += '<ul class="spec-list">';
-
-            html += `<li><span class="status-badge ${systemInfo.capabilities.real_processing ? 'status-ok' : 'status-missing'}"></span>Real Music Recognition</li>`;
-            html += `<li><span class="status-badge status-ok"></span>PDF Upload (up to ${systemInfo.processing.max_file_size_mb}MB)</li>`;
-            html += `<li><span class="status-badge status-ok"></span>Multi-File Upload</li>`;
-            html += `<li><span class="status-badge status-ok"></span>Real-time Progress Tracking</li>`;
-            html += `<li><span class="status-badge ${systemInfo.capabilities.part_generation ? 'status-ok' : 'status-missing'}"></span>Automatic Part Generation (${systemInfo.processing.generated_parts.length} parts)</li>`;
-            html += `<li><span class="status-badge ${systemInfo.capabilities.song_extraction ? 'status-ok' : 'status-missing'}"></span>Individual Song Extraction</li>`;
-
-            html += '</ul>';
-
-            html += '<h4 style="margin: 20px 0 15px 0;">Generated Parts</h4>';
-            html += '<div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">';
-            html += '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px;">';
-
-            systemInfo.processing.generated_parts.forEach(part => {
-                html += `<div style="font-size: 0.9em;">✓ ${part}</div>`;
-            });
-
-            html += '</div></div>';
-
-            html += '<h4 style="margin: 20px 0 15px 0;">Processing Specifications</h4>';
-            html += '<ul class="spec-list">';
-            html += `<li>Maximum Instruments: ${systemInfo.processing.max_instruments}</li>`;
-            html += `<li>Maximum Songs: ${systemInfo.processing.max_songs}</li>`;
-            html += `<li>Supported Input: ${systemInfo.processing.supported_formats.join(', ')}</li>`;
-            html += `<li>Output Format: ${systemInfo.processing.output_formats.join(', ')}</li>`;
-            html += '</ul>';
-
-            specsDetail.innerHTML = html;
-        }
-
-        function toggleSpecs() {
-            const specsDetail = document.getElementById('specs-detail');
-            const btn = document.querySelector('.toggle-specs');
-
-            if (specsDetail.classList.contains('active')) {
-                specsDetail.classList.remove('active');
-                btn.textContent = 'Show Detailed Specifications';
-            } else {
-                specsDetail.classList.add('active');
-                btn.textContent = 'Hide Detailed Specifications';
-            }
-        }
-
-        // Drag and drop handlers
-        const uploadZone = document.getElementById('upload-zone');
-
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            uploadZone.addEventListener(eventName, preventDefaults, false);
-        });
-
-        function preventDefaults(e) {
+        // Drag and drop
+        uploadZone.addEventListener('dragover', (e) => {
             e.preventDefault();
-            e.stopPropagation();
-        }
-
-        ['dragenter', 'dragover'].forEach(eventName => {
-            uploadZone.addEventListener(eventName, () => {
-                uploadZone.classList.add('dragging');
-            });
+            uploadZone.style.borderColor = '#764ba2';
+            uploadZone.style.background = '#f0f2ff';
         });
 
-        ['dragleave', 'drop'].forEach(eventName => {
-            uploadZone.addEventListener(eventName, () => {
-                uploadZone.classList.remove('dragging');
-            });
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.style.borderColor = '#667eea';
+            uploadZone.style.background = '#f8f9ff';
         });
 
         uploadZone.addEventListener('drop', (e) => {
-            const dt = e.dataTransfer;
-            const files = dt.files;
-            handleFiles(files);
+            e.preventDefault();
+            uploadZone.style.borderColor = '#667eea';
+            uploadZone.style.background = '#f8f9ff';
+            handleFiles(e.dataTransfer.files);
         });
 
         function handleFiles(files) {
-            console.log(`Browser selected ${files.length} files`);
-            // Accept both .pdf and .PDF (case insensitive)
-            selectedFiles = Array.from(files).filter(f => f.name.toLowerCase().endsWith('.pdf'));
-            console.log(`After filtering for PDFs: ${selectedFiles.length} files`);
-            console.log('Files:', selectedFiles.map(f => f.name));
-
-            // Log any rejected files for debugging
-            const rejected = Array.from(files).filter(f => !f.name.toLowerCase().endsWith('.pdf'));
-            if (rejected.length > 0) {
-                console.log(`Rejected ${rejected.length} non-PDF files:`, rejected.map(f => f.name));
-            }
-
-            updateFileList();
-            document.getElementById('upload-btn').disabled = selectedFiles.length === 0;
+            selectedFiles = Array.from(files).filter(f => f.name.endsWith('.pdf'));
+            displayFiles();
+            processBtn.disabled = selectedFiles.length === 0;
         }
 
-        function updateFileList() {
-            const fileList = document.getElementById('file-list');
+        function displayFiles() {
             fileList.innerHTML = '';
-
             selectedFiles.forEach((file, index) => {
-                const item = document.createElement('div');
-                item.className = 'file-item';
-                item.innerHTML = `
-                    <div>
-                        <span class="file-name">${file.name}</span>
-                        <span class="file-size">(${formatFileSize(file.size)})</span>
-                    </div>
-                    <button class="file-remove" onclick="removeFile(${index})">Remove</button>
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <span class="file-name">${index + 1}. ${file.name}</span>
+                    <span class="file-size">${(file.size / 1024 / 1024).toFixed(2)} MB</span>
                 `;
-                fileList.appendChild(item);
+                fileList.appendChild(fileItem);
             });
         }
 
-        function removeFile(index) {
-            selectedFiles.splice(index, 1);
-            updateFileList();
-            document.getElementById('upload-btn').disabled = selectedFiles.length === 0;
-        }
-
-        function formatFileSize(bytes) {
-            if (bytes < 1024) return bytes + ' B';
-            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
-        }
-
-        async function createProject() {
-            const name = document.getElementById('project-name').value;
-            const description = document.getElementById('project-description').value;
-
-            if (!name) {
-                alert('Please enter a project name');
+        // Process button
+        processBtn.addEventListener('click', async () => {
+            if (selectedFiles.length === 0) {
+                alert('Please select PDF files first');
                 return;
             }
 
             try {
-                const response = await fetch('/api/projects', {
+                // Create project
+                const projectResponse = await fetch('/api/projects', {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({name, description})
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: 'God of Mercy Church Band Hymnal',
+                        description: `Processing ${selectedFiles.length} handwritten parts`
+                    })
                 });
 
-                currentProject = await response.json();
+                const project = await projectResponse.json();
+                projectId = project.project_id;
 
-                // Show step 2
-                document.getElementById('step-1').classList.add('hidden');
-                document.getElementById('step-2').classList.remove('hidden');
-            } catch (error) {
-                alert('Error creating project: ' + error.message);
-            }
-        }
+                // Upload files
+                const formData = new FormData();
+                selectedFiles.forEach(file => formData.append('files', file));
 
-        async function uploadFiles() {
-            if (!currentProject || selectedFiles.length === 0) return;
-
-            const formData = new FormData();
-            selectedFiles.forEach(file => {
-                formData.append('files', file);
-            });
-
-            try {
-                document.getElementById('upload-btn').disabled = true;
-                document.getElementById('upload-btn').textContent = 'Uploading...';
-
-                const response = await fetch(`/api/projects/${currentProject.project_id}/upload`, {
+                await fetch(`/api/projects/${projectId}/upload`, {
                     method: 'POST',
                     body: formData
                 });
 
-                const result = await response.json();
+                // Show progress
+                uploadCard.classList.add('hidden');
+                progressCard.classList.remove('hidden');
 
-                // Show step 3
-                document.getElementById('step-2').classList.add('hidden');
-                document.getElementById('step-3').classList.remove('hidden');
-            } catch (error) {
-                alert('Error uploading files: ' + error.message);
-                document.getElementById('upload-btn').disabled = false;
-                document.getElementById('upload-btn').textContent = 'Upload All Files';
-            }
-        }
+                // Connect WebSocket
+                ws = new WebSocket(`ws://${window.location.host}/ws/${projectId}`);
 
-        async function startProcessing() {
-            if (!currentProject) return;
+                ws.onmessage = (event) => {
+                    const data = JSON.parse(event.data);
+                    updateProgress(data.progress, data.message);
 
-            const options = {
-                generate_derived_parts: document.getElementById('option-derived').checked,
-                split_combined: document.getElementById('option-split').checked,
-                extract_songs: document.getElementById('option-songs').checked,
-                song_boundaries: []
-            };
+                    if (data.stage === 'completed') {
+                        setTimeout(() => {
+                            progressCard.classList.add('hidden');
+                            resultsCard.classList.remove('hidden');
+                        }, 1000);
+                    }
+                };
 
-            // Show progress
-            document.getElementById('step-3').classList.add('hidden');
-            document.getElementById('progress-container').classList.add('active');
-
-            // Connect to WebSocket for progress updates
-            connectWebSocket();
-
-            try {
-                const response = await fetch(`/api/projects/${currentProject.project_id}/process`, {
+                // Start processing
+                await fetch(`/api/projects/${projectId}/process`, {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(options)
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        split_combined: false,
+                        generate_derived_parts: true,
+                        extract_songs: false
+                    })
                 });
 
-                const result = await response.json();
             } catch (error) {
-                showError('Error starting processing: ' + error.message);
+                console.error('Error:', error);
+                alert('Error processing files: ' + error.message);
             }
-        }
+        });
 
-        function connectWebSocket() {
-            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-            ws = new WebSocket(`${protocol}//${window.location.host}/ws/${currentProject.project_id}`);
-
-            ws.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                updateProgress(data);
-            };
-
-            ws.onerror = (error) => {
-                console.error('WebSocket error:', error);
-            };
-        }
-
-        function updateProgress(data) {
-            const fill = document.getElementById('progress-fill');
-            const message = document.getElementById('progress-message');
-            const stage = document.getElementById('progress-stage');
-
-            fill.style.width = data.progress + '%';
-            fill.textContent = data.progress + '%';
-            message.textContent = data.message;
-            stage.textContent = `Stage: ${data.stage}`;
-
-            if (data.stage === 'completed') {
-                setTimeout(() => {
-                    document.getElementById('progress-container').classList.remove('active');
-                    document.getElementById('success-message').classList.add('active');
-                    loadDownloads();
-                }, 1000);
-            } else if (data.stage === 'error') {
-                showError(data.message);
-            }
-        }
-
-        async function loadDownloads() {
-            try {
-                const response = await fetch(`/api/projects/${currentProject.project_id}/files`);
-                const result = await response.json();
-
-                const grid = document.getElementById('download-grid');
-                grid.innerHTML = '';
-
-                result.files.forEach(file => {
-                    const item = document.createElement('div');
-                    item.className = 'download-item';
-                    item.onclick = () => downloadFile(file.path);
-                    item.innerHTML = `
-                        <div class="download-icon">📄</div>
-                        <div class="download-name">${file.name}</div>
-                        <div class="download-size">${formatFileSize(file.size)}</div>
-                    `;
-                    grid.appendChild(item);
-                });
-
-                document.getElementById('download-section').classList.add('active');
-            } catch (error) {
-                showError('Error loading downloads: ' + error.message);
-            }
-        }
-
-        function downloadFile(path) {
-            window.open(`/api/projects/${currentProject.project_id}/download/${path}`, '_blank');
-        }
-
-        async function loadSongIndex() {
-            try {
-                const response = await fetch('/api/song-index');
-                const data = await response.json();
-                alert(`Loaded ${data.count} songs from God of Mercy Church Band Hymnal`);
-            } catch (error) {
-                alert('Error loading song index: ' + error.message);
-            }
-        }
-
-        function showError(message) {
-            const errorDiv = document.getElementById('error-message');
-            errorDiv.textContent = message;
-            errorDiv.classList.add('active');
-            document.getElementById('progress-container').classList.remove('active');
+        function updateProgress(progress, message) {
+            progressFill.style.width = progress + '%';
+            progressFill.textContent = progress + '%';
+            progressMessage.textContent = message;
         }
     </script>
 </body>
