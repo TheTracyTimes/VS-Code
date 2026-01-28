@@ -247,7 +247,8 @@ class PartGenerator:
 
         # Collect all available 2nd parts
         available_parts = {}
-        for part_name, (score, instrument) in self.multipart_score.parts.items():
+        for part_name, score in self.multipart_score.parts.items():
+            instrument = self.multipart_score.instruments[part_name]
             for target_name in second_part_names:
                 if target_name.lower() in part_name.lower():
                     # Convert to concert pitch
@@ -293,7 +294,8 @@ class PartGenerator:
 
         # Collect all available 3rd parts
         available_parts = {}
-        for part_name, (score, instrument) in self.multipart_score.parts.items():
+        for part_name, score in self.multipart_score.parts.items():
+            instrument = self.multipart_score.instruments[part_name]
             for target_name in third_part_names:
                 if target_name.lower() in part_name.lower():
                     # Convert to concert pitch
@@ -339,7 +341,8 @@ class PartGenerator:
 
         # Collect all available low brass parts
         available_parts = {}
-        for part_name, (score, instrument) in self.multipart_score.parts.items():
+        for part_name, score in self.multipart_score.parts.items():
+            instrument = self.multipart_score.instruments[part_name]
             for target_name in low_brass_names:
                 if target_name.lower() in part_name.lower():
                     # Convert to concert pitch
@@ -415,10 +418,10 @@ class PartGenerator:
         source_score = None
         source_instrument = None
 
-        for part_name, (score, instrument) in self.multipart_score.parts.items():
+        for part_name, score in self.multipart_score.parts.items():
             if source_part_name.lower() in part_name.lower():
                 source_score = score
-                source_instrument = instrument
+                source_instrument = self.multipart_score.instruments[part_name]
                 break
 
         if source_score is None:
