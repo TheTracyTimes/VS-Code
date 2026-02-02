@@ -73,7 +73,7 @@
 
         .elder-photo {
             width: 100%;
-            height: 300px;
+            min-height: 300px;
             background: linear-gradient(135deg, var(--navy-blue) 0%, var(--dark-gray) 100%);
             display: flex;
             align-items: center;
@@ -81,6 +81,31 @@
             font-size: 80px;
             color: var(--off-white);
             position: relative;
+            overflow: hidden;
+        }
+
+        /* Custom heights for each elder photo - adjust as needed */
+        .elder-photo.achile-photo {
+            min-height: 350px;
+        }
+
+        .elder-photo.eveillard-photo {
+            min-height: 350px;
+        }
+
+        .elder-photo.oscar-photo {
+            min-height: 300px;
+        }
+
+        .elder-photo.jeune-photo {
+            min-height: 300px;
+        }
+
+        .elder-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
         }
 
         .elder-photo::after {
@@ -91,6 +116,7 @@
             right: 0;
             height: 4px;
             background-color: var(--burnt-orange);
+            z-index: 1;
         }
 
         .elder-info {
@@ -219,7 +245,8 @@
             <div class="elders-grid">
                 <!-- Elder 1 - Senior Pastor -->
                 <div class="elder-card">
-                    <div class="elder-photo" style="background-image: url('images/elders/achile.jpg'); background-size: cover; background-position: center;">
+                    <div class="elder-photo achile-photo">
+                        <img src="images/elders/achile.jpg" alt="Brother & Sister Edwige Achile" onerror="this.style.display='none'; this.parentElement.innerHTML='👨‍👩';">
                     </div>
                     <div class="elder-info">
                         <h3>Brother & Sister Edwige Achile</h3>
@@ -230,7 +257,8 @@
 
                 <!-- Elder 2 -->
                 <div class="elder-card">
-                    <div class="elder-photo" style="background-image: url('images/elders/eveillard.jpg'); background-size: cover; background-position: center;">
+                    <div class="elder-photo eveillard-photo">
+                        <img src="images/elders/eveillard.jpg" alt="Brother & Sister Patrick Eveillard" onerror="this.style.display='none'; this.parentElement.innerHTML='👨‍👩';">
                     </div>
                     <div class="elder-info">
                         <h3>Brother & Sister Patrick Eveillard</h3>

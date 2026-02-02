@@ -44,17 +44,26 @@ For best results:
 
 ## 🔧 Technical Details
 
-The photos are displayed using CSS background-image:
+The photos are displayed using HTML img tags with custom sizing:
 ```html
-<div class="elder-photo" style="background-image: url('images/elders/achile.jpg'); background-size: cover; background-position: center;">
+<div class="elder-photo achile-photo">
+    <img src="images/elders/achile.jpg" alt="Brother & Sister Edwige Achile">
 </div>
 ```
 
+**Custom Photo Sizing:**
+Each elder has their own photo container class that can be adjusted:
+- `.achile-photo` - Min height: 350px
+- `.eveillard-photo` - Min height: 350px
+- `.oscar-photo` - Min height: 300px
+- `.jeune-photo` - Min height: 300px
+
 The CSS automatically:
 - Centers the photo
-- Scales it to fill the card (300px height)
+- Uses object-fit to maintain aspect ratio
+- Scales to fill the container without distortion
 - Adds the orange accent bar at the bottom
-- Falls back to gradient background if photo not found
+- Falls back to gradient background with emoji if photo not found
 
 ## ➕ Adding More Elder Photos (Optional)
 
@@ -71,9 +80,29 @@ For Brother & Sister Josue Oscar or Brother & Sister Elfils Jeune:
    ```
    With:
    ```html
-   <div class="elder-photo" style="background-image: url('images/elders/oscar.jpg'); background-size: cover; background-position: center;">
+   <div class="elder-photo oscar-photo">
+       <img src="images/elders/oscar.jpg" alt="Brother & Sister Josue Oscar" onerror="this.style.display='none'; this.parentElement.innerHTML='👨‍👩';">
    </div>
    ```
+
+## 🎛️ Adjusting Photo Sizes
+
+If a photo doesn't fit well in its container, you can adjust the min-height in the CSS:
+
+1. Open `about.html` in a text editor
+2. Find the style section with `.elder-photo.achile-photo` (around line 90)
+3. Change the `min-height` value for the specific elder:
+   ```css
+   .elder-photo.achile-photo {
+       min-height: 400px;  /* Adjust this value */
+   }
+   ```
+4. Save and refresh your browser to see the changes
+
+Recommended heights based on photo orientation:
+- **Portrait photos:** 350-400px
+- **Square photos:** 300-350px
+- **Landscape photos:** 250-300px
 
 ## ✅ Quick Checklist
 
