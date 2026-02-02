@@ -288,7 +288,7 @@ Features:
 ## 📞 Contact
 
 **Sarasota Gospel Temple**
-- **Address:** 1900 Gandy Blvd N, St. Petersburg, FL 33702
+- **Address:** 3629 Tallevast Road, Sarasota, FL 34243
 - **Email:** tracykmussotte@gmail.com
 - **Phone:** (941) 321-8859
 

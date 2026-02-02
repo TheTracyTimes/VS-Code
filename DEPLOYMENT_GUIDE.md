@@ -234,7 +234,7 @@ Open `contact.html` and find the Google Maps iframe:
 
 **To get your embed URL:**
 1. Go to [Google Maps](https://www.google.com/maps)
-2. Search for: `1900 Gandy Blvd N, St. Petersburg, FL 33702`
+2. Search for: `3629 Tallevast Road, Sarasota, FL 34243`
 3. Click **"Share"** → **"Embed a map"**
 4. Copy the iframe code
 5. Replace the existing iframe in `contact.html`
