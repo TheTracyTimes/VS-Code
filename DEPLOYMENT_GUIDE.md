@@ -73,7 +73,7 @@ service cloud.firestore {
 
 1. Go to **Authentication > Users** tab
 2. Click **"Add user"**
-3. Enter your admin email: `tracykmussotte@gmail.com` (or preferred admin email)
+3. Enter your admin email: `sarasotagospel@gmail.com` (or preferred admin email)
 4. Create a secure password (save it somewhere safe!)
 5. Click **"Add user"**
 
@@ -103,7 +103,7 @@ service cloud.firestore {
 1. Go to **"Email Services"** in dashboard
 2. Click **"Add New Service"**
 3. Select **Gmail** (or your preferred email provider)
-4. Connect your email account: `tracykmussotte@gmail.com`
+4. Connect your email account: `sarasotagospel@gmail.com`
 5. Note the **Service ID** (e.g., `service_abc123`)
 
 ### 2.3 Create Email Templates
@@ -359,7 +359,7 @@ Before announcing the website, test everything:
 
 All form submissions automatically send:
 - Confirmation email to submitter
-- Notification email to admin (`tracykmussotte@gmail.com`)
+- Notification email to admin (`sarasotagospel@gmail.com`)
 
 **To change notification email:**
 - Edit EmailJS templates
@@ -579,7 +579,7 @@ Before announcing the website publicly:
 - [Custom Domains](https://docs.netlify.com/domains-https/custom-domains/)
 
 ### Additional Help
-- Email: tracykmussotte@gmail.com
+- Email: sarasotagospel@gmail.com
 - Repository: [Your GitHub Repository]
 
 ---

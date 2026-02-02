@@ -218,7 +218,7 @@ document.getElementById('vendorForm').addEventListener('submit', async function(
 
     } catch (error) {
         console.error('Error submitting form:', error);
-        alert('There was an error submitting your vendor application. Please try again or contact us at 941-667-0526.');
+        alert('There was an error submitting your vendor application. Please try again or contact us at 941-800-5211.');
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;
     }
@@ -234,7 +234,7 @@ async function sendVendorEmails(data) {
 
         // Admin notification
         const adminTemplateParams = {
-            to_email: 'tracykmussotte@gmail.com',
+            to_email: 'sarasotagospel@gmail.com',
             from_name: data.businessName,
             reply_to: data.email,
             subject: 'New Vendor Application - 2026 International Meeting',
@@ -288,7 +288,7 @@ If approved, we'll send you additional information including:
 - Payment information (if applicable)
 - Load-in times
 
-Questions? Call us at 941-667-0526
+Questions? Call us at 941-800-5211
 
 Blessings,
 Sarasota Gospel Temple

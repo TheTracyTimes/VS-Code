@@ -289,8 +289,8 @@ Features:
 
 **Sarasota Gospel Temple**
 - **Address:** 3629 Tallevast Road, Sarasota, FL 34243
-- **Email:** tracykmussotte@gmail.com
-- **Phone:** (941) 321-8859
+- **Email:** sarasotagospel@gmail.com
+- **Phone:** (941) 800-5211
 
 **Service Times:**
 - Sunday Morning: 10:00 AM

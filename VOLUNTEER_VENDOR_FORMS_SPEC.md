@@ -158,7 +158,7 @@ Contact: [Name]
 Selling: [Goods/Services]
 Availability: [Selected times]
 
-Please contact us at 941-667-0526 with any questions.
+Please contact us at 941-800-5211 with any questions.
 
 Blessings,
 Sarasota Gospel Temple Vendor Coordination Team
@@ -296,7 +296,7 @@ Your application is under review. You'll receive an email at [email] within 3-5 
 Business: [Business Name]
 Contact: [Name]
 
-Questions? Call 941-667-0526
+Questions? Call 941-800-5211
 
 Blessings,
 Sarasota Gospel Temple

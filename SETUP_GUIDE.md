@@ -243,7 +243,7 @@ const EMAILJS_PUBLIC_KEY = 'YOUR_EMAILJS_PUBLIC_KEY';
 2. Find:
 
 ```javascript
-to_email: 'tracykmussotte@gmail.com',
+to_email: 'sarasotagospel@gmail.com',
 ```
 
 3. Change to YOUR email address where you want notifications
@@ -381,7 +381,7 @@ If you have traditional hosting (GoDaddy, Bluehost, etc.):
 ```html
 <p><strong>Dates:</strong> April 9-11, 2026</p>
 <p><strong>Location:</strong> 1900 Gandy Blvd N, St. Petersburg, FL 33702</p>
-<p><strong>Contact:</strong> 941-667-0526</p>
+<p><strong>Contact:</strong> 941-800-5211</p>
 ```
 
 Change to your actual info.

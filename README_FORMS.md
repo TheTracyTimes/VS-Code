@@ -295,7 +295,7 @@ Thank you for registering for the Sarasota Gospel Temple
 EVENT DETAILS:
 📅 Dates: April 9-11, 2026
 📍 Location: 1900 Gandy Blvd N, St. Petersburg, FL 33702
-📞 Contact: 941-667-0526
+📞 Contact: 941-800-5211
 
 We look forward to seeing you!
 
@@ -349,7 +349,7 @@ With the admin dashboard, you can easily analyze:
 **Contact Info** - Edit form HTML files:
 ```html
 <p><strong>Location:</strong> 1900 Gandy Blvd N, St. Petersburg, FL 33702</p>
-<p><strong>Contact:</strong> 941-667-0526</p>
+<p><strong>Contact:</strong> 941-800-5211</p>
 ```
 
 **Form Fields** - Add/remove/modify fields in HTML
@@ -495,4 +495,4 @@ Perfect for the 2026 International Meeting and beyond!
 *Event: 2026 International Meeting*
 *Dates: April 9-11, 2026*
 *Location: 1900 Gandy Blvd N, St. Petersburg, FL 33702*
-*Contact: 941-667-0526*
+*Contact: 941-800-5211*

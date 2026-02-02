@@ -201,7 +201,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 contactForm.reset();
             } catch (error) {
                 console.error('Error submitting contact form:', error);
-                alert('There was an error sending your message. Please try calling us at 941-667-0526.');
+                alert('There was an error sending your message. Please try calling us at 941-800-5211.');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = originalText;

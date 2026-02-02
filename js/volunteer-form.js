@@ -242,7 +242,7 @@ document.getElementById('volunteerForm').addEventListener('submit', async functi
 
     } catch (error) {
         console.error('Error submitting form:', error);
-        alert('There was an error submitting your volunteer application. Please try again or contact us at 941-667-0526.');
+        alert('There was an error submitting your volunteer application. Please try again or contact us at 941-800-5211.');
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;
     }
@@ -263,7 +263,7 @@ async function sendVolunteerEmails(data) {
 
         // Admin notification
         const adminTemplateParams = {
-            to_email: 'tracykmussotte@gmail.com',
+            to_email: 'sarasotagospel@gmail.com',
             from_name: `${data.firstName} ${data.lastName}`,
             reply_to: data.email,
             subject: 'New Volunteer Sign-Up - 2026 International Meeting',
