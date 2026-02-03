@@ -21,6 +21,16 @@ To add elder photos to your website, save the image files directly in this folde
 - **Full path:** `/Users/liltrizzytreezy/GitHub/VS-Code/images/elders/eveillard.jpg`
 - **Status:** ⚠️ Ready to upload (website is configured, just save the file here)
 
+### 3. Brother & Sister Josue Oscar
+- **Filename:** `oscar.jpg`
+- **Full path:** `/Users/liltrizzytreezy/GitHub/VS-Code/images/elders/oscar.jpg`
+- **Status:** ⚠️ Ready to upload (website is configured, just save the file here)
+
+### 4. Brother & Sister Elfils Jeune
+- **Filename:** `jeune.jpg`
+- **Full path:** `/Users/liltrizzytreezy/GitHub/VS-Code/images/elders/jeune.jpg`
+- **Status:** ⚠️ Ready to upload (website is configured, just save the file here)
+
 ## 📝 How to Add Photos
 
 **Step 1:** Save your photo files to this directory
@@ -65,25 +75,15 @@ The CSS automatically:
 - Adds the orange accent bar at the bottom
 - Falls back to gradient background with emoji if photo not found
 
-## ➕ Adding More Elder Photos (Optional)
+## ➕ All Elder Photos Configured
 
-For Brother & Sister Josue Oscar or Brother & Sister Elfils Jeune:
+All four elder photos are now configured and ready to use:
+- **Achile:** `achile.jpg`
+- **Eveillard:** `eveillard.jpg`
+- **Oscar:** `oscar.jpg`
+- **Jeune:** `jeune.jpg`
 
-1. Save photo as `oscar.jpg` or `jeune.jpg` in this directory
-2. Edit `/home/user/VS-Code/about.html`
-3. Find their elder card section
-4. Replace:
-   ```html
-   <div class="elder-photo">
-       👨‍👩
-   </div>
-   ```
-   With:
-   ```html
-   <div class="elder-photo oscar-photo">
-       <img src="images/elders/oscar.jpg" alt="Brother & Sister Josue Oscar" onerror="this.style.display='none'; this.parentElement.innerHTML='👨‍👩';">
-   </div>
-   ```
+Simply save the photos to this directory with the correct filenames and they will automatically appear on the website!
 
 ## 🎛️ Adjusting Photo Sizes
 
@@ -109,5 +109,6 @@ Recommended heights based on photo orientation:
 - [ ] Navigate to `/Users/liltrizzytreezy/GitHub/VS-Code/images/elders/`
 - [ ] Save `achile.jpg` (Brother & Sister Edwige Achile photo)
 - [ ] Save `eveillard.jpg` (Brother & Sister Patrick Eveillard photo)
+- [ ] Save `oscar.jpg` (Brother & Sister Josue Oscar photo)
+- [ ] Save `jeune.jpg` (Brother & Sister Elfils Jeune photo)
 - [ ] Refresh the website to see the photos appear
-- [ ] Optional: Add photos for the other two elders

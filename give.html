@@ -52,7 +52,8 @@
         }
 
         .giving-card .btn {
-            width: 100%;
+            display: inline-block;
+            margin: 0 auto;
         }
 
         .giving-details {
@@ -167,36 +168,16 @@
             <p class="text-center lead">Thank you for supporting the ministry of Sarasota Gospel Temple. Your gifts help us continue spreading the Gospel and serving our community.</p>
 
             <div class="giving-grid">
-                <!-- PayPal -->
-                <div class="giving-card">
-                    <div class="giving-icon">💳</div>
-                    <h3>PayPal</h3>
-                    <p>Give securely using PayPal. You can make a one-time donation or set up recurring giving.</p>
-                    <div class="giving-details">
-                        PayPal.Me/SarasotaGospelTemple
-                    </div>
-                    <a href="https://www.paypal.com" target="_blank" rel="noopener" class="btn btn-primary">Give via PayPal</a>
-                </div>
-
                 <!-- Zelle -->
                 <div class="giving-card">
                     <div class="giving-icon">💵</div>
                     <h3>Zelle</h3>
                     <p>Send your gift directly from your bank account using Zelle. Fast, easy, and secure.</p>
                     <div class="giving-details">
-                        sarasotagospel@gmail.com
+                        (941) 465-2973
                     </div>
-                    <button class="btn btn-secondary" onclick="copyToClipboard('sarasotagospel@gmail.com')">Copy Email</button>
+                    <button class="btn btn-secondary" onclick="copyToClipboard('(941) 465-2973')">Copy Phone Number</button>
                     <p style="font-size: 12px; margin-top: 8px; color: var(--dark-gray);">Use your bank's Zelle feature</p>
-                </div>
-
-                <!-- GoFundMe -->
-                <div class="giving-card">
-                    <div class="giving-icon">🎯</div>
-                    <h3>GoFundMe</h3>
-                    <p>Support specific campaigns and projects through our GoFundMe page.</p>
-                    <a href="https://www.gofundme.com" target="_blank" rel="noopener" class="btn btn-outline">Visit GoFundMe</a>
-                    <p style="font-size: 12px; margin-top: 12px; color: var(--dark-gray);">Special campaigns and building projects</p>
                 </div>
             </div>
 
@@ -262,8 +243,9 @@
                 <h3><span class="icon">🏦</span> Give In Person</h3>
                 <p>You can give during any of our worship services or drop by the church office during business hours.</p>
                 <p><strong>Service Times:</strong><br>
-                Sunday: 10:00 AM & 6:00 PM<br>
-                Wednesday: 7:00 PM</p>
+                Sunday: 11:00 AM<br>
+                Tuesday: 7:00 PM<br>
+                Friday: 7:00 PM</p>
             </div>
         </div>
     </section>
@@ -334,7 +316,7 @@
     <script>
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text).then(() => {
-                alert('Email address copied to clipboard: ' + text);
+                alert('Phone number copied to clipboard: ' + text);
             }).catch(err => {
                 console.error('Failed to copy:', err);
             });

@@ -67,14 +67,16 @@
 
 .nav-menu a.meeting-link {
     background-color: var(--burnt-orange);
+    color: white !important;
     padding: var(--spacing-sm) var(--spacing-md);
     border-radius: var(--radius-sm);
     border-bottom: none;
 }
 
-.nav-menu a.meeting-link:hover {
+.nav-menu a.meeting-link:hover,
+.nav-menu a.meeting-link.active {
     background-color: var(--burnt-orange-hover);
-    color: var(--off-white);
+    color: white !important;
 }
 
 .nav-toggle {
