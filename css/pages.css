@@ -396,7 +396,7 @@
 
 .ministry-card {
     background-color: white;
-    padding: var(--spacing-xl);
+    padding: var(--spacing-lg) var(--spacing-xl);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-md);
     text-align: center;
@@ -415,7 +415,7 @@
 
 .ministry-card h3 {
     color: var(--navy-blue);
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: 0;
 }
 
 .ministry-card p {
