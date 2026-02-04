@@ -52,10 +52,26 @@
         }
 
         .elders-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: var(--spacing-lg);
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xl);
             margin-top: var(--spacing-xl);
+            align-items: center;
+        }
+
+        .elder-row-top {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .elder-row-bottom {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-lg);
+            width: 100%;
+            max-width: 1200px;
         }
 
         .elder-card {
@@ -88,7 +104,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            object-position: center;
+            object-position: center 20%;  /* Focus on upper portion to show faces */
         }
 
         .elder-photo::after {
@@ -158,6 +174,18 @@
         .value-card p {
             color: var(--dark-gray);
         }
+
+        /* Responsive layout for elder cards */
+        @media (max-width: 968px) {
+            .elder-row-top {
+                max-width: 350px;
+            }
+
+            .elder-row-bottom {
+                grid-template-columns: 1fr;
+                max-width: 400px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -225,51 +253,56 @@
             <p class="text-center lead">Meet the spiritual leaders guiding our church family</p>
 
             <div class="elders-grid">
-                <!-- Elder 1 - Senior Pastor -->
-                <div class="elder-card">
-                    <div class="elder-photo achile-photo">
-                        <img src="images/elders/achile.jpg" alt="Brother & Sister Edwige Achile" onerror="this.style.display='none'; this.parentElement.innerHTML='👨‍👩';">
-                    </div>
-                    <div class="elder-info">
-                        <h3>Brother & Sister Edwige Achile</h3>
-                        <p class="elder-title">Elder, Senior Pastor</p>
-                        <p class="elder-bio">Born in December 1958, Brother Edwige Achile received his calling to the ministry at a very young age and began receiving his ministerial formation from Elder Joseph Desrivieres in Port-au-Prince, Haiti. Ever abounding in the grace of God, Brother Achile earned the love and honor of his contemporaries as a seasoned teacher, a man of God with the heart of a Shepherd who uses everything he owns for the utility of the Kingdom. Married to one wife, Alta Achile, he lives an exemplary life as a husband, a father, and a Pastor as the bible so clearly requires an elder. As a man of great vision, he works closely with a group of young leaders to transmit the vision to them and reassure the continuity of this colossal work.</p>
-                    </div>
-                </div>
-
-                <!-- Elder 2 -->
-                <div class="elder-card">
-                    <div class="elder-photo eveillard-photo">
-                        <img src="images/elders/eveillard.jpg" alt="Brother & Sister Patrick Eveillard" onerror="this.style.display='none'; this.parentElement.innerHTML='👨‍👩';">
-                    </div>
-                    <div class="elder-info">
-                        <h3>Brother & Sister Patrick Eveillard</h3>
-                        <p class="elder-title">Elder, Minister</p>
-                        <p class="elder-bio">Committed to teaching God's Word and shepherding the flock with wisdom and love.</p>
+                <!-- Top Row - Senior Pastor -->
+                <div class="elder-row-top">
+                    <div class="elder-card">
+                        <div class="elder-photo achile-photo">
+                            <img src="images/elders/achile.jpg" alt="Brother & Sister Edwige Achile" onerror="this.style.display='none'; this.parentElement.innerHTML='👨‍👩';">
+                        </div>
+                        <div class="elder-info">
+                            <h3>Brother & Sister Edwige Achile</h3>
+                            <p class="elder-title">Elder, Senior Pastor</p>
+                            <p class="elder-bio">Born in December 1958, Brother Edwige Achile received his calling to the ministry at a very young age and began receiving his ministerial formation from Elder Joseph Desrivieres in Port-au-Prince, Haiti. Ever abounding in the grace of God, Brother Achile earned the love and honor of his contemporaries as a seasoned teacher, a man of God with the heart of a Shepherd who uses everything he owns for the utility of the Kingdom. Married to one wife, Alta Achile, he lives an exemplary life as a husband, a father, and a Pastor as the bible so clearly requires an elder. As a man of great vision, he works closely with a group of young leaders to transmit the vision to them and reassure the continuity of this colossal work.</p>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Elder 3 -->
-                <div class="elder-card">
-                    <div class="elder-photo oscar-photo">
-                        <img src="images/elders/oscar.jpg" alt="Brother & Sister Josue Oscar" onerror="this.style.display='none'; this.parentElement.innerHTML='👨‍👩';">
+                <!-- Bottom Row - Ministers -->
+                <div class="elder-row-bottom">
+                    <!-- Elder 2 -->
+                    <div class="elder-card">
+                        <div class="elder-photo eveillard-photo">
+                            <img src="images/elders/eveillard.jpg" alt="Brother & Sister Patrick Eveillard" onerror="this.style.display='none'; this.parentElement.innerHTML='👨‍👩';">
+                        </div>
+                        <div class="elder-info">
+                            <h3>Brother & Sister Patrick Eveillard</h3>
+                            <p class="elder-title">Elder, Minister</p>
+                            <p class="elder-bio">Committed to teaching God's Word and shepherding the flock with wisdom and love.</p>
+                        </div>
                     </div>
-                    <div class="elder-info">
-                        <h3>Brother & Sister Josue Oscar</h3>
-                        <p class="elder-title">Elder, Minister</p>
-                        <p class="elder-bio">Passionate about prayer and leading our church in spiritual maturity.</p>
-                    </div>
-                </div>
 
-                <!-- Elder 4 -->
-                <div class="elder-card">
-                    <div class="elder-photo jeune-photo">
-                        <img src="images/elders/jeune.jpg" alt="Brother & Sister Elfils Jeune" onerror="this.style.display='none'; this.parentElement.innerHTML='👨‍👩';">
+                    <!-- Elder 3 -->
+                    <div class="elder-card">
+                        <div class="elder-photo oscar-photo">
+                            <img src="images/elders/oscar.jpg" alt="Brother & Sister Josue Oscar" onerror="this.style.display='none'; this.parentElement.innerHTML='👨‍👩';">
+                        </div>
+                        <div class="elder-info">
+                            <h3>Brother & Sister Josue Oscar</h3>
+                            <p class="elder-title">Elder, Minister</p>
+                            <p class="elder-bio">Passionate about prayer and leading our church in spiritual maturity.</p>
+                        </div>
                     </div>
-                    <div class="elder-info">
-                        <h3>Brother & Sister Elfils Jeune</h3>
-                        <p class="elder-title">Elder, Minister</p>
-                        <p class="elder-bio">Dedicated to serving the community and helping believers grow in their faith.</p>
+
+                    <!-- Elder 4 -->
+                    <div class="elder-card">
+                        <div class="elder-photo jeune-photo">
+                            <img src="images/elders/jeune.jpg" alt="Brother & Sister Elfils Jeune" onerror="this.style.display='none'; this.parentElement.innerHTML='👨‍👩';">
+                        </div>
+                        <div class="elder-info">
+                            <h3>Brother & Sister Elfils Jeune</h3>
+                            <p class="elder-title">Elder, Minister</p>
+                            <p class="elder-bio">Dedicated to serving the community and helping believers grow in their faith.</p>
+                        </div>
                     </div>
                 </div>
             </div>
