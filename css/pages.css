@@ -139,7 +139,7 @@
     }
 }
 
-/* Clouds animation */
+/* Sketch-style clouds animation */
 .clouds-container {
     position: absolute;
     top: 0;
@@ -148,151 +148,91 @@
     height: 100%;
     overflow: hidden;
     pointer-events: none;
+    z-index: 2;
 }
 
-.cloud {
+.cloud-sketch {
     position: absolute;
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 100px;
-    box-shadow: 0 0 40px rgba(255, 255, 255, 0.05);
-}
-
-.cloud::before,
-.cloud::after {
-    content: '';
-    position: absolute;
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 100px;
+    width: 200px;
+    height: 60px;
+    opacity: 0.8;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.1));
 }
 
 .cloud-1 {
-    width: 120px;
-    height: 40px;
-    top: 15%;
-    animation: drift-cloud-1 45s linear infinite;
-}
-
-.cloud-1::before {
-    width: 60px;
-    height: 60px;
-    top: -30px;
-    left: 20px;
-}
-
-.cloud-1::after {
-    width: 80px;
-    height: 50px;
-    top: -25px;
-    right: 15px;
+    top: 12%;
+    width: 200px;
+    animation: drift-cloud-1 50s linear infinite;
 }
 
 .cloud-2 {
-    width: 100px;
-    height: 35px;
     top: 25%;
-    animation: drift-cloud-2 55s linear infinite;
-}
-
-.cloud-2::before {
-    width: 50px;
-    height: 50px;
-    top: -25px;
-    left: 15px;
-}
-
-.cloud-2::after {
-    width: 70px;
-    height: 45px;
-    top: -20px;
-    right: 10px;
+    width: 180px;
+    animation: drift-cloud-2 60s linear infinite;
+    animation-delay: -15s;
 }
 
 .cloud-3 {
-    width: 140px;
-    height: 45px;
-    top: 40%;
-    animation: drift-cloud-3 65s linear infinite;
-}
-
-.cloud-3::before {
-    width: 70px;
-    height: 70px;
-    top: -35px;
-    left: 25px;
-}
-
-.cloud-3::after {
-    width: 90px;
-    height: 55px;
-    top: -30px;
-    right: 20px;
+    top: 8%;
+    width: 220px;
+    animation: drift-cloud-3 70s linear infinite;
+    animation-delay: -30s;
 }
 
 .cloud-4 {
-    width: 110px;
-    height: 38px;
-    top: 60%;
-    animation: drift-cloud-4 50s linear infinite;
-}
-
-.cloud-4::before {
-    width: 55px;
-    height: 55px;
-    top: -28px;
-    left: 18px;
-}
-
-.cloud-4::after {
-    width: 75px;
-    height: 48px;
-    top: -23px;
-    right: 12px;
+    top: 18%;
+    width: 190px;
+    animation: drift-cloud-4 55s linear infinite;
+    animation-delay: -45s;
 }
 
 @keyframes drift-cloud-1 {
     from {
-        transform: translateX(-150px);
+        transform: translateX(-220px);
     }
     to {
-        transform: translateX(calc(100vw + 150px));
+        transform: translateX(calc(100vw + 220px));
     }
 }
 
 @keyframes drift-cloud-2 {
     from {
-        transform: translateX(-150px);
+        transform: translateX(-200px);
     }
     to {
-        transform: translateX(calc(100vw + 150px));
+        transform: translateX(calc(100vw + 200px));
     }
 }
 
 @keyframes drift-cloud-3 {
     from {
-        transform: translateX(-180px);
+        transform: translateX(-240px);
     }
     to {
-        transform: translateX(calc(100vw + 180px));
+        transform: translateX(calc(100vw + 240px));
     }
 }
 
 @keyframes drift-cloud-4 {
     from {
-        transform: translateX(-130px);
+        transform: translateX(-210px);
     }
     to {
-        transform: translateX(calc(100vw + 130px));
+        transform: translateX(calc(100vw + 210px));
     }
 }
 
-/* Lighthouse container */
+/* Lighthouse container - centered and larger */
 .lighthouse-container {
     position: absolute;
-    bottom: 5%;
-    right: 8%;
-    width: 200px;
-    height: 300px;
-    z-index: 5;
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 400px;
+    height: 500px;
+    z-index: 4;
+    perspective: 1000px;
+    perspective-origin: 50% 50%;
 }
 
 .lighthouse-image {
@@ -300,76 +240,100 @@
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 180px;
+    width: 350px;
     height: auto;
-    opacity: 0.25;
-    filter: brightness(1.2);
+    opacity: 0.3;
+    filter: brightness(1.3) contrast(1.1);
+    z-index: 6;
 }
 
-/* Lighthouse beam - the main rotating light */
-.lighthouse-beam {
+/* 3D Lighthouse beam - rotating in 3D space */
+.lighthouse-beam-3d {
     position: absolute;
-    top: 50px;
+    top: 80px;
     left: 50%;
-    width: 600px;
-    height: 80px;
+    width: 800px;
+    height: 100px;
+    transform-style: preserve-3d;
+    transform-origin: 0% 50%;
+    animation: rotate-beam-3d 12s linear infinite;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.lighthouse-beam-3d::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background: linear-gradient(
         90deg,
         transparent 0%,
-        transparent 20%,
-        rgba(255, 253, 208, 0.5) 45%,
-        rgba(255, 253, 208, 0.8) 50%,
-        rgba(255, 253, 208, 0.5) 55%,
-        transparent 80%,
+        transparent 10%,
+        rgba(255, 253, 208, 0.1) 20%,
+        rgba(255, 253, 208, 0.4) 40%,
+        rgba(255, 253, 208, 0.7) 50%,
+        rgba(255, 253, 208, 0.4) 60%,
+        rgba(255, 253, 208, 0.1) 80%,
+        transparent 90%,
         transparent 100%
     );
-    transform: translateX(-50%) rotate(0deg);
-    transform-origin: 50% 50%;
-    animation: rotate-beam 12s linear infinite;
-    pointer-events: none;
-    z-index: 3;
-    filter: blur(3px);
+    filter: blur(5px);
+    transform: rotateY(-15deg);
 }
 
-/* Additional glow layer for the beam */
-.lighthouse-beam-glow {
+.lighthouse-beam-3d::after {
+    content: '';
     position: absolute;
-    top: 50px;
-    left: 50%;
-    width: 700px;
-    height: 120px;
+    top: -20px;
+    left: 0;
+    width: 100%;
+    height: 140px;
     background: radial-gradient(
-        ellipse,
+        ellipse at left center,
         rgba(255, 253, 208, 0.3) 0%,
         rgba(255, 253, 208, 0.15) 30%,
+        rgba(255, 253, 208, 0.05) 50%,
         transparent 70%
     );
-    transform: translateX(-50%) rotate(0deg);
-    transform-origin: 50% 50%;
-    animation: rotate-beam 12s linear infinite;
-    pointer-events: none;
-    z-index: 2;
-    filter: blur(20px);
+    filter: blur(25px);
+    transform: rotateY(10deg) rotateX(5deg);
 }
 
-@keyframes rotate-beam {
+@keyframes rotate-beam-3d {
     0% {
-        transform: translateX(-50%) rotate(0deg);
-        opacity: 0.6;
+        transform: translateX(-50%) rotateY(0deg) rotateZ(0deg);
+        opacity: 0.7;
+    }
+    12.5% {
+        opacity: 0.95;
     }
     25% {
-        opacity: 0.9;
+        transform: translateX(-50%) rotateY(15deg) rotateZ(90deg);
+        opacity: 0.7;
+    }
+    37.5% {
+        opacity: 0.95;
     }
     50% {
-        transform: translateX(-50%) rotate(180deg);
-        opacity: 0.6;
+        transform: translateX(-50%) rotateY(0deg) rotateZ(180deg);
+        opacity: 0.7;
+    }
+    62.5% {
+        opacity: 0.95;
     }
     75% {
-        opacity: 0.9;
+        transform: translateX(-50%) rotateY(-15deg) rotateZ(270deg);
+        opacity: 0.7;
+    }
+    87.5% {
+        opacity: 0.95;
     }
     100% {
-        transform: translateX(-50%) rotate(360deg);
-        opacity: 0.6;
+        transform: translateX(-50%) rotateY(0deg) rotateZ(360deg);
+        opacity: 0.7;
     }
 }
 
