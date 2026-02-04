@@ -249,15 +249,15 @@
 /* Cone-shaped lighthouse beam - rotating clockwise on horizontal plane from lantern room */
 .lighthouse-beam-3d {
     position: absolute;
-    top: 50%;
+    top: calc(50% - 150px);  /* Position at lantern room (top section of lighthouse) */
     left: 50%;
     width: 1400px;
     height: 300px;
-    transform-origin: 0 50%;
+    transform-origin: 0 50%;  /* Rotate from left edge (lighthouse center) */
     animation: rotate-beam-horizontal 12s linear infinite;
     pointer-events: none;
     z-index: 4;
-    clip-path: polygon(0% 45%, 0% 55%, 100% 100%, 100% 0%);
+    clip-path: polygon(0% 45%, 0% 55%, 100% 100%, 100% 0%);  /* Cone shape */
 }
 
 .lighthouse-beam-3d::before {
