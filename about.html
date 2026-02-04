@@ -53,8 +53,8 @@
 
         .elders-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: var(--spacing-xl);
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: var(--spacing-lg);
             margin-top: var(--spacing-xl);
         }
 
@@ -73,7 +73,7 @@
 
         .elder-photo {
             width: 100%;
-            min-height: 300px;
+            height: 280px;
             background: linear-gradient(135deg, var(--navy-blue) 0%, var(--dark-gray) 100%);
             display: flex;
             align-items: center;
@@ -82,23 +82,6 @@
             color: var(--off-white);
             position: relative;
             overflow: hidden;
-        }
-
-        /* Custom heights for each elder photo - adjust as needed */
-        .elder-photo.achile-photo {
-            min-height: 350px;
-        }
-
-        .elder-photo.eveillard-photo {
-            min-height: 350px;
-        }
-
-        .elder-photo.oscar-photo {
-            min-height: 300px;
-        }
-
-        .elder-photo.jeune-photo {
-            min-height: 300px;
         }
 
         .elder-photo img {
