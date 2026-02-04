@@ -1,0 +1,51 @@
+<svg width="400" height="150" viewBox="0 0 400 150" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer cloud shape -->
+  <path d="M 20,90 Q 20,50 60,45 Q 80,20 110,35 Q 140,25 170,40 Q 200,30 230,45 Q 260,35 290,50 Q 320,40 350,60 Q 380,50 390,75 L 390,100 Q 360,110 330,105 Q 300,115 270,110 Q 240,120 210,115 Q 180,125 150,120 Q 120,130 90,120 Q 60,125 30,115 L 20,90 Z"
+        fill="none"
+        stroke="rgba(200,200,220,0.8)"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+
+  <!-- Inner sketch lines for depth -->
+  <path d="M 35,92 Q 35,60 65,55 Q 85,35 105,48"
+        fill="none"
+        stroke="rgba(180,180,200,0.6)"
+        stroke-width="1.5"
+        stroke-linecap="round"/>
+
+  <path d="M 140,45 Q 165,38 185,50 Q 210,42 235,55"
+        fill="none"
+        stroke="rgba(180,180,200,0.6)"
+        stroke-width="1.5"
+        stroke-linecap="round"/>
+
+  <path d="M 280,58 Q 305,48 330,60 Q 355,52 370,68"
+        fill="none"
+        stroke="rgba(180,180,200,0.6)"
+        stroke-width="1.5"
+        stroke-linecap="round"/>
+
+  <!-- Hatching details -->
+  <g stroke="rgba(170,170,190,0.5)" stroke-width="1" fill="none">
+    <line x1="65" y1="60" x2="85" y2="75"/>
+    <line x1="70" y1="62" x2="90" y2="77"/>
+    <line x1="75" y1="64" x2="95" y2="79"/>
+    <line x1="80" y1="66" x2="100" y2="81"/>
+
+    <line x1="170" y1="50" x2="190" y2="65"/>
+    <line x1="175" y1="52" x2="195" y2="67"/>
+    <line x1="180" y1="54" x2="200" y2="69"/>
+
+    <line x1="300" y1="58" x2="320" y2="73"/>
+    <line x1="305" y1="60" x2="325" y2="75"/>
+    <line x1="310" y1="62" x2="330" y2="77"/>
+  </g>
+
+  <!-- Bottom detail line -->
+  <path d="M 30,100 Q 90,95 150,100 Q 210,95 270,100 Q 330,95 380,100"
+        fill="none"
+        stroke="rgba(190,190,210,0.7)"
+        stroke-width="1.5"
+        stroke-linecap="round"/>
+</svg>

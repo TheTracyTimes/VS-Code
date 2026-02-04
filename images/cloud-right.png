@@ -1,0 +1,65 @@
+<svg width="420" height="160" viewBox="0 0 420 160" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer cloud shape (mirrored/different from left) -->
+  <path d="M 30,70 Q 30,35 70,30 Q 100,15 130,25 Q 160,10 190,25 Q 220,15 250,30 Q 280,20 310,35 Q 340,25 370,45 Q 400,35 410,60 L 410,90 Q 380,100 350,95 Q 320,105 290,100 Q 260,110 230,105 Q 200,115 170,110 Q 140,120 110,110 Q 80,115 50,105 L 30,70 Z"
+        fill="none"
+        stroke="rgba(200,200,220,0.8)"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+
+  <!-- Inner sketch lines for depth -->
+  <path d="M 45,72 Q 45,45 75,40 Q 95,25 115,38"
+        fill="none"
+        stroke="rgba(180,180,200,0.6)"
+        stroke-width="1.5"
+        stroke-linecap="round"/>
+
+  <path d="M 180,32 Q 205,25 225,37 Q 250,30 275,42"
+        fill="none"
+        stroke="rgba(180,180,200,0.6)"
+        stroke-width="1.5"
+        stroke-linecap="round"/>
+
+  <path d="M 320,45 Q 345,35 370,50 Q 385,42 395,55"
+        fill="none"
+        stroke="rgba(180,180,200,0.6)"
+        stroke-width="1.5"
+        stroke-linecap="round"/>
+
+  <!-- Hatching details -->
+  <g stroke="rgba(170,170,190,0.5)" stroke-width="1" fill="none">
+    <line x1="100" y1="42" x2="120" y2="57"/>
+    <line x1="105" y1="44" x2="125" y2="59"/>
+    <line x1="110" y1="46" x2="130" y2="61"/>
+    <line x1="115" y1="48" x2="135" y2="63"/>
+
+    <line x1="210" y1="35" x2="230" y2="50"/>
+    <line x1="215" y1="37" x2="235" y2="52"/>
+    <line x1="220" y1="39" x2="240" y2="54"/>
+    <line x1="225" y1="41" x2="245" y2="56"/>
+
+    <line x1="340" y1="47" x2="360" y2="62"/>
+    <line x1="345" y1="49" x2="365" y2="64"/>
+    <line x1="350" y1="51" x2="370" y2="66"/>
+  </g>
+
+  <!-- Bottom detail line -->
+  <path d="M 40,85 Q 110,80 180,85 Q 250,80 320,85 Q 360,80 400,85"
+        fill="none"
+        stroke="rgba(190,190,210,0.7)"
+        stroke-width="1.5"
+        stroke-linecap="round"/>
+
+  <!-- Additional wispy details -->
+  <path d="M 150,50 Q 165,45 180,50"
+        fill="none"
+        stroke="rgba(180,180,200,0.4)"
+        stroke-width="1"
+        stroke-linecap="round"/>
+
+  <path d="M 280,55 Q 295,50 310,55"
+        fill="none"
+        stroke="rgba(180,180,200,0.4)"
+        stroke-width="1"
+        stroke-linecap="round"/>
+</svg>

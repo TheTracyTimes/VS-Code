@@ -241,9 +241,10 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 700px;
-    height: 700px;
+    width: 800px;
+    height: 800px;
     z-index: 3;
+    perspective: 1000px;  /* Enable 3D perspective for child elements */
 }
 
 .lighthouse-image {
@@ -251,7 +252,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 500px;
+    width: 600px;
     height: auto;
     opacity: 0.45;
     filter: brightness(1.6) contrast(1.3);
@@ -260,11 +261,12 @@
 /* Cone-shaped lighthouse beam - rotating clockwise on horizontal plane from lantern room */
 .lighthouse-beam-3d {
     position: absolute;
-    top: calc(50% - 150px);  /* Position at lantern room (top section of lighthouse) */
+    top: calc(50% - 180px);  /* Position at lantern room (top section of lighthouse) */
     left: 50%;
     width: 1400px;
     height: 300px;
-    transform-origin: 0 50%;  /* Rotate from left edge (lighthouse center) */
+    transform-origin: 0 150px 0;  /* Rotate from lighthouse center in 3D (x, y, z) */
+    transform-style: preserve-3d;  /* Enable 3D rendering */
     animation: rotate-beam-horizontal 12s linear infinite;
     pointer-events: none;
     z-index: 4;
@@ -312,24 +314,24 @@
     filter: blur(40px);
 }
 
-/* Simple horizontal rotation - clockwise from lighthouse center */
+/* Horizontal plane rotation - clockwise around Y-axis from lighthouse center */
 @keyframes rotate-beam-horizontal {
     0% {
-        transform: rotate(0deg);
+        transform: rotateY(0deg);
         opacity: 0.7;
     }
     25% {
         opacity: 0.95;
     }
     50% {
-        transform: rotate(180deg);
+        transform: rotateY(180deg);
         opacity: 0.7;
     }
     75% {
         opacity: 0.95;
     }
     100% {
-        transform: rotate(360deg);
+        transform: rotateY(360deg);
         opacity: 0.7;
     }
 }
