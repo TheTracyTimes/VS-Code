@@ -836,4 +836,13 @@
     .brand-text {
         display: none;
     }
+
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+
+    .footer-logo {
+        max-width: 150px;
+    }
 }
