@@ -139,7 +139,7 @@
     }
 }
 
-/* Sketch-style clouds animation - BEHIND text */
+/* Cloud images animation - BEHIND text */
 .clouds-container {
     position: absolute;
     top: 0;
@@ -151,76 +151,87 @@
     z-index: 2;
 }
 
-.cloud-sketch {
+.cloud-image {
     position: absolute;
-    opacity: 0.6;
-    filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.15));
+    opacity: 0.5;
+    filter: brightness(1.2) drop-shadow(0 0 8px rgba(255, 255, 255, 0.1));
+    width: 300px;
+    height: auto;
 }
 
-.cloud-1 {
-    top: 10%;
-    width: 350px;
-    height: 105px;
-    animation: drift-cloud-1 50s linear infinite;
+.cloud-left-1 {
+    top: 8%;
+    animation: drift-left-1 55s linear infinite;
 }
 
-.cloud-2 {
-    top: 20%;
-    width: 320px;
-    height: 95px;
-    animation: drift-cloud-2 60s linear infinite;
-    animation-delay: -15s;
+.cloud-right-1 {
+    top: 18%;
+    animation: drift-right-1 65s linear infinite;
+    animation-delay: -10s;
 }
 
-.cloud-3 {
+.cloud-left-2 {
+    top: 25%;
+    animation: drift-left-2 60s linear infinite;
+    animation-delay: -20s;
+}
+
+.cloud-right-2 {
+    top: 12%;
+    animation: drift-right-2 70s linear infinite;
+    animation-delay: -35s;
+}
+
+.cloud-left-3 {
     top: 5%;
-    width: 380px;
-    height: 115px;
-    animation: drift-cloud-3 70s linear infinite;
-    animation-delay: -30s;
-}
-
-.cloud-4 {
-    top: 15%;
-    width: 340px;
-    height: 100px;
-    animation: drift-cloud-4 55s linear infinite;
+    animation: drift-left-3 50s linear infinite;
     animation-delay: -45s;
 }
 
-@keyframes drift-cloud-1 {
+/* Cloud left-to-right animations */
+@keyframes drift-left-1 {
     from {
-        transform: translateX(-220px);
+        transform: translateX(-320px);
     }
     to {
-        transform: translateX(calc(100vw + 220px));
+        transform: translateX(calc(100vw + 320px));
     }
 }
 
-@keyframes drift-cloud-2 {
+@keyframes drift-left-2 {
     from {
-        transform: translateX(-200px);
+        transform: translateX(-320px);
     }
     to {
-        transform: translateX(calc(100vw + 200px));
+        transform: translateX(calc(100vw + 320px));
     }
 }
 
-@keyframes drift-cloud-3 {
+@keyframes drift-left-3 {
     from {
-        transform: translateX(-240px);
+        transform: translateX(-320px);
     }
     to {
-        transform: translateX(calc(100vw + 240px));
+        transform: translateX(calc(100vw + 320px));
     }
 }
 
-@keyframes drift-cloud-4 {
+/* Cloud right-to-left animations */
+@keyframes drift-right-1 {
     from {
-        transform: translateX(-210px);
+        transform: translateX(calc(100vw + 320px));
     }
     to {
-        transform: translateX(calc(100vw + 210px));
+        transform: translateX(-320px);
+    }
+}
+
+@keyframes drift-right-2 {
+    from {
+        transform: translateX(calc(100vw + 320px));
+    }
+    to {
+        transform: translateX(-320px);
     }
 }
 
