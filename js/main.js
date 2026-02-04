@@ -64,14 +64,15 @@ function initLighthouseIllumination() {
     function updateBeamPosition() {
         rotation = (rotation + rotationSpeed * 16.67) % 360; // 16.67ms = ~60fps
 
-        // Lighthouse is centered below the text, beam rotates in 3D
-        // The beam illuminates text when pointing upward (around 60-120 degrees)
-        // 90 degrees = straight up (perfect alignment with text)
+        // Lighthouse is centered below the text, beam rotates horizontally clockwise
+        // The beam illuminates text when pointing straight up
+        // 90 degrees = beam pointing up (12 o'clock position)
+        // Illumination window: roughly 70-110 degrees
 
-        const titleIlluminationStart = 60;
-        const titleIlluminationEnd = 120;
-        const subtitleIlluminationStart = 65;
-        const subtitleIlluminationEnd = 115;
+        const titleIlluminationStart = 70;
+        const titleIlluminationEnd = 110;
+        const subtitleIlluminationStart = 75;
+        const subtitleIlluminationEnd = 105;
 
         // Check if title should be illuminated
         if (rotation >= titleIlluminationStart && rotation <= titleIlluminationEnd) {
