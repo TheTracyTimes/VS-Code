@@ -755,7 +755,8 @@
     /* Fix button containers to prevent overflow */
     .container-narrow,
     .hero-buttons,
-    .cta-buttons {
+    .cta-buttons,
+    .featured-meeting .container {
         width: 100%;
         max-width: 100%;
         padding-left: var(--spacing-md);
@@ -820,6 +821,8 @@
         flex-direction: column;
         text-align: center;
         padding: var(--spacing-xl);
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .meeting-banner h2 {
@@ -835,8 +838,13 @@
         margin-top: var(--spacing-lg);
     }
 
+    .meeting-banner-graphic img {
+        max-width: 150px;
+    }
+
     .meeting-actions {
         flex-direction: column;
+        width: 100%;
     }
 
     .times-grid {
@@ -859,13 +867,19 @@
         box-sizing: border-box;
     }
 
-    /* Hide 2026 meeting banner in mobile to prevent overflow */
-    .featured-meeting {
+    .brand-text {
         display: none;
     }
 
-    .brand-text {
-        display: none;
+    /* Fix navigation menu overflow */
+    #mainNav {
+        width: 100%;
+        overflow-x: hidden;
+    }
+
+    .nav-wrapper {
+        width: 100%;
+        overflow-x: hidden;
     }
 
     .footer-grid {
