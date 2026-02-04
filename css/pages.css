@@ -139,29 +139,272 @@
     }
 }
 
-.lighthouse-container {
+/* Clouds animation */
+.clouds-container {
     position: absolute;
-    bottom: 10%;
-    right: 10%;
-    font-size: 120px;
-    opacity: 0.15;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
 }
 
+.cloud {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 100px;
+    box-shadow: 0 0 40px rgba(255, 255, 255, 0.05);
+}
+
+.cloud::before,
+.cloud::after {
+    content: '';
+    position: absolute;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 100px;
+}
+
+.cloud-1 {
+    width: 120px;
+    height: 40px;
+    top: 15%;
+    animation: drift-cloud-1 45s linear infinite;
+}
+
+.cloud-1::before {
+    width: 60px;
+    height: 60px;
+    top: -30px;
+    left: 20px;
+}
+
+.cloud-1::after {
+    width: 80px;
+    height: 50px;
+    top: -25px;
+    right: 15px;
+}
+
+.cloud-2 {
+    width: 100px;
+    height: 35px;
+    top: 25%;
+    animation: drift-cloud-2 55s linear infinite;
+}
+
+.cloud-2::before {
+    width: 50px;
+    height: 50px;
+    top: -25px;
+    left: 15px;
+}
+
+.cloud-2::after {
+    width: 70px;
+    height: 45px;
+    top: -20px;
+    right: 10px;
+}
+
+.cloud-3 {
+    width: 140px;
+    height: 45px;
+    top: 40%;
+    animation: drift-cloud-3 65s linear infinite;
+}
+
+.cloud-3::before {
+    width: 70px;
+    height: 70px;
+    top: -35px;
+    left: 25px;
+}
+
+.cloud-3::after {
+    width: 90px;
+    height: 55px;
+    top: -30px;
+    right: 20px;
+}
+
+.cloud-4 {
+    width: 110px;
+    height: 38px;
+    top: 60%;
+    animation: drift-cloud-4 50s linear infinite;
+}
+
+.cloud-4::before {
+    width: 55px;
+    height: 55px;
+    top: -28px;
+    left: 18px;
+}
+
+.cloud-4::after {
+    width: 75px;
+    height: 48px;
+    top: -23px;
+    right: 12px;
+}
+
+@keyframes drift-cloud-1 {
+    from {
+        transform: translateX(-150px);
+    }
+    to {
+        transform: translateX(calc(100vw + 150px));
+    }
+}
+
+@keyframes drift-cloud-2 {
+    from {
+        transform: translateX(-150px);
+    }
+    to {
+        transform: translateX(calc(100vw + 150px));
+    }
+}
+
+@keyframes drift-cloud-3 {
+    from {
+        transform: translateX(-180px);
+    }
+    to {
+        transform: translateX(calc(100vw + 180px));
+    }
+}
+
+@keyframes drift-cloud-4 {
+    from {
+        transform: translateX(-130px);
+    }
+    to {
+        transform: translateX(calc(100vw + 130px));
+    }
+}
+
+/* Lighthouse container */
+.lighthouse-container {
+    position: absolute;
+    bottom: 5%;
+    right: 8%;
+    width: 200px;
+    height: 300px;
+    z-index: 5;
+}
+
+.lighthouse-image {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 180px;
+    height: auto;
+    opacity: 0.25;
+    filter: brightness(1.2);
+}
+
+/* Lighthouse beam - the main rotating light */
 .lighthouse-beam {
     position: absolute;
-    top: -50px;
+    top: 50px;
     left: 50%;
-    width: 200px;
-    height: 200px;
-    background: radial-gradient(ellipse, rgba(255,255,255,0.3) 0%, transparent 70%);
+    width: 600px;
+    height: 80px;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        transparent 20%,
+        rgba(255, 253, 208, 0.5) 45%,
+        rgba(255, 253, 208, 0.8) 50%,
+        rgba(255, 253, 208, 0.5) 55%,
+        transparent 80%,
+        transparent 100%
+    );
     transform: translateX(-50%) rotate(0deg);
-    transform-origin: 50% 150px;
-    animation: rotate-beam 8s linear infinite;
+    transform-origin: 50% 50%;
+    animation: rotate-beam 12s linear infinite;
+    pointer-events: none;
+    z-index: 3;
+    filter: blur(3px);
+}
+
+/* Additional glow layer for the beam */
+.lighthouse-beam-glow {
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    width: 700px;
+    height: 120px;
+    background: radial-gradient(
+        ellipse,
+        rgba(255, 253, 208, 0.3) 0%,
+        rgba(255, 253, 208, 0.15) 30%,
+        transparent 70%
+    );
+    transform: translateX(-50%) rotate(0deg);
+    transform-origin: 50% 50%;
+    animation: rotate-beam 12s linear infinite;
+    pointer-events: none;
+    z-index: 2;
+    filter: blur(20px);
 }
 
 @keyframes rotate-beam {
-    to {
+    0% {
+        transform: translateX(-50%) rotate(0deg);
+        opacity: 0.6;
+    }
+    25% {
+        opacity: 0.9;
+    }
+    50% {
+        transform: translateX(-50%) rotate(180deg);
+        opacity: 0.6;
+    }
+    75% {
+        opacity: 0.9;
+    }
+    100% {
         transform: translateX(-50%) rotate(360deg);
+        opacity: 0.6;
+    }
+}
+
+/* Text illumination effect */
+.hero-title,
+.hero-subtitle {
+    transition: text-shadow 0.3s ease, color 0.3s ease;
+}
+
+.hero-title.illuminated {
+    color: #fffdf0;
+    text-shadow:
+        0 0 20px rgba(255, 253, 208, 0.8),
+        0 0 40px rgba(255, 253, 208, 0.5),
+        0 0 60px rgba(255, 253, 208, 0.3),
+        2px 2px 4px rgba(0, 0, 0, 0.5);
+    animation: text-glow 0.5s ease-in-out;
+}
+
+.hero-subtitle.illuminated {
+    color: #fffdf0;
+    text-shadow:
+        0 0 15px rgba(255, 253, 208, 0.7),
+        0 0 30px rgba(255, 253, 208, 0.4),
+        0 0 45px rgba(255, 253, 208, 0.2),
+        2px 2px 4px rgba(0, 0, 0, 0.5);
+    animation: text-glow 0.5s ease-in-out;
+}
+
+@keyframes text-glow {
+    0%, 100% {
+        filter: brightness(1);
+    }
+    50% {
+        filter: brightness(1.3);
     }
 }
 

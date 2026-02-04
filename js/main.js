@@ -51,6 +51,59 @@ function createRain() {
     }
 }
 
+// ===== LIGHTHOUSE BEAM ILLUMINATION =====
+function initLighthouseIllumination() {
+    const heroTitle = document.getElementById('heroTitle');
+    const heroSubtitle = document.getElementById('heroSubtitle');
+
+    if (!heroTitle || !heroSubtitle) return;
+
+    let rotation = 0;
+    const rotationSpeed = 360 / 12000; // 12 seconds per full rotation (matching CSS animation)
+
+    function updateBeamPosition() {
+        rotation = (rotation + rotationSpeed * 16.67) % 360; // 16.67ms = ~60fps
+
+        // The beam illuminates text when it's pointing towards the center of the screen
+        // Lighthouse is at bottom-right, so beam pointing left-up illuminates the text
+        // This happens roughly at these rotation angles:
+        // - Around 200-260 degrees for the title
+        // - Around 200-260 degrees for the subtitle (they're close together)
+
+        const titleIlluminationStart = 200;
+        const titleIlluminationEnd = 260;
+        const subtitleIlluminationStart = 205;
+        const subtitleIlluminationEnd = 255;
+
+        // Check if title should be illuminated
+        if (rotation >= titleIlluminationStart && rotation <= titleIlluminationEnd) {
+            if (!heroTitle.classList.contains('illuminated')) {
+                heroTitle.classList.add('illuminated');
+            }
+        } else {
+            if (heroTitle.classList.contains('illuminated')) {
+                heroTitle.classList.remove('illuminated');
+            }
+        }
+
+        // Check if subtitle should be illuminated
+        if (rotation >= subtitleIlluminationStart && rotation <= subtitleIlluminationEnd) {
+            if (!heroSubtitle.classList.contains('illuminated')) {
+                heroSubtitle.classList.add('illuminated');
+            }
+        } else {
+            if (heroSubtitle.classList.contains('illuminated')) {
+                heroSubtitle.classList.remove('illuminated');
+            }
+        }
+
+        requestAnimationFrame(updateBeamPosition);
+    }
+
+    // Start the animation loop
+    updateBeamPosition();
+}
+
 // ===== SMOOTH SCROLL =====
 document.addEventListener('DOMContentLoaded', function() {
     // Smooth scroll for anchor links
@@ -68,8 +121,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Initialize rain animation if on homepage
+    // Initialize rain animation and lighthouse illumination if on homepage
     createRain();
+    initLighthouseIllumination();
 });
 
 // ===== STICKY NAVIGATION =====
