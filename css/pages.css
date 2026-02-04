@@ -752,6 +752,17 @@
 
 /* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 768px) {
+    /* Fix button containers to prevent overflow */
+    .container-narrow,
+    .hero-buttons,
+    .cta-buttons {
+        width: 100%;
+        max-width: 100%;
+        padding-left: var(--spacing-md);
+        padding-right: var(--spacing-md);
+        box-sizing: border-box;
+    }
+
     .nav-menu {
         position: fixed;
         left: -100%;
@@ -794,6 +805,17 @@
         letter-spacing: 2px;
     }
 
+    .hero-buttons {
+        flex-direction: column;
+        gap: var(--spacing-md);
+    }
+
+    .hero-buttons .btn {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
     .meeting-banner {
         flex-direction: column;
         text-align: center;
@@ -827,10 +849,19 @@
 
     .cta-buttons {
         flex-direction: column;
+        width: 100%;
+        padding: 0;
     }
 
     .btn-large {
         width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Hide 2026 meeting banner in mobile to prevent overflow */
+    .featured-meeting {
+        display: none;
     }
 
     .brand-text {
