@@ -13,6 +13,29 @@
             color: var(--off-white);
             padding: var(--spacing-xxl) 0;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .meeting-hero::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 400px;
+            background-image: url('images/logos/dark-logo.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .meeting-hero .container {
+            position: relative;
+            z-index: 1;
         }
 
         .meeting-hero h1 {
@@ -198,7 +221,8 @@
         .schedule-time {
             font-weight: 700;
             color: var(--burnt-orange);
-            min-width: 100px;
+            width: 200px;
+            flex-shrink: 0;
         }
 
         .schedule-event {

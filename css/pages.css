@@ -261,7 +261,7 @@
 /* Cone-shaped lighthouse beam - rotating clockwise on horizontal plane from lantern room */
 .lighthouse-beam-3d {
     position: absolute;
-    top: calc(50% - 180px);  /* Position at lantern room (top section of lighthouse) */
+    top: calc(50% - 240px);  /* Position at lantern room (very top of lighthouse) */
     left: 50%;
     width: 1400px;
     height: 300px;
@@ -770,15 +770,22 @@
         top: 70px;
         flex-direction: column;
         background-color: var(--navy-blue);
-        width: 100%;
-        padding: var(--spacing-lg);
+        width: 70%;
+        max-width: 280px;
+        padding: var(--spacing-md);
         box-shadow: var(--shadow-lg);
         transition: left var(--transition-normal);
-        gap: var(--spacing-md);
+        gap: var(--spacing-sm);
+        box-sizing: border-box;
     }
 
     .nav-menu.active {
         left: 0;
+    }
+
+    .nav-menu a {
+        font-size: 15px;
+        padding: var(--spacing-sm);
     }
 
     .nav-toggle {
