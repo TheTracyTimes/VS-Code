@@ -224,39 +224,40 @@
     }
 }
 
-/* Lighthouse container - centered, BEHIND text */
+/* Lighthouse container - centered both horizontally and vertically, BEHIND text */
 .lighthouse-container {
     position: absolute;
-    bottom: 8%;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
-    width: 500px;
-    height: 600px;
+    transform: translate(-50%, -50%);
+    width: 700px;
+    height: 700px;
     z-index: 3;
 }
 
 .lighthouse-image {
     position: absolute;
-    bottom: 0;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
-    width: 350px;
+    transform: translate(-50%, -50%);
+    width: 500px;
     height: auto;
     opacity: 0.45;
     filter: brightness(1.6) contrast(1.3);
 }
 
-/* Horizontal lighthouse beam - rotating clockwise from lantern room */
+/* Cone-shaped lighthouse beam - rotating clockwise on horizontal plane from lantern room */
 .lighthouse-beam-3d {
     position: absolute;
-    top: 60px;
+    top: 50%;
     left: 50%;
     width: 1400px;
-    height: 160px;
+    height: 300px;
     transform-origin: 0 50%;
     animation: rotate-beam-horizontal 12s linear infinite;
     pointer-events: none;
     z-index: 4;
+    clip-path: polygon(0% 45%, 0% 55%, 100% 100%, 100% 0%);
 }
 
 .lighthouse-beam-3d::before {
@@ -268,36 +269,36 @@
     height: 100%;
     background: linear-gradient(
         90deg,
-        rgba(255, 253, 208, 0.8) 0%,
-        rgba(255, 253, 208, 0.6) 5%,
-        rgba(255, 253, 208, 0.4) 10%,
-        rgba(255, 253, 208, 0.5) 25%,
-        rgba(255, 253, 208, 0.7) 40%,
-        rgba(255, 253, 208, 0.8) 50%,
-        rgba(255, 253, 208, 0.5) 60%,
-        rgba(255, 253, 208, 0.2) 75%,
-        rgba(255, 253, 208, 0.1) 85%,
+        rgba(255, 253, 208, 0.85) 0%,
+        rgba(255, 253, 208, 0.7) 3%,
+        rgba(255, 253, 208, 0.5) 8%,
+        rgba(255, 253, 208, 0.6) 20%,
+        rgba(255, 253, 208, 0.75) 35%,
+        rgba(255, 253, 208, 0.85) 50%,
+        rgba(255, 253, 208, 0.6) 65%,
+        rgba(255, 253, 208, 0.3) 80%,
+        rgba(255, 253, 208, 0.15) 90%,
         transparent 100%
     );
-    filter: blur(10px);
+    filter: blur(8px);
 }
 
 .lighthouse-beam-3d::after {
     content: '';
     position: absolute;
-    top: -40px;
+    top: -75px;
     left: 0;
     width: 100%;
-    height: 220px;
+    height: 450px;
     background: radial-gradient(
         ellipse at left center,
-        rgba(255, 253, 208, 0.4) 0%,
-        rgba(255, 253, 208, 0.25) 20%,
-        rgba(255, 253, 208, 0.12) 40%,
-        rgba(255, 253, 208, 0.05) 60%,
-        transparent 80%
+        rgba(255, 253, 208, 0.45) 0%,
+        rgba(255, 253, 208, 0.3) 15%,
+        rgba(255, 253, 208, 0.18) 35%,
+        rgba(255, 253, 208, 0.08) 55%,
+        transparent 75%
     );
-    filter: blur(35px);
+    filter: blur(40px);
 }
 
 /* Simple horizontal rotation - clockwise from lighthouse center */
@@ -639,6 +640,19 @@
     justify-content: center;
     margin-top: var(--spacing-xl);
     flex-wrap: wrap;
+}
+
+/* Make btn-outline buttons visible on dark backgrounds */
+.cta-section .btn-outline,
+.hero .btn-outline {
+    border-color: white !important;
+    color: white !important;
+}
+
+.cta-section .btn-outline:hover,
+.hero .btn-outline:hover {
+    background-color: white;
+    color: var(--navy-blue) !important;
 }
 
 .btn-large {
