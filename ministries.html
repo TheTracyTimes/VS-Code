@@ -288,7 +288,7 @@
                         </div>
                         <button class="gallery-nav prev" onclick="changeSlide('prayer-gallery', -1)">‹</button>
                         <button class="gallery-nav next" onclick="changeSlide('prayer-gallery', 1)">›</button>
-                        <div class="gallery-counter" id="prayer-counter">1 / 30</div>
+                        <div class="gallery-counter" id="prayer-counter">1 / 29</div>
                     </div>
                 </div>
             </div>
@@ -401,7 +401,7 @@
             },
             'prayer-gallery': {
                 currentSlide: 0,
-                totalSlides: 30,
+                totalSlides: 29,
                 photos: []
             },
             'youth-gallery': {
@@ -481,7 +481,7 @@
         window.addEventListener('DOMContentLoaded', function() {
             // Try to load photos for each gallery
             loadGalleryPhotos('music-gallery', 'music', 22);
-            loadGalleryPhotos('prayer-gallery', 'prayer', 30);
+            loadGalleryPhotos('prayer-gallery', 'prayer', 29);
             loadGalleryPhotos('youth-gallery', 'youth', 7);
         });
     </script>
