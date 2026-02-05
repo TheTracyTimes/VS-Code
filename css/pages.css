@@ -261,7 +261,7 @@
 /* Cone-shaped lighthouse beam - rotating clockwise on horizontal plane from lantern room */
 .lighthouse-beam-3d {
     position: absolute;
-    top: calc(50% - 308px);  /* Position at lantern room (glass-enclosed room at very top) */
+    top: calc(50% - 340px);  /* Position at lantern room (glass-enclosed room at very top) */
     left: calc(50% + 10px);  /* Centered on lantern room */
     width: 1400px;
     height: 300px;
