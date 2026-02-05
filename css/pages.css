@@ -270,7 +270,7 @@
     animation: rotate-beam-horizontal 12s linear infinite;
     pointer-events: none;
     z-index: 4;
-    clip-path: polygon(0% 45%, 0% 55%, 100% 100%, 100% 0%);  /* Cone shape */
+    clip-path: polygon(0% 50%, 100% 0%, 100% 100%);  /* Sharp pointed cone/triangle shape */
 }
 
 .lighthouse-beam-3d::before {
