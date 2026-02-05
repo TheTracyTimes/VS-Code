@@ -452,26 +452,42 @@
         async function loadGalleryPhotos(galleryId, ministryName, photoCount) {
             const gallery = galleries[galleryId];
             const container = document.getElementById(galleryId);
+            let loadedCount = 0;
 
-            // Try to load photos
+            // Clear placeholder first
+            container.innerHTML = '';
+
+            // Pre-create all slides in numerical order
+            const slides = [];
+            for (let i = 1; i <= photoCount; i++) {
+                const slide = document.createElement('div');
+                slide.className = 'gallery-slide' + (i === 1 ? ' active' : '');
+                slide.setAttribute('data-photo-number', i);
+                container.appendChild(slide);
+                slides.push(slide);
+            }
+
+            // Load photos and populate slides in order
             for (let i = 1; i <= photoCount; i++) {
                 const imgPath = `images/ministries/${ministryName}/${i}.jpg`;
+                const slideIndex = i - 1;
 
                 // Check if image exists
                 const img = new Image();
                 img.onload = function() {
-                    if (gallery.photos.length === 0) {
-                        // Clear placeholder
-                        container.innerHTML = '';
+                    // Insert image into the correct slide
+                    slides[slideIndex].innerHTML = `<img src="${imgPath}" alt="${ministryName} photo ${i}">`;
+                    gallery.photos[slideIndex] = imgPath;
+                    loadedCount++;
+
+                    // If no photos loaded, restore placeholder
+                    if (loadedCount === 0 && i === photoCount) {
+                        container.innerHTML = '<div class="gallery-slide active"><div class="gallery-placeholder">📷</div></div>';
                     }
-
-                    // Add new slide
-                    const slide = document.createElement('div');
-                    slide.className = 'gallery-slide' + (gallery.photos.length === 0 ? ' active' : '');
-                    slide.innerHTML = `<img src="${imgPath}" alt="${ministryName} photo ${i}">`;
-                    container.appendChild(slide);
-
-                    gallery.photos.push(imgPath);
+                };
+                img.onerror = function() {
+                    // Remove slide if image doesn't exist
+                    slides[slideIndex].remove();
                 };
                 img.src = imgPath;
             }
