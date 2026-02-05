@@ -55,6 +55,121 @@
         .meta-item strong {
             color: var(--navy-blue);
         }
+
+        .ministry-with-gallery {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-xl);
+            align-items: start;
+        }
+
+        .ministry-content {
+            flex: 1;
+        }
+
+        .ministry-gallery {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background: var(--off-white);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .gallery-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .gallery-slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .gallery-slide.active {
+            display: block;
+        }
+
+        .gallery-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .gallery-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--navy-blue), var(--dark-gray));
+            color: var(--off-white);
+            font-size: 64px;
+        }
+
+        .gallery-counter {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .gallery-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 16px;
+            cursor: pointer;
+            font-size: 24px;
+            transition: background var(--transition-normal);
+            z-index: 10;
+        }
+
+        .gallery-nav:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .gallery-nav.prev {
+            left: 0;
+        }
+
+        .gallery-nav.next {
+            right: 0;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 968px) {
+            .ministry-with-gallery {
+                grid-template-columns: 1fr;
+            }
+
+            .ministry-gallery {
+                height: 300px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -103,59 +218,105 @@
 
             <!-- Bible Study -->
             <div class="ministry-detail">
-                <h3>Bible Study</h3>
-                <p>Sarasota Gospel offers weekly Bible studies to increase your understanding of scripture. Classes are divided by age and level understanding to ensure every saint is sufficiently exposed to the gospel and equipped in the word. Join us every Saturday night for bible study, where we dive into scripture and bible stories, and learn insights on how to apply them to our daily lives.</p>
-                <div class="ministry-meta">
-                    <div class="meta-item">
-                        <strong>Meeting Times:</strong> Saturday, 9:00 PM
-                    </div>
-                    <div class="meta-item">
-                        <strong>Location:</strong> <a href="https://us02web.zoom.us/j/9222352941" target="_blank">Zoom</a>
+                <div class="ministry-with-gallery" style="grid-template-columns: 1fr;">
+                    <div class="ministry-content">
+                        <h3>Bible Study</h3>
+                        <p>Sarasota Gospel offers weekly Bible studies to increase your understanding of scripture. Classes are divided by age and level understanding to ensure every saint is sufficiently exposed to the gospel and equipped in the word. Join us every Saturday night for bible study, where we dive into scripture and bible stories, and learn insights on how to apply them to our daily lives.</p>
+                        <div class="ministry-meta">
+                            <div class="meta-item">
+                                <strong>Meeting Times:</strong> Saturday, 9:00 PM
+                            </div>
+                            <div class="meta-item">
+                                <strong>Location:</strong> <a href="https://us02web.zoom.us/j/9222352941" target="_blank">Zoom</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Music Ministry -->
             <div class="ministry-detail">
-                <h3>Music Ministry</h3>
-                <p>Throughout scripture, music is mentioned as an essential part of worship and praise to God. The value and importance that God places on musical expression are clearly evidenced both in the Old and New Testaments. Here at SGT, we strongly support music's use in worship and believe it is a spiritual tool to connect with, and honor God. Our ensemble band and accompanying singers lead each of our services into praise and adoration. Additionally, we offer music classes for all levels and ages to those feeling called to music ministry. During the summer months, special music camps and intensives are also offered.</p>
-                <div class="ministry-meta">
-                    <div class="meta-item">
-                        <strong>Practice:</strong> After Sunday Service until 5 PM
+                <div class="ministry-with-gallery">
+                    <div class="ministry-content">
+                        <h3>Music Ministry</h3>
+                        <p>Throughout scripture, music is mentioned as an essential part of worship and praise to God. The value and importance that God places on musical expression are clearly evidenced both in the Old and New Testaments. Here at SGT, we strongly support music's use in worship and believe it is a spiritual tool to connect with, and honor God. Our ensemble band and accompanying singers lead each of our services into praise and adoration. Additionally, we offer music classes for all levels and ages to those feeling called to music ministry. During the summer months, special music camps and intensives are also offered.</p>
+                        <div class="ministry-meta">
+                            <div class="meta-item">
+                                <strong>Practice:</strong> After Sunday Service until 5 PM
+                            </div>
+                            <div class="meta-item">
+                                <strong>Opportunities:</strong> Band, Choir, Event Performances
+                            </div>
+                        </div>
                     </div>
-                    <div class="meta-item">
-                        <strong>Opportunities:</strong> Band, Choir, Event Performances
+                    <div class="ministry-gallery">
+                        <div class="gallery-container" id="music-gallery">
+                            <div class="gallery-slide active">
+                                <div class="gallery-placeholder">🎵</div>
+                            </div>
+                        </div>
+                        <button class="gallery-nav prev" onclick="changeSlide('music-gallery', -1)">‹</button>
+                        <button class="gallery-nav next" onclick="changeSlide('music-gallery', 1)">›</button>
+                        <div class="gallery-counter" id="music-counter">1 / 22</div>
                     </div>
                 </div>
             </div>
 
             <!-- Prayer Ministry -->
             <div class="ministry-detail">
-                <h3>Prayer Ministry</h3>
-                <p>We are a church who believes in the power of prayer. In Ephesians 6, apostle Paul encourages us to pray with all supplication and in the spirit, and this is what we strive to do both individually as saints of God, and collectively as a people of God. Prayer is our means of communication with God and by which we are strengthened in him. We urge all saints to cultivate a strong prayer life. Prayer services are held weekly by region to encourage saints to come together in one mind to pray and seek the Lord.</p>
-                <div class="ministry-meta">
-                    <div class="meta-item">
-                        <strong>Meeting Times:</strong> Monday, Wednesday, and Thursday, 9:00 PM to 10:00 PM
+                <div class="ministry-with-gallery">
+                    <div class="ministry-content">
+                        <h3>Prayer Ministry</h3>
+                        <p>We are a church who believes in the power of prayer. In Ephesians 6, apostle Paul encourages us to pray with all supplication and in the spirit, and this is what we strive to do both individually as saints of God, and collectively as a people of God. Prayer is our means of communication with God and by which we are strengthened in him. We urge all saints to cultivate a strong prayer life. Prayer services are held weekly by region to encourage saints to come together in one mind to pray and seek the Lord.</p>
+                        <div class="ministry-meta">
+                            <div class="meta-item">
+                                <strong>Meeting Times:</strong> Monday, Wednesday, and Thursday, 9:00 PM to 10:00 PM
+                            </div>
+                            <div class="meta-item">
+                                <strong>Prayer Requests:</strong> <a href="https://forms.gle/KtYM9D1byjj63yeK8" target="_blank">Submit Anytime</a>
+                            </div>
+                            <div class="meta-item">
+                                <strong>Location:</strong> <a href="https://us02web.zoom.us/j/9222352941" target="_blank">Zoom</a>
+                            </div>
+                        </div>
                     </div>
-                    <div class="meta-item">
-                        <strong>Prayer Requests:</strong> <a href="https://forms.gle/KtYM9D1byjj63yeK8" target="_blank">Submit Anytime</a>
-                    </div>
-                    <div class="meta-item">
-                        <strong>Location:</strong> <a href="https://us02web.zoom.us/j/9222352941" target="_blank">Zoom</a>
+                    <div class="ministry-gallery">
+                        <div class="gallery-container" id="prayer-gallery">
+                            <div class="gallery-slide active">
+                                <div class="gallery-placeholder">🙏</div>
+                            </div>
+                        </div>
+                        <button class="gallery-nav prev" onclick="changeSlide('prayer-gallery', -1)">‹</button>
+                        <button class="gallery-nav next" onclick="changeSlide('prayer-gallery', 1)">›</button>
+                        <div class="gallery-counter" id="prayer-counter">1 / 30</div>
                     </div>
                 </div>
             </div>
 
             <!-- Youth Ministry -->
             <div class="ministry-detail">
-                <h3>Youth Ministry</h3>
-                <p>At Sarasota Gospel Temple, we recognize that the strength of our youth today is indicative of the success of the church of tomorrow. Therefore, at SGT we are committed to building young people that are spiritually-minded, biblically sound, and socially conscious in hopes that they will be strong Christian leaders each within their respective spheres. To support this mission, every last Sunday of the month is Youth Sunday. Alongside this, SGT provides many activities and outreach opportunities specifically tailored to the interests and concerns of our young people.</p>
-                <div class="ministry-meta">
-                    <div class="meta-item">
-                        <strong>Meeting Times:</strong> As Needed
+                <div class="ministry-with-gallery">
+                    <div class="ministry-content">
+                        <h3>Youth Ministry</h3>
+                        <p>At Sarasota Gospel Temple, we recognize that the strength of our youth today is indicative of the success of the church of tomorrow. Therefore, at SGT we are committed to building young people that are spiritually-minded, biblically sound, and socially conscious in hopes that they will be strong Christian leaders each within their respective spheres. To support this mission, every last Sunday of the month is Youth Sunday. Alongside this, SGT provides many activities and outreach opportunities specifically tailored to the interests and concerns of our young people.</p>
+                        <div class="ministry-meta">
+                            <div class="meta-item">
+                                <strong>Meeting Times:</strong> As Needed
+                            </div>
+                            <div class="meta-item">
+                                <strong>Ages:</strong> 14-39
+                            </div>
+                        </div>
                     </div>
-                    <div class="meta-item">
-                        <strong>Ages:</strong> 14-39
+                    <div class="ministry-gallery">
+                        <div class="gallery-container" id="youth-gallery">
+                            <div class="gallery-slide active">
+                                <div class="gallery-placeholder">👨‍👩‍👧‍👦</div>
+                            </div>
+                        </div>
+                        <button class="gallery-nav prev" onclick="changeSlide('youth-gallery', -1)">‹</button>
+                        <button class="gallery-nav next" onclick="changeSlide('youth-gallery', 1)">›</button>
+                        <div class="gallery-counter" id="youth-counter">1 / 7</div>
                     </div>
                 </div>
             </div>
@@ -197,6 +358,9 @@
                         <a href="https://www.youtube.com/@sarasotagospeltemple" target="_blank" aria-label="YouTube">
                             <img src="images/logos/youtube-logo.png" alt="YouTube" style="width: 24px; height: 24px;">
                         </a>
+                        <a href="https://theeagleandtheblackbird.pixieset.com/folder/qCk631Wge2Hn/" target="_blank" aria-label="Gallery">
+                            <img src="images/logos/gallery-logo.png" alt="Gallery" style="width: 24px; height: 24px;">
+                        </a>
                     </div>
                 </div>
 
@@ -227,5 +391,99 @@
 
     <!-- JavaScript -->
     <script src="js/main.js"></script>
+    <script>
+        // Gallery data - will be populated once photos are uploaded
+        const galleries = {
+            'music-gallery': {
+                currentSlide: 0,
+                totalSlides: 22,
+                photos: [] // Will contain photo paths once uploaded
+            },
+            'prayer-gallery': {
+                currentSlide: 0,
+                totalSlides: 30,
+                photos: []
+            },
+            'youth-gallery': {
+                currentSlide: 0,
+                totalSlides: 7,
+                photos: []
+            }
+        };
+
+        // Change slide function
+        function changeSlide(galleryId, direction) {
+            const gallery = galleries[galleryId];
+            const container = document.getElementById(galleryId);
+            const slides = container.querySelectorAll('.gallery-slide');
+            const counter = document.getElementById(galleryId.replace('-gallery', '-counter'));
+
+            // Hide current slide
+            slides[gallery.currentSlide].classList.remove('active');
+
+            // Calculate new slide index
+            gallery.currentSlide += direction;
+
+            // Wrap around if needed
+            if (gallery.currentSlide >= gallery.totalSlides) {
+                gallery.currentSlide = 0;
+            } else if (gallery.currentSlide < 0) {
+                gallery.currentSlide = gallery.totalSlides - 1;
+            }
+
+            // Show new slide
+            slides[gallery.currentSlide].classList.add('active');
+
+            // Update counter
+            counter.textContent = `${gallery.currentSlide + 1} / ${gallery.totalSlides}`;
+        }
+
+        // Auto-rotate galleries every 5 seconds
+        function autoRotateGalleries() {
+            Object.keys(galleries).forEach(galleryId => {
+                changeSlide(galleryId, 1);
+            });
+        }
+
+        // Start auto-rotation
+        setInterval(autoRotateGalleries, 5000);
+
+        // Load photos dynamically (once photos are uploaded)
+        async function loadGalleryPhotos(galleryId, ministryName, photoCount) {
+            const gallery = galleries[galleryId];
+            const container = document.getElementById(galleryId);
+
+            // Try to load photos
+            for (let i = 1; i <= photoCount; i++) {
+                const imgPath = `images/ministries/${ministryName}/${i}.jpg`;
+
+                // Check if image exists
+                const img = new Image();
+                img.onload = function() {
+                    if (gallery.photos.length === 0) {
+                        // Clear placeholder
+                        container.innerHTML = '';
+                    }
+
+                    // Add new slide
+                    const slide = document.createElement('div');
+                    slide.className = 'gallery-slide' + (gallery.photos.length === 0 ? ' active' : '');
+                    slide.innerHTML = `<img src="${imgPath}" alt="${ministryName} photo ${i}">`;
+                    container.appendChild(slide);
+
+                    gallery.photos.push(imgPath);
+                };
+                img.src = imgPath;
+            }
+        }
+
+        // Initialize galleries when page loads
+        window.addEventListener('DOMContentLoaded', function() {
+            // Try to load photos for each gallery
+            loadGalleryPhotos('music-gallery', 'music', 22);
+            loadGalleryPhotos('prayer-gallery', 'prayer', 30);
+            loadGalleryPhotos('youth-gallery', 'youth', 7);
+        });
+    </script>
 </body>
 </html>
