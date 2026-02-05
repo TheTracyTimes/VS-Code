@@ -7,8 +7,8 @@ This guide will walk you through deploying your complete custom website with for
 Before deploying, you'll need:
 - A Firebase account (free tier is sufficient)
 - An EmailJS account (free tier allows 200 emails/month)
-- A Netlify account (free tier is perfect for static sites)
-- Google Maps API key (for the map on contact page)
+- A Wix account with your domain connected
+- Google Maps API key (for the map on contact page - already configured)
 
 ---
 
@@ -241,42 +241,139 @@ Open `contact.html` and find the Google Maps iframe:
 
 ---
 
-## 🚀 Step 4: Deploy to Netlify
+## 🚀 Step 4: Deploy to Wix
 
-### 4.1 Prepare for Deployment
+Since your domain is already on Wix, you have two deployment options:
 
-1. Ensure all files are committed and pushed to GitHub
-2. Your repository should include:
-   - All HTML pages
-   - `/css` folder with design-system.css and pages.css
-   - `/js` folder with all JavaScript files
-   - `/forms` folder with all three forms
-   - `/config` folder with firebase-config.js
-   - `/admin` folder with dashboard.html
+### Option A: Wix Custom Code (Recommended for Full Control)
 
-### 4.2 Deploy to Netlify
+#### 4.1 Prepare Your Files
 
-1. Go to [Netlify](https://www.netlify.com/)
-2. Sign up or log in
-3. Click **"Add new site"** → **"Import an existing project"**
-4. Connect your GitHub account
-5. Select your repository: `VS-Code` (or your repository name)
-6. Configure build settings:
-   - **Branch to deploy:** `claude/analyze-photos-design-CqXcK` (or your main branch)
+1. **Download all website files** from your repository:
+   - All HTML pages (index.html, about.html, etc.)
+   - `/css` folder (design-system.css, pages.css)
+   - `/js` folder (all JavaScript files)
+   - `/forms` folder (all three forms)
+   - `/config` folder (firebase-config.js)
+   - `/admin` folder (dashboard.html)
+   - `/images` folder (all logos and photos)
+
+2. **Create a ZIP file** of all folders and files
+
+#### 4.2 Set Up Wix Custom Code
+
+1. Log in to your **Wix Dashboard**
+2. Go to **Settings** → **Custom Code**
+3. Click **"+ Add Custom Code"**
+
+**IMPORTANT:** Wix doesn't support uploading complete HTML sites directly. You have two better options:
+
+### Option B: Deploy to Netlify and Point Your Domain (RECOMMENDED)
+
+This gives you full control and is easier to manage:
+
+#### 4.1 Deploy to Netlify
+
+1. Go to [Netlify](https://www.netlify.com/) and create a free account
+2. Click **"Add new site"** → **"Import an existing project"**
+3. Connect your GitHub account
+4. Select your repository: `VS-Code`
+5. Configure build settings:
+   - **Branch to deploy:** `claude/analyze-photos-design-CqXcK` (or main)
    - **Build command:** (leave empty - this is a static site)
-   - **Publish directory:** (leave empty or use `/`)
-7. Click **"Deploy site"**
+   - **Publish directory:** `/` (root)
+6. Click **"Deploy site"**
+7. Wait 2-3 minutes for deployment to complete
 
-### 4.3 Configure Custom Domain (Optional)
+Netlify will give you a URL like: `https://your-site-name.netlify.app`
+
+#### 4.2 Point Your Wix Domain to Netlify
 
 1. In Netlify, go to **"Domain settings"**
 2. Click **"Add custom domain"**
-3. Enter your domain: `sarasotagospeltemple.com` (if you own it)
-4. Follow DNS configuration instructions
-5. Enable HTTPS (automatic with Netlify)
+3. Enter your domain (e.g., `sarasotagospeltemple.com`)
+4. Netlify will provide DNS records to add
 
-If you don't have a custom domain, Netlify provides a free subdomain like:
-`sarasota-gospel-temple.netlify.app`
+5. In your **Wix Dashboard**:
+   - Go to **Domains** → **Your Domain**
+   - Click **"Manage DNS Records"**
+   - Click **"+ Add Record"**
+
+6. Add these DNS records from Netlify:
+   - **A Record:** Name: `@`, Value: Netlify IP address
+   - **CNAME Record:** Name: `www`, Value: `your-site.netlify.app`
+
+7. Back in Netlify, click **"Verify DNS configuration"**
+8. Wait 24-48 hours for DNS propagation
+9. Netlify will automatically enable HTTPS
+
+### Option C: Host on External Server and Redirect from Wix
+
+If you want to use another hosting provider:
+
+#### 4.1 Alternative Hosting Options
+
+**GitHub Pages (Free):**
+1. Push your code to GitHub
+2. Go to repository **Settings** → **Pages**
+3. Select branch and `/root` folder
+4. Click **"Save"**
+5. Your site will be at `username.github.io/repository-name`
+
+**Vercel (Free, Fast):**
+1. Go to [Vercel](https://vercel.com/)
+2. Import your GitHub repository
+3. Deploy with one click
+4. Connect your domain
+
+**Firebase Hosting (Free):**
+1. Install Firebase CLI: `npm install -g firebase-tools`
+2. Run `firebase init hosting`
+3. Select your Firebase project
+4. Set public directory to `/`
+5. Configure as single-page app: No
+6. Run `firebase deploy`
+
+#### 4.2 Redirect Wix Domain
+
+Once hosted elsewhere:
+
+1. In **Wix Dashboard** → **Domains**
+2. Click your domain name
+3. Click **"Redirect Domain"**
+4. Enter your new hosting URL
+5. Choose **301 Permanent Redirect**
+6. Save changes
+
+---
+
+## 🎯 Recommended Deployment Path
+
+**For your situation (domain on Wix, custom website):**
+
+1. ✅ **Deploy to Netlify** (Step 4, Option B)
+   - Free tier is perfect
+   - Automatic HTTPS
+   - Fast global CDN
+   - Easy updates via GitHub
+   - Professional and reliable
+
+2. ✅ **Point Wix domain to Netlify**
+   - Keep your domain registration on Wix
+   - Update DNS records to point to Netlify
+   - Visitors see your custom domain
+   - You get full control over your website
+
+3. ✅ **Alternative: Keep on GitHub Pages**
+   - Also free and reliable
+   - Slightly different DNS setup
+   - Works just as well
+
+**Why not use Wix directly?**
+- Wix is designed for their drag-and-drop builder
+- Your custom coded site won't work properly in Wix
+- Netlify/GitHub Pages are built for custom code
+- You still keep your domain name on Wix, just point it elsewhere
 
 ---
 
@@ -373,14 +470,20 @@ All form submissions automatically send:
 
 The admin dashboard is at `/admin/dashboard.html`. To add extra security:
 
-**Option 1: Netlify Password Protection** (Easiest)
+**Option 1: Netlify Password Protection** (Easiest - if using Netlify)
 1. In Netlify, go to **"Site settings"** → **"Access control"**
 2. Enable **"Password protection"**
 3. Set a password for `/admin/*` path
 
-**Option 2: Move Admin to Separate Subdomain**
+**Option 2: Vercel Password Protection** (if using Vercel)
+1. Create a `vercel.json` file with basic auth configuration
+2. Set environment variables for username/password
+
+**Option 3: Move Admin to Separate Subdomain**
 1. Deploy admin dashboard to `admin.sarasotagospeltemple.com`
 2. Apply password protection only to admin subdomain
+
+**Note:** Firebase Authentication already protects the dashboard - only logged-in admins can view data
 
 ### 6.2 Firebase Security
 
@@ -554,13 +657,14 @@ Before announcing the website publicly:
 - [ ] 2026 Meeting banner links to forms
 - [ ] Mobile responsive on multiple devices
 - [ ] All social media links verified
-- [ ] Google Map loading correctly
-- [ ] Custom domain configured (if applicable)
-- [ ] HTTPS enabled (automatic with Netlify)
+- [ ] Google Map loading correctly and fills frame properly
+- [ ] Custom domain configured (DNS records updated)
+- [ ] HTTPS enabled (automatic with most hosting providers)
 - [ ] Browser testing (Chrome, Safari, Firefox)
 - [ ] Test email confirmations received
 - [ ] Admin login credentials saved securely
 - [ ] Backup plan for form data established
+- [ ] DNS propagation complete (can take 24-48 hours)
 
 ---
 
@@ -574,9 +678,16 @@ Before announcing the website publicly:
 - [EmailJS Documentation](https://www.emailjs.com/docs/)
 - [Template Guide](https://www.emailjs.com/docs/user-guide/creating-email-template/)
 
-### Netlify
+### Hosting Platforms
 - [Netlify Documentation](https://docs.netlify.com/)
-- [Custom Domains](https://docs.netlify.com/domains-https/custom-domains/)
+- [Netlify Custom Domains](https://docs.netlify.com/domains-https/custom-domains/)
+- [GitHub Pages Guide](https://docs.github.com/en/pages)
+- [Vercel Documentation](https://vercel.com/docs)
+- [Firebase Hosting](https://firebase.google.com/docs/hosting)
+
+### Wix Domain Management
+- [Wix DNS Records](https://support.wix.com/en/article/managing-dns-records-in-your-wix-account)
+- [Wix Domain Redirect](https://support.wix.com/en/article/redirecting-your-domain)
 
 ### Additional Help
 - Email: sarasotagospel@gmail.com
@@ -584,7 +695,7 @@ Before announcing the website publicly:
 
 ---
 
-## 🎉 Congratulations!
+## 🎉 Your Deployment Roadmap
 
 Your complete custom website is ready for launch! You now have:
 
@@ -595,14 +706,199 @@ Your complete custom website is ready for launch! You now have:
 ✅ Email notifications
 ✅ Admin dashboard with export capability
 ✅ Brand-consistent styling throughout
+✅ Google Maps properly fitted in frame
 
-**Next Steps:**
-1. Complete Firebase and EmailJS setup (30 minutes)
-2. Deploy to Netlify (10 minutes)
-3. Test everything thoroughly (1 hour)
-4. Announce to your congregation!
+---
+
+## 📝 Step-by-Step Launch Plan for Wix Domain Owners
+
+### Phase 1: Configure Services (30-45 minutes)
+
+**Step 1: Firebase Setup**
+1. Create Firebase project at https://console.firebase.google.com/
+2. Enable Firestore Database (production mode)
+3. Add security rules from Section 1.3
+4. Enable Email/Password authentication
+5. Create admin user account
+6. Copy Firebase configuration values
+
+**Step 2: EmailJS Setup**
+1. Create account at https://www.emailjs.com/
+2. Connect your Gmail account
+3. Create three email templates:
+   - Registration confirmation
+   - Volunteer confirmation
+   - Vendor confirmation
+4. Save Service ID and Template IDs
+
+**Step 3: Update Configuration Files**
+1. Open `config/firebase-config.js`
+2. Replace Firebase values with your actual credentials
+3. Replace EmailJS values with your actual IDs
+4. Save the file
+5. Commit and push changes to GitHub
+
+---
+
+### Phase 2: Deploy Your Website (15-30 minutes)
+
+**Recommended: Netlify Deployment**
+
+1. **Sign up for Netlify**
+   - Go to https://www.netlify.com/
+   - Create free account with GitHub
+
+2. **Import Your Repository**
+   - Click "Add new site" → "Import an existing project"
+   - Connect GitHub
+   - Select your `VS-Code` repository
+   - Branch: `claude/analyze-photos-design-CqXcK` (or main)
+   - Build command: (leave empty)
+   - Publish directory: `/`
+   - Click "Deploy site"
+
+3. **Wait for Deployment**
+   - Takes 2-3 minutes
+   - Netlify gives you a URL like: `https://random-name-123.netlify.app`
+   - Test this URL to make sure everything works!
+
+---
+
+### Phase 3: Connect Your Wix Domain (24-48 hours)
+
+**Step 1: Add Custom Domain in Netlify**
+1. In Netlify, go to "Domain settings"
+2. Click "Add custom domain"
+3. Enter your domain: `yourdomain.com` (replace with your actual domain)
+4. Netlify will show you DNS records to add
+
+**Step 2: Update DNS in Wix**
+1. Log in to **Wix Dashboard**
+2. Go to **Domains** → Click your domain name
+3. Click **"Manage DNS Records"**
+4. Click **"+ Add Record"**
+
+5. **Add A Record** (for root domain):
+   - Type: `A`
+   - Name: `@`
+   - Value: `75.2.60.5` (Netlify's IP - verify current IP in Netlify)
+   - TTL: `3600` (1 hour)
+
+6. **Add CNAME Record** (for www):
+   - Type: `CNAME`
+   - Name: `www`
+   - Value: `your-site-name.netlify.app` (from Netlify)
+   - TTL: `3600`
+
+7. **Save changes**
+
+**Step 3: Verify in Netlify**
+1. Back in Netlify, click "Verify DNS configuration"
+2. Wait for verification (can take up to 48 hours)
+3. Once verified, Netlify enables automatic HTTPS
+
+**Important:** DNS changes take 24-48 hours to fully propagate worldwide. Your old Wix site will show until then.
+
+---
+
+### Phase 4: Testing (1 hour)
+
+Once DNS propagates and your domain shows the new site:
+
+**Test Forms:**
+- [ ] Submit registration form → Check Firestore + Email
+- [ ] Submit volunteer form → Check Firestore + Email
+- [ ] Submit vendor form → Check Firestore + Email
+- [ ] Test contact form
+
+**Test Admin Dashboard:**
+- [ ] Go to `yourdomain.com/admin/dashboard.html`
+- [ ] Log in with Firebase admin credentials
+- [ ] View submissions
+- [ ] Export to CSV and open in Excel
+
+**Test Navigation:**
+- [ ] Click through all 8 pages
+- [ ] Test mobile menu on phone
+- [ ] Verify 2026 Meeting banner links
+- [ ] Click all social media links
+- [ ] Test on iPhone, Android, tablet
+
+**Test Contact Page:**
+- [ ] Verify Google Map loads and fills frame properly
+- [ ] Click phone number on mobile
+- [ ] Test social links
+
+---
+
+### Phase 5: Go Live! 🎉
+
+1. **Announce to Congregation**
+   - Share website URL
+   - Promote 2026 Meeting registration
+   - Encourage volunteer signups
+
+2. **Monitor Submissions**
+   - Check admin dashboard daily
+   - Respond to form submissions
+   - Export data for planning
+
+3. **Future Updates**
+   - Push changes to GitHub
+   - Netlify auto-deploys in 2-3 minutes
+   - No manual upload needed!
+
+---
+
+## ⏱️ Total Time Estimate
+
+- Firebase Setup: 20 minutes
+- EmailJS Setup: 15 minutes
+- Config File Updates: 10 minutes
+- Netlify Deployment: 15 minutes
+- Wix DNS Update: 10 minutes
+- **Total Active Work: ~70 minutes**
+- DNS Propagation Wait: 24-48 hours (automatic)
+- Testing: 1 hour
+
+**You can complete all setup in one afternoon, then wait for DNS to propagate!**
+
+---
+
+## 🆘 Quick Troubleshooting
+
+**"My domain still shows old Wix site"**
+- DNS takes 24-48 hours to propagate
+- Check if you added both A and CNAME records correctly
+- Clear browser cache
+
+**"Forms don't submit"**
+- Check browser console (F12) for errors
+- Verify Firebase config values are correct
+- Check Firestore security rules
+
+**"No emails received"**
+- Check EmailJS dashboard for errors
+- Verify you're under 200 emails/month limit (free tier)
+- Check spam folder
+
+**"Can't log into admin dashboard"**
+- Verify email/password in Firebase Authentication
+- Clear browser cache/cookies
+- Try incognito mode
+
+---
+
+## 📞 Need Help?
+
+If you get stuck:
+1. Check the detailed sections above
+2. Review error messages in browser console (F12)
+3. Check Firebase Console for issues
+4. Email: sarasotagospel@gmail.com
 
 ---
 
 *This guide was created for Sarasota Gospel Temple - 2026 International Meeting Website*
-*Last updated: January 2026*
+*Last updated: February 2026*
+*Deployment Platform: Netlify (recommended) | Domain Management: Wix*
