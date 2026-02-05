@@ -261,11 +261,11 @@
 /* Cone-shaped lighthouse beam - rotating clockwise on horizontal plane from lantern room */
 .lighthouse-beam-3d {
     position: absolute;
-    top: calc(50% - 161px);  /* Position at lantern room at (610,250) in original 1080x1080 image */
+    top: calc(50% - 311px);  /* Position so beam tip (at 150px down) aligns with lantern room at (610,250) */
     left: calc(50% + 39px);  /* Centered on lantern room */
     width: 1400px;
     height: 300px;
-    transform-origin: 0 150px 0;  /* Rotate from lighthouse center in 3D (x, y, z) */
+    transform-origin: 0 150px 0;  /* Rotate from beam tip (triangle point) in 3D (x, y, z) */
     transform-style: preserve-3d;  /* Enable 3D rendering */
     animation: rotate-beam-horizontal 12s linear infinite;
     pointer-events: none;
