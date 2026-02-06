@@ -13,7 +13,7 @@ const GOOGLE_SHEETS_CONFIG = {
 
     // Your Google Cloud Project Client ID (for OAuth)
     // Get this from: https://console.cloud.google.com/apis/credentials
-    clientId: 'REDACTED_GOOGLE_CLIENT_ID'',
+    clientId: 'REDACTED_GOOGLE_CLIENT_ID',
 
     // Google Sheets IDs for each form type
     // After creating spreadsheets, paste their IDs here
