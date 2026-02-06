@@ -268,31 +268,9 @@ Please review and approve/deny this application in the admin dashboard.
         // Confirmation email to vendor
         const confirmTemplateParams = {
             to_email: data.email,
-            to_name: `${data.firstName} ${data.lastName}`,
-            subject: 'Vendor Application Received - 2026 International Meeting',
-            message: `
-Dear ${data.firstName} ${data.lastName},
-
-Thank you for your interest in being a vendor at the Sarasota Gospel Temple 2026 International Meeting!
-
-YOUR APPLICATION:
-Business: ${data.businessName}
-Selling: ${sellingText}
-Availability: ${data.availability.join(', ')}
-
-Your application is currently under review. You'll receive an email within 3-5 business days regarding your application status.
-
-If approved, we'll send you additional information including:
-- Booth setup details
-- Vendor guidelines
-- Payment information (if applicable)
-- Load-in times
-
-Questions? Call us at 941-800-5211
-
-Blessings,
-Sarasota Gospel Temple
-            `.trim()
+            businessName: data.businessName || '',
+            contactName: `${data.firstName} ${data.lastName}`,
+            sellingType: sellingText
         };
 
         // Send emails via EmailJS

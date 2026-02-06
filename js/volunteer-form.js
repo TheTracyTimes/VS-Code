@@ -285,24 +285,9 @@ Submitted: ${new Date().toLocaleString()}
         // Confirmation email to volunteer
         const confirmTemplateParams = {
             to_email: data.email,
-            to_name: `${data.firstName} ${data.lastName}`,
-            subject: 'Volunteer Application Received - 2026 International Meeting',
-            message: `
-Dear ${data.firstName} ${data.lastName},
-
-Thank you for volunteering for the Sarasota Gospel Temple 2026 International Meeting!
-
-YOUR VOLUNTEER INFORMATION:
-Committees: ${data.committees.join(', ')}
-Availability: ${data.availability.join(', ')}
-
-We'll contact you at ${data.phone} with more details about your volunteer assignment and any training or preparation needed.
-
-We appreciate your willingness to serve!
-
-Blessings,
-Sarasota Gospel Temple
-            `.trim()
+            firstName: data.firstName || '',
+            lastName: data.lastName || '',
+            committees: data.committees.join(', ')
         };
 
         // Send emails via EmailJS
