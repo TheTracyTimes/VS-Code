@@ -225,10 +225,21 @@ document.getElementById('volunteerForm').addEventListener('submit', async functi
 
     try {
         // Submit to Firebase
-        await submitVolunteer(formData);
+        const docId = await submitVolunteer(formData);
+
+        // Add document ID to form data for Google Sheets
+        formData.id = docId;
+        formData.createdAt = { toDate: () => new Date() };
 
         // Send email notifications
         await sendVolunteerEmails(formData);
+
+        // Sync to Google Sheets (non-blocking - won't prevent form submission)
+        if (window.GoogleSheetsService && window.GoogleSheetsService.isGoogleSheetsConfigured()) {
+            window.GoogleSheetsService.addRowToSheet('volunteers', formData).catch(err => {
+                console.warn('Google Sheets sync failed (form still submitted successfully):', err);
+            });
+        }
 
         // Show success message
         document.getElementById('volunteerForm').style.display = 'none';

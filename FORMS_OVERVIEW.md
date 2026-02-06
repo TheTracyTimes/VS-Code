@@ -37,6 +37,7 @@ You now have **THREE fully custom forms**, all matching your brand design perfec
 
 **After Submission**:
 - Data saved to Firebase → `registrations` collection
+- **Automatically synced to Google Sheets** (new row added)
 - Admin receives email notification
 - Registrant receives confirmation email (if email provided)
 
@@ -72,6 +73,7 @@ Matrix appears:
 
 **After Submission**:
 - Data saved to Firebase → `volunteers` collection
+- **Automatically synced to Google Sheets** (new row added)
 - Admin receives detailed email with committee assignments
 - Volunteer receives confirmation email
 
@@ -105,6 +107,7 @@ If selling = "Services" → Hide goods type question
 
 **After Submission**:
 - Data saved to Firebase → `vendors` collection
+- **Automatically synced to Google Sheets** (new row added)
 - Status: "pending" (requires admin approval)
 - Admin receives notification email
 - Vendor receives "under review" confirmation email
@@ -170,29 +173,44 @@ All three forms share:
 │  (Your Database)│
 └────────┬────────┘
          │
-         ├──────────────────┐
-         │                  │
-         ▼                  ▼
-┌──────────────┐   ┌──────────────┐
-│ ADMIN EMAIL  │   │ USER EMAIL   │
-│(Notification)│   │(Confirmation)│
-└──────────────┘   └──────────────┘
-         │                  │
-         ▼                  │
-┌─────────────────┐         │
-│ ADMIN DASHBOARD │         │
-│ - View data     │         │
-│ - Export Excel  │         │
-│ - Approve/Deny  │         │
-└─────────────────┘         │
-         │                  │
-         └──────────┬───────┘
-                    ▼
-            ┌─────────────┐
-            │  ANALYTICS  │
-            │ (Your Excel)│
-            └─────────────┘
+         ├──────────────────┬─────────────────┐
+         │                  │                 │
+         ▼                  ▼                 ▼
+┌──────────────┐   ┌──────────────┐  ┌──────────────┐
+│ ADMIN EMAIL  │   │ USER EMAIL   │  │GOOGLE SHEETS │
+│(Notification)│   │(Confirmation)│  │(Auto Sync)   │
+└──────────────┘   └──────────────┘  └──────────────┘
+         │                  │                 │
+         ▼                  │                 │
+┌─────────────────┐         │                 │
+│ ADMIN DASHBOARD │         │                 │
+│ - View data     │         │                 │
+│ - Export CSV    │         │                 │
+│ - Sync Sheets   │◄────────┴─────────────────┘
+│ - Approve/Deny  │  (Manual bulk sync)
+└─────────────────┘
+         │
+         ▼
+┌─────────────────┐
+│  DATA EXPORT    │
+│ - CSV Download  │
+│ - Google Sheets │
+│ - Analytics     │
+└─────────────────┘
 ```
+
+### Google Sheets Integration (NEW!)
+
+Your forms now automatically sync to Google Sheets, just like Google Forms:
+
+- **Automatic Sync**: Every form submission is automatically added as a new row
+- **Real-time Updates**: Data appears in Google Sheets within seconds
+- **Manual Bulk Sync**: Admin dashboard has "Sync to Google Sheets" buttons
+- **Three Separate Sheets**: One for registrations, volunteers, and vendors
+- **Easy Sharing**: Share sheets with your team for collaborative data analysis
+- **Export Options**: Download as Excel, CSV, or PDF from Google Sheets
+
+See `GOOGLE-SHEETS-SETUP.md` for complete setup instructions.
 
 ---
 

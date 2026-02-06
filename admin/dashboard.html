@@ -280,6 +280,11 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="../config/firebase-config.js"></script>
+
+    <!-- Google Sheets API -->
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://accounts.google.com/gsi/client"></script>
+    <script src="../config/google-sheets-config.js"></script>
 </head>
 <body>
 
@@ -355,6 +360,7 @@
                     </div>
                     <div class="action-buttons">
                         <button class="btn btn-secondary" onclick="exportData('registrations')">📥 Export to Excel</button>
+                        <button class="btn btn-primary" onclick="syncToGoogleSheets('registrations')">📊 Sync to Google Sheets</button>
                         <button class="btn btn-outline" onclick="refreshData('registrations')">🔄 Refresh</button>
                     </div>
                 </div>
@@ -400,6 +406,7 @@
                     </div>
                     <div class="action-buttons">
                         <button class="btn btn-secondary" onclick="exportData('volunteers')">📥 Export to Excel</button>
+                        <button class="btn btn-primary" onclick="syncToGoogleSheets('volunteers')">📊 Sync to Google Sheets</button>
                         <button class="btn btn-outline" onclick="refreshData('volunteers')">🔄 Refresh</button>
                     </div>
                 </div>
@@ -444,6 +451,7 @@
                     </div>
                     <div class="action-buttons">
                         <button class="btn btn-secondary" onclick="exportData('vendors')">📥 Export to Excel</button>
+                        <button class="btn btn-primary" onclick="syncToGoogleSheets('vendors')">📊 Sync to Google Sheets</button>
                         <button class="btn btn-outline" onclick="refreshData('vendors')">🔄 Refresh</button>
                     </div>
                 </div>

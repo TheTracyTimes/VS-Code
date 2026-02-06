@@ -314,10 +314,21 @@ document.getElementById('registrationForm').addEventListener('submit', async fun
 
     try {
         // Submit to Firebase
-        await submitRegistration(formData);
+        const docId = await submitRegistration(formData);
+
+        // Add document ID to form data for Google Sheets
+        formData.id = docId;
+        formData.createdAt = { toDate: () => new Date() };
 
         // Send email notification
         await sendEmailNotification(formData);
+
+        // Sync to Google Sheets (non-blocking - won't prevent form submission)
+        if (window.GoogleSheetsService && window.GoogleSheetsService.isGoogleSheetsConfigured()) {
+            window.GoogleSheetsService.addRowToSheet('registrations', formData).catch(err => {
+                console.warn('Google Sheets sync failed (form still submitted successfully):', err);
+            });
+        }
 
         // Show success message
         document.getElementById('registrationForm').style.display = 'none';

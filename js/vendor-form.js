@@ -201,10 +201,21 @@ document.getElementById('vendorForm').addEventListener('submit', async function(
 
     try {
         // Submit to Firebase
-        await submitVendor(formData);
+        const docId = await submitVendor(formData);
+
+        // Add document ID to form data for Google Sheets
+        formData.id = docId;
+        formData.createdAt = { toDate: () => new Date() };
 
         // Send email notifications
         await sendVendorEmails(formData);
+
+        // Sync to Google Sheets (non-blocking - won't prevent form submission)
+        if (window.GoogleSheetsService && window.GoogleSheetsService.isGoogleSheetsConfigured()) {
+            window.GoogleSheetsService.addRowToSheet('vendors', formData).catch(err => {
+                console.warn('Google Sheets sync failed (form still submitted successfully):', err);
+            });
+        }
 
         // Show success message
         document.getElementById('vendorForm').style.display = 'none';

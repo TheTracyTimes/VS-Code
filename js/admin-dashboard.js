@@ -447,6 +447,63 @@ function getDateString() {
     return `${year}-${month}-${day}`;
 }
 
+// ===== GOOGLE SHEETS SYNC =====
+
+async function syncToGoogleSheets(section) {
+    if (!window.GoogleSheetsService) {
+        alert('Google Sheets integration is not loaded. Please check your configuration.');
+        return;
+    }
+
+    if (!window.GoogleSheetsService.isGoogleSheetsConfigured()) {
+        alert('Google Sheets is not configured yet.\n\nPlease follow these steps:\n1. Set up Google Cloud Project\n2. Enable Google Sheets API\n3. Create API credentials\n4. Configure google-sheets-config.js\n\nSee GOOGLE-SHEETS-SETUP.md for detailed instructions.');
+        return;
+    }
+
+    // Request authentication if needed
+    if (!gapi.client.getToken()) {
+        try {
+            // Request auth first
+            await new Promise((resolve, reject) => {
+                window.GoogleSheetsService.requestGoogleSheetsAuth((response) => {
+                    if (response.error) {
+                        reject(response);
+                    } else {
+                        resolve(response);
+                    }
+                });
+            });
+        } catch (error) {
+            console.error('Authentication failed:', error);
+            alert('Google Sheets authentication failed. Please try again.');
+            return;
+        }
+    }
+
+    // Show loading state
+    const originalText = event.target.textContent;
+    event.target.disabled = true;
+    event.target.textContent = '⏳ Syncing...';
+
+    try {
+        // Sync all data for this section
+        const count = await window.GoogleSheetsService.syncAllDataToSheets(section);
+
+        alert(`✅ Successfully synced ${count} ${section} to Google Sheets!`);
+
+        event.target.textContent = '✓ Synced!';
+        setTimeout(() => {
+            event.target.textContent = originalText;
+            event.target.disabled = false;
+        }, 2000);
+    } catch (error) {
+        console.error('Sync error:', error);
+        alert(`Error syncing to Google Sheets: ${error.message || 'Unknown error'}\n\nPlease check:\n1. Spreadsheet ID is correct\n2. Spreadsheet sharing permissions\n3. API credentials are valid`);
+        event.target.textContent = originalText;
+        event.target.disabled = false;
+    }
+}
+
 // ===== INITIALIZE =====
 
 console.log('Admin dashboard initialized');
