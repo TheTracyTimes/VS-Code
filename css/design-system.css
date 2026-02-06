@@ -320,6 +320,10 @@ textarea.error {
 /* ===== HEADERS ===== */
 .page-header {
   background-color: var(--navy-blue);
+  background-image: url('../images/logos/dark-trans-logo.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
   color: var(--off-white);
   padding: var(--spacing-xxl) 0;
   text-align: center;
