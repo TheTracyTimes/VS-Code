@@ -9,19 +9,19 @@
 const GOOGLE_SHEETS_CONFIG = {
     // Your Google Cloud Project API Key (for client-side access)
     // Get this from: https://console.cloud.google.com/apis/credentials
-    apiKey: 'YOUR_GOOGLE_API_KEY',
+    apiKey: 'REDACTED_GOOGLE_SHEETS_API_KEY',
 
     // Your Google Cloud Project Client ID (for OAuth)
     // Get this from: https://console.cloud.google.com/apis/credentials
-    clientId: 'YOUR_CLIENT_ID.apps.googleusercontent.com',
+    clientId: 'REDACTED_GOOGLE_CLIENT_ID'',
 
     // Google Sheets IDs for each form type
     // After creating spreadsheets, paste their IDs here
     // The ID is the long string in the URL: docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/edit
     spreadsheetIds: {
-        registrations: 'YOUR_REGISTRATIONS_SPREADSHEET_ID',
-        volunteers: 'YOUR_VOLUNTEERS_SPREADSHEET_ID',
-        vendors: 'YOUR_VENDORS_SPREADSHEET_ID'
+        registrations: '1q7vxkgof14p6OpHehTySIU6c0qNpbencA6E09agYJTg',
+        volunteers: '1T45QcAsY7m5SO8gSQKTvHI_PFFa4qx1x6dwW3iwG0s0',
+        vendors: '1V6G2KN1vvTB5Ng249rg9K6ijbUT7tou_jaE9ygALxeM'
     },
 
     // Discovery docs and scopes for Google Sheets API
