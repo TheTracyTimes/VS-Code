@@ -135,19 +135,61 @@ function displayRegistrations(data) {
 
     data.forEach(reg => {
         const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${reg.firstName} ${reg.lastName}</td>
-            <td>${reg.phone}</td>
-            <td>${reg.email || '—'}</td>
-            <td>${reg.pastorName}</td>
-            <td>${Array.isArray(reg.services) ? reg.services.length : '—'} services</td>
-            <td>${reg.airportTransport}</td>
-            <td>${formatDate(reg.createdAt)}</td>
-            <td class="action-links">
-                <a onclick="viewDetails('registration', '${reg.id}')">View</a>
-                <a onclick="deleteRecord('registrations', '${reg.id}')">Delete</a>
-            </td>
-        `;
+
+        // Create cells safely using textContent
+        const nameCell = document.createElement('td');
+        nameCell.textContent = `${reg.firstName} ${reg.lastName}`;
+        row.appendChild(nameCell);
+
+        const phoneCell = document.createElement('td');
+        phoneCell.textContent = reg.phone;
+        row.appendChild(phoneCell);
+
+        const emailCell = document.createElement('td');
+        emailCell.textContent = reg.email || '—';
+        row.appendChild(emailCell);
+
+        const pastorCell = document.createElement('td');
+        pastorCell.textContent = reg.pastorName;
+        row.appendChild(pastorCell);
+
+        const servicesCell = document.createElement('td');
+        servicesCell.textContent = Array.isArray(reg.services) ? reg.services.length + ' services' : '—';
+        row.appendChild(servicesCell);
+
+        const transportCell = document.createElement('td');
+        transportCell.textContent = reg.airportTransport;
+        row.appendChild(transportCell);
+
+        const dateCell = document.createElement('td');
+        dateCell.textContent = formatDate(reg.createdAt);
+        row.appendChild(dateCell);
+
+        // Create action links with event listeners (NO inline onclick)
+        const actionsCell = document.createElement('td');
+        actionsCell.className = 'action-links';
+
+        const viewLink = document.createElement('a');
+        viewLink.href = '#';
+        viewLink.textContent = 'View';
+        viewLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            viewDetails('registration', reg.id);
+        });
+
+        const deleteLink = document.createElement('a');
+        deleteLink.href = '#';
+        deleteLink.textContent = 'Delete';
+        deleteLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            deleteRecord('registrations', reg.id);
+        });
+
+        actionsCell.appendChild(viewLink);
+        actionsCell.appendChild(document.createTextNode(' | '));
+        actionsCell.appendChild(deleteLink);
+        row.appendChild(actionsCell);
+
         tbody.appendChild(row);
     });
 }
@@ -158,18 +200,57 @@ function displayVolunteers(data) {
 
     data.forEach(vol => {
         const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${vol.firstName} ${vol.lastName}</td>
-            <td>${vol.phone}</td>
-            <td>${vol.email}</td>
-            <td>${Array.isArray(vol.committees) ? vol.committees.join(', ') : vol.committees}</td>
-            <td>${Array.isArray(vol.availability) ? vol.availability.length : '—'} slots</td>
-            <td>${formatDate(vol.createdAt)}</td>
-            <td class="action-links">
-                <a onclick="viewDetails('volunteer', '${vol.id}')">View</a>
-                <a onclick="deleteRecord('volunteers', '${vol.id}')">Delete</a>
-            </td>
-        `;
+
+        // Create cells safely using textContent
+        const nameCell = document.createElement('td');
+        nameCell.textContent = `${vol.firstName} ${vol.lastName}`;
+        row.appendChild(nameCell);
+
+        const phoneCell = document.createElement('td');
+        phoneCell.textContent = vol.phone;
+        row.appendChild(phoneCell);
+
+        const emailCell = document.createElement('td');
+        emailCell.textContent = vol.email;
+        row.appendChild(emailCell);
+
+        const committeesCell = document.createElement('td');
+        committeesCell.textContent = Array.isArray(vol.committees) ? vol.committees.join(', ') : vol.committees;
+        row.appendChild(committeesCell);
+
+        const availCell = document.createElement('td');
+        availCell.textContent = Array.isArray(vol.availability) ? vol.availability.length + ' slots' : '—';
+        row.appendChild(availCell);
+
+        const dateCell = document.createElement('td');
+        dateCell.textContent = formatDate(vol.createdAt);
+        row.appendChild(dateCell);
+
+        // Create action links with event listeners
+        const actionsCell = document.createElement('td');
+        actionsCell.className = 'action-links';
+
+        const viewLink = document.createElement('a');
+        viewLink.href = '#';
+        viewLink.textContent = 'View';
+        viewLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            viewDetails('volunteer', vol.id);
+        });
+
+        const deleteLink = document.createElement('a');
+        deleteLink.href = '#';
+        deleteLink.textContent = 'Delete';
+        deleteLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            deleteRecord('volunteers', vol.id);
+        });
+
+        actionsCell.appendChild(viewLink);
+        actionsCell.appendChild(document.createTextNode(' | '));
+        actionsCell.appendChild(deleteLink);
+        row.appendChild(actionsCell);
+
         tbody.appendChild(row);
     });
 }
@@ -183,20 +264,77 @@ function displayVendors(data) {
         const statusText = vendor.approved ? 'Approved' : 'Pending';
 
         const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${vendor.businessName}</td>
-            <td>${vendor.firstName} ${vendor.lastName}</td>
-            <td>${vendor.phone}</td>
-            <td>${vendor.email}</td>
-            <td>${vendor.selling || '—'}</td>
-            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-            <td>${formatDate(vendor.createdAt)}</td>
-            <td class="action-links">
-                <a onclick="viewDetails('vendor', '${vendor.id}')">View</a>
-                ${!vendor.approved ? `<a onclick="approveVendor('${vendor.id}')">Approve</a>` : ''}
-                <a onclick="deleteRecord('vendors', '${vendor.id}')">Delete</a>
-            </td>
-        `;
+
+        // Create cells safely using textContent
+        const businessCell = document.createElement('td');
+        businessCell.textContent = vendor.businessName;
+        row.appendChild(businessCell);
+
+        const nameCell = document.createElement('td');
+        nameCell.textContent = `${vendor.firstName} ${vendor.lastName}`;
+        row.appendChild(nameCell);
+
+        const phoneCell = document.createElement('td');
+        phoneCell.textContent = vendor.phone;
+        row.appendChild(phoneCell);
+
+        const emailCell = document.createElement('td');
+        emailCell.textContent = vendor.email;
+        row.appendChild(emailCell);
+
+        const sellingCell = document.createElement('td');
+        sellingCell.textContent = vendor.selling || '—';
+        row.appendChild(sellingCell);
+
+        const statusCell = document.createElement('td');
+        const statusBadge = document.createElement('span');
+        statusBadge.className = `status-badge ${statusClass}`;
+        statusBadge.textContent = statusText;
+        statusCell.appendChild(statusBadge);
+        row.appendChild(statusCell);
+
+        const dateCell = document.createElement('td');
+        dateCell.textContent = formatDate(vendor.createdAt);
+        row.appendChild(dateCell);
+
+        // Create action links with event listeners
+        const actionsCell = document.createElement('td');
+        actionsCell.className = 'action-links';
+
+        const viewLink = document.createElement('a');
+        viewLink.href = '#';
+        viewLink.textContent = 'View';
+        viewLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            viewDetails('vendor', vendor.id);
+        });
+
+        actionsCell.appendChild(viewLink);
+
+        if (!vendor.approved) {
+            actionsCell.appendChild(document.createTextNode(' | '));
+            const approveLink = document.createElement('a');
+            approveLink.href = '#';
+            approveLink.textContent = 'Approve';
+            approveLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                approveVendor(vendor.id);
+            });
+            actionsCell.appendChild(approveLink);
+        }
+
+        actionsCell.appendChild(document.createTextNode(' | '));
+        const deleteLink = document.createElement('a');
+        deleteLink.href = '#';
+        deleteLink.textContent = 'Delete';
+        deleteLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            deleteRecord('vendors', vendor.id);
+        });
+
+        actionsCell.appendChild(deleteLink);
+        row.appendChild(actionsCell);
+
         tbody.appendChild(row);
     });
 }
@@ -283,31 +421,17 @@ function viewDetails(type, id) {
         return;
     }
 
-    // Create modal content
-    let content = '<div style="max-width: 600px; max-height: 80vh; overflow-y: auto; padding: 20px;">';
-    content += `<h2 style="margin-top: 0;">Details</h2>`;
-
-    for (const [key, value] of Object.entries(data)) {
-        if (key === 'id') continue;
-
-        let displayValue = value;
-        if (Array.isArray(value)) {
-            displayValue = value.join(', ');
-        } else if (typeof value === 'object' && value !== null) {
-            displayValue = JSON.stringify(value, null, 2);
-        } else if (key === 'createdAt') {
-            displayValue = formatDate(value);
-        }
-
-        const label = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-        content += `<p><strong>${label}:</strong> ${displayValue || '—'}</p>`;
+    // Open new window first
+    const modal = window.open('', 'Details', 'width=700,height=600');
+    if (!modal) {
+        alert('Please allow popups to view details');
+        return;
     }
 
-    content += '</div>';
-
-    // Show in alert (basic) - you can create a proper modal
-    const modal = window.open('', 'Details', 'width=700,height=600');
-    modal.document.write(`
+    // Create safe content structure
+    const doc = modal.document;
+    doc.open();
+    doc.write(`
         <html>
         <head>
             <title>Details</title>
@@ -318,9 +442,45 @@ function viewDetails(type, id) {
                 strong { color: #4d4d4d; }
             </style>
         </head>
-        <body>${content}</body>
+        <body>
+            <div id="content" style="max-width: 600px; max-height: 80vh; overflow-y: auto; padding: 20px;"></div>
+        </body>
         </html>
     `);
+    doc.close();
+
+    // Build content safely using DOM methods
+    const contentDiv = doc.getElementById('content');
+    const title = doc.createElement('h2');
+    title.textContent = 'Details';
+    title.style.marginTop = '0';
+    contentDiv.appendChild(title);
+
+    for (const [key, value] of Object.entries(data)) {
+        if (key === 'id') continue;
+
+        let displayValue = value;
+        if (Array.isArray(value)) {
+            displayValue = value.join(', ');
+        } else if (typeof value === 'object' && value !== null) {
+            if (value.toDate && typeof value.toDate === 'function') {
+                displayValue = formatDate(value);
+            } else {
+                displayValue = JSON.stringify(value, null, 2);
+            }
+        } else if (key === 'createdAt') {
+            displayValue = formatDate(value);
+        }
+
+        const label = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+
+        const p = doc.createElement('p');
+        const strong = doc.createElement('strong');
+        strong.textContent = label + ': ';
+        p.appendChild(strong);
+        p.appendChild(doc.createTextNode(displayValue || '—'));
+        contentDiv.appendChild(p);
+    }
 }
 
 // ===== APPROVE VENDOR =====
@@ -505,5 +665,51 @@ async function syncToGoogleSheets(section) {
 }
 
 // ===== INITIALIZE =====
+
+// Set up event listeners after DOM loads
+document.addEventListener('DOMContentLoaded', () => {
+    // Logout button
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', handleLogout);
+    }
+
+    // Navigation buttons
+    const navButtons = document.querySelectorAll('.dashboard-nav button');
+    navButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const section = this.getAttribute('data-section');
+            if (section) {
+                showSection(section);
+            }
+        });
+    });
+
+    // Search boxes
+    const searchInputs = document.querySelectorAll('input[data-table]');
+    searchInputs.forEach(input => {
+        input.addEventListener('keyup', function() {
+            const tableId = this.getAttribute('data-table');
+            searchTable(tableId, this.value);
+        });
+    });
+
+    // Action buttons (export, sync, refresh)
+    const actionButtons = document.querySelectorAll('button[data-action]');
+    actionButtons.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            const action = this.getAttribute('data-action');
+            const section = this.getAttribute('data-section');
+
+            if (action === 'export') {
+                exportData(section);
+            } else if (action === 'sync') {
+                syncToGoogleSheets(section);
+            } else if (action === 'refresh') {
+                refreshData(section);
+            }
+        });
+    });
+});
 
 console.log('Admin dashboard initialized');

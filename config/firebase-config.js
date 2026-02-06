@@ -189,10 +189,10 @@ async function deleteRecord(collection, docId) {
 async function signInAdmin(email, password) {
     try {
         const userCredential = await auth.signInWithEmailAndPassword(email, password);
-        console.log('Admin signed in:', userCredential.user.email);
+        console.log('Admin signed in successfully');
         return userCredential.user;
     } catch (error) {
-        console.error('Sign in error:', error);
+        console.error('Sign in error:', error.code);
         throw error;
     }
 }
@@ -313,10 +313,10 @@ Submitted: ${new Date().toLocaleString()}
 
         if (typeof emailjs !== 'undefined') {
             await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
-            console.log('Email notification sent');
+            console.log('Email notification sent successfully');
         }
     } catch (error) {
-        console.error('Error sending email:', error);
+        console.error('Error sending email:', error.code || 'Unknown error');
         // Don't throw - form was still submitted successfully
     }
 }
@@ -351,7 +351,7 @@ Sarasota Gospel Temple
 
         if (typeof emailjs !== 'undefined' && data.email) {
             await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
-            console.log('Confirmation email sent to registrant');
+            console.log('Confirmation email sent successfully');
         }
     } catch (error) {
         console.error('Error sending confirmation email:', error);

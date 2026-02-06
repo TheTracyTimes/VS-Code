@@ -294,6 +294,23 @@ function saveCurrentSectionData() {
 document.getElementById('registrationForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
+    // Check rate limiting
+    if (window.RateLimiter) {
+        const rateLimitCheck = window.RateLimiter.canSubmit('registration');
+        if (!rateLimitCheck.allowed) {
+            alert(rateLimitCheck.message);
+            return;
+        }
+    }
+
+    // Validate CSRF token if available
+    if (window.CSRFProtection) {
+        if (!window.CSRFProtection.validateForm(this)) {
+            alert('Security validation failed. Please refresh the page and try again.');
+            return;
+        }
+    }
+
     // Validate final section
     if (!validateSection(currentStep)) {
         return;
@@ -301,6 +318,21 @@ document.getElementById('registrationForm').addEventListener('submit', async fun
 
     // Save final section data
     saveCurrentSectionData();
+
+    // Validate and sanitize form data if FormValidator is available
+    if (window.FormValidator) {
+        const validation = window.FormValidator.validateFormData(formData, [
+            'firstName', 'lastName', 'phone', 'email', 'pastorName'
+        ]);
+
+        if (!validation.valid) {
+            alert('Please fix the following errors:\n' + validation.errors.join('\n'));
+            return;
+        }
+
+        // Use sanitized data
+        formData = { ...formData, ...validation.sanitized };
+    }
 
     // Add timestamp
     formData.timestamp = new Date().toISOString();
@@ -316,6 +348,11 @@ document.getElementById('registrationForm').addEventListener('submit', async fun
         // Submit to Firebase
         const docId = await submitRegistration(formData);
 
+        // Record submission for rate limiting
+        if (window.RateLimiter) {
+            window.RateLimiter.recordSubmission('registration');
+        }
+
         // Add document ID to form data for Google Sheets
         formData.id = docId;
         formData.createdAt = { toDate: () => new Date() };
@@ -326,20 +363,22 @@ document.getElementById('registrationForm').addEventListener('submit', async fun
         // Sync to Google Sheets (non-blocking - won't prevent form submission)
         if (window.GoogleSheetsService && window.GoogleSheetsService.isGoogleSheetsConfigured()) {
             window.GoogleSheetsService.addRowToSheet('registrations', formData).catch(err => {
-                console.warn('Google Sheets sync failed (form still submitted successfully):', err);
+                console.warn('Google Sheets sync failed (form still submitted successfully)');
             });
         }
 
-        // Show success message
+        // Show success message with masked email
         document.getElementById('registrationForm').style.display = 'none';
         document.getElementById('successMessage').style.display = 'block';
-        document.getElementById('confirmEmail').textContent = formData.email || formData.phone;
+        const confirmEmail = formData.email || formData.phone;
+        document.getElementById('confirmEmail').textContent = window.DataMasking ?
+            window.DataMasking.maskEmail(confirmEmail) : confirmEmail;
 
         // Scroll to success message
         document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
     } catch (error) {
-        console.error('Error submitting form:', error);
+        console.error('Error submitting form:', error.message || 'Unknown error');
         alert('There was an error submitting your registration. Please try again or contact us at 941-800-5211.');
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;
@@ -412,6 +451,12 @@ Submitted: ${new Date().toLocaleString()}
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Registration form initialized');
+
+    // Initialize CSRF protection
+    if (window.CSRFProtection) {
+        const form = document.getElementById('registrationForm');
+        window.CSRFProtection.addToForm(form);
+    }
 
     // Initialize EmailJS
     if (typeof emailjs !== 'undefined') {

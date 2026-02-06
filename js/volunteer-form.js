@@ -217,6 +217,37 @@ document.getElementById('volunteerForm').addEventListener('submit', async functi
         formData.committeeAssignments = assignments;
     }
 
+    // Check rate limiting
+    if (window.RateLimiter) {
+        const rateLimitCheck = window.RateLimiter.canSubmit('volunteer');
+        if (!rateLimitCheck.allowed) {
+            alert(rateLimitCheck.message);
+            return;
+        }
+    }
+
+    // Validate CSRF token
+    if (window.CSRFProtection) {
+        if (!window.CSRFProtection.validateForm(document.getElementById('volunteerForm'))) {
+            alert('Security validation failed. Please refresh the page and try again.');
+            return;
+        }
+    }
+
+    // Validate and sanitize form data
+    if (window.FormValidator) {
+        const validation = window.FormValidator.validateFormData(formData, [
+            'firstName', 'lastName', 'phone', 'email'
+        ]);
+
+        if (!validation.valid) {
+            alert('Please fix the following errors:\n' + validation.errors.join('\n'));
+            return;
+        }
+
+        formData = { ...formData, ...validation.sanitized };
+    }
+
     // Show loading state
     const submitBtn = document.getElementById('submitBtn');
     const originalText = submitBtn.textContent;
@@ -226,6 +257,11 @@ document.getElementById('volunteerForm').addEventListener('submit', async functi
     try {
         // Submit to Firebase
         const docId = await submitVolunteer(formData);
+
+        // Record submission for rate limiting
+        if (window.RateLimiter) {
+            window.RateLimiter.recordSubmission('volunteer');
+        }
 
         // Add document ID to form data for Google Sheets
         formData.id = docId;
@@ -237,14 +273,15 @@ document.getElementById('volunteerForm').addEventListener('submit', async functi
         // Sync to Google Sheets (non-blocking - won't prevent form submission)
         if (window.GoogleSheetsService && window.GoogleSheetsService.isGoogleSheetsConfigured()) {
             window.GoogleSheetsService.addRowToSheet('volunteers', formData).catch(err => {
-                console.warn('Google Sheets sync failed (form still submitted successfully):', err);
+                console.warn('Google Sheets sync failed (form still submitted successfully)');
             });
         }
 
-        // Show success message
+        // Show success message with masked email
         document.getElementById('volunteerForm').style.display = 'none';
         document.getElementById('successMessage').style.display = 'block';
-        document.getElementById('confirmEmail').textContent = formData.email;
+        document.getElementById('confirmEmail').textContent = window.DataMasking ?
+            window.DataMasking.maskEmail(formData.email) : formData.email;
         document.getElementById('confirmCommittees').textContent = formData.committees.join(', ');
         document.getElementById('confirmAvailability').textContent = formData.availability.length + ' time slot(s)';
 
@@ -252,7 +289,7 @@ document.getElementById('volunteerForm').addEventListener('submit', async functi
         document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
     } catch (error) {
-        console.error('Error submitting form:', error);
+        console.error('Error submitting form:', error.message || 'Unknown error');
         alert('There was an error submitting your volunteer application. Please try again or contact us at 941-800-5211.');
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;
@@ -317,6 +354,12 @@ Submitted: ${new Date().toLocaleString()}
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Volunteer form initialized');
+
+    // Initialize CSRF protection
+    if (window.CSRFProtection) {
+        const form = document.getElementById('volunteerForm');
+        window.CSRFProtection.addToForm(form);
+    }
 
     // Initialize EmailJS
     if (typeof emailjs !== 'undefined') {

@@ -285,6 +285,10 @@
     <script src="https://apis.google.com/js/api.js"></script>
     <script src="https://accounts.google.com/gsi/client"></script>
     <script src="../config/google-sheets-config.js"></script>
+
+    <!-- Security Utilities -->
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+    <script src="../js/security-utils.js"></script>
 </head>
 <body>
 
@@ -318,13 +322,13 @@
                         <h1>Admin Dashboard</h1>
                         <p>Sarasota Gospel Temple - 2026 International Meeting</p>
                     </div>
-                    <button class="btn btn-outline logout-btn" onclick="handleLogout()">Logout</button>
+                    <button class="btn btn-outline logout-btn" id="logoutBtn">Logout</button>
                 </div>
 
                 <nav class="dashboard-nav">
-                    <button class="active" onclick="showSection('registrations')">Registrations</button>
-                    <button onclick="showSection('volunteers')">Volunteers</button>
-                    <button onclick="showSection('vendors')">Vendors</button>
+                    <button class="active" data-section="registrations">Registrations</button>
+                    <button data-section="volunteers">Volunteers</button>
+                    <button data-section="vendors">Vendors</button>
                 </nav>
             </div>
         </header>
@@ -356,12 +360,12 @@
             <div id="registrations-section" class="section-content active">
                 <div class="action-bar">
                     <div class="search-box">
-                        <input type="text" id="searchRegistrations" placeholder="Search registrations..." onkeyup="searchTable('registrationsTable', this.value)">
+                        <input type="text" id="searchRegistrations" placeholder="Search registrations..." data-table="registrationsTable">
                     </div>
                     <div class="action-buttons">
-                        <button class="btn btn-secondary" onclick="exportData('registrations')">📥 Export to Excel</button>
-                        <button class="btn btn-primary" onclick="syncToGoogleSheets('registrations')">📊 Sync to Google Sheets</button>
-                        <button class="btn btn-outline" onclick="refreshData('registrations')">🔄 Refresh</button>
+                        <button class="btn btn-secondary" data-action="export" data-section="registrations">📥 Export to Excel</button>
+                        <button class="btn btn-primary" data-action="sync" data-section="registrations">📊 Sync to Google Sheets</button>
+                        <button class="btn btn-outline" data-action="refresh" data-section="registrations">🔄 Refresh</button>
                     </div>
                 </div>
 
@@ -402,12 +406,12 @@
             <div id="volunteers-section" class="section-content">
                 <div class="action-bar">
                     <div class="search-box">
-                        <input type="text" id="searchVolunteers" placeholder="Search volunteers..." onkeyup="searchTable('volunteersTable', this.value)">
+                        <input type="text" id="searchVolunteers" placeholder="Search volunteers..." data-table="volunteersTable">
                     </div>
                     <div class="action-buttons">
-                        <button class="btn btn-secondary" onclick="exportData('volunteers')">📥 Export to Excel</button>
-                        <button class="btn btn-primary" onclick="syncToGoogleSheets('volunteers')">📊 Sync to Google Sheets</button>
-                        <button class="btn btn-outline" onclick="refreshData('volunteers')">🔄 Refresh</button>
+                        <button class="btn btn-secondary" data-action="export" data-section="volunteers">📥 Export to Excel</button>
+                        <button class="btn btn-primary" data-action="sync" data-section="volunteers">📊 Sync to Google Sheets</button>
+                        <button class="btn btn-outline" data-action="refresh" data-section="volunteers">🔄 Refresh</button>
                     </div>
                 </div>
 
@@ -447,12 +451,12 @@
             <div id="vendors-section" class="section-content">
                 <div class="action-bar">
                     <div class="search-box">
-                        <input type="text" id="searchVendors" placeholder="Search vendors..." onkeyup="searchTable('vendorsTable', this.value)">
+                        <input type="text" id="searchVendors" placeholder="Search vendors..." data-table="vendorsTable">
                     </div>
                     <div class="action-buttons">
-                        <button class="btn btn-secondary" onclick="exportData('vendors')">📥 Export to Excel</button>
-                        <button class="btn btn-primary" onclick="syncToGoogleSheets('vendors')">📊 Sync to Google Sheets</button>
-                        <button class="btn btn-outline" onclick="refreshData('vendors')">🔄 Refresh</button>
+                        <button class="btn btn-secondary" data-action="export" data-section="vendors">📥 Export to Excel</button>
+                        <button class="btn btn-primary" data-action="sync" data-section="vendors">📊 Sync to Google Sheets</button>
+                        <button class="btn btn-outline" data-action="refresh" data-section="vendors">🔄 Refresh</button>
                     </div>
                 </div>
 

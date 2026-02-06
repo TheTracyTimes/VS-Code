@@ -193,6 +193,37 @@ document.getElementById('vendorForm').addEventListener('submit', async function(
         status: 'pending'
     };
 
+    // Check rate limiting
+    if (window.RateLimiter) {
+        const rateLimitCheck = window.RateLimiter.canSubmit('vendor');
+        if (!rateLimitCheck.allowed) {
+            alert(rateLimitCheck.message);
+            return;
+        }
+    }
+
+    // Validate CSRF token
+    if (window.CSRFProtection) {
+        if (!window.CSRFProtection.validateForm(document.getElementById('vendorForm'))) {
+            alert('Security validation failed. Please refresh the page and try again.');
+            return;
+        }
+    }
+
+    // Validate and sanitize form data
+    if (window.FormValidator) {
+        const validation = window.FormValidator.validateFormData(formData, [
+            'businessName', 'firstName', 'lastName', 'phone', 'email'
+        ]);
+
+        if (!validation.valid) {
+            alert('Please fix the following errors:\n' + validation.errors.join('\n'));
+            return;
+        }
+
+        formData = { ...formData, ...validation.sanitized };
+    }
+
     // Show loading state
     const submitBtn = document.getElementById('submitBtn');
     const originalText = submitBtn.textContent;
@@ -202,6 +233,11 @@ document.getElementById('vendorForm').addEventListener('submit', async function(
     try {
         // Submit to Firebase
         const docId = await submitVendor(formData);
+
+        // Record submission for rate limiting
+        if (window.RateLimiter) {
+            window.RateLimiter.recordSubmission('vendor');
+        }
 
         // Add document ID to form data for Google Sheets
         formData.id = docId;
@@ -213,14 +249,15 @@ document.getElementById('vendorForm').addEventListener('submit', async function(
         // Sync to Google Sheets (non-blocking - won't prevent form submission)
         if (window.GoogleSheetsService && window.GoogleSheetsService.isGoogleSheetsConfigured()) {
             window.GoogleSheetsService.addRowToSheet('vendors', formData).catch(err => {
-                console.warn('Google Sheets sync failed (form still submitted successfully):', err);
+                console.warn('Google Sheets sync failed (form still submitted successfully)');
             });
         }
 
-        // Show success message
+        // Show success message with masked email
         document.getElementById('vendorForm').style.display = 'none';
         document.getElementById('successMessage').style.display = 'block';
-        document.getElementById('confirmEmail').textContent = formData.email;
+        document.getElementById('confirmEmail').textContent = window.DataMasking ?
+            window.DataMasking.maskEmail(formData.email) : formData.email;
         document.getElementById('confirmBusiness').textContent = formData.businessName;
         document.getElementById('confirmName').textContent = `${formData.firstName} ${formData.lastName}`;
 
@@ -228,7 +265,7 @@ document.getElementById('vendorForm').addEventListener('submit', async function(
         document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
     } catch (error) {
-        console.error('Error submitting form:', error);
+        console.error('Error submitting form:', error.message || 'Unknown error');
         alert('There was an error submitting your vendor application. Please try again or contact us at 941-800-5211.');
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;
@@ -300,6 +337,12 @@ Please review and approve/deny this application in the admin dashboard.
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Vendor form initialized');
+
+    // Initialize CSRF protection
+    if (window.CSRFProtection) {
+        const form = document.getElementById('vendorForm');
+        window.CSRFProtection.addToForm(form);
+    }
 
     // Initialize EmailJS
     if (typeof emailjs !== 'undefined') {
