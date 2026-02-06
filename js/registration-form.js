@@ -395,14 +395,14 @@ Sarasota Gospel Temple
 
             // Send both emails
             if (typeof emailjs !== 'undefined') {
-                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, adminTemplateParams);
-                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, confirmTemplateParams);
+                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_IDS.registration, adminTemplateParams);
+                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_IDS.registration, confirmTemplateParams);
                 console.log('Registration notification emails sent');
             }
         } else {
             // Send only admin notification if no email provided
             if (typeof emailjs !== 'undefined') {
-                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, adminTemplateParams);
+                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_IDS.registration, adminTemplateParams);
                 console.log('Registration notification email sent to admin');
             }
         }

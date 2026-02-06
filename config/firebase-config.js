@@ -10,15 +10,14 @@
 */
 
 // Your Firebase configuration object
-// REPLACE THESE VALUES with your actual Firebase project credentials
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY_HERE",
-    authDomain: "your-project-id.firebaseapp.com",
-    projectId: "your-project-id",
-    storageBucket: "your-project-id.appspot.com",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID",
-    databaseURL: "https://your-project-id.firebaseio.com"
+    apiKey: "REDACTED_FIREBASE_API_KEY_1",
+    authDomain: "sarasota-gospel-temple.firebaseapp.com",
+    projectId: "sarasota-gospel-temple",
+    storageBucket: "sarasota-gospel-temple.firebasestorage.app",
+    messagingSenderId: "868460102497",
+    appId: "1:868460102497:web:1b805b72d00801971c7b20",
+    measurementId: "G-CEY9WE2C47"
 };
 
 // Initialize Firebase
@@ -262,9 +261,18 @@ function exportToCSV(data, filename) {
 
 // Configure EmailJS (free email service)
 // Sign up at https://www.emailjs.com/
-const EMAILJS_SERVICE_ID = 'YOUR_EMAILJS_SERVICE_ID';
-const EMAILJS_TEMPLATE_ID = 'YOUR_EMAILJS_TEMPLATE_ID';
-const EMAILJS_PUBLIC_KEY = 'YOUR_EMAILJS_PUBLIC_KEY';
+const EMAILJS_SERVICE_ID = 'REDACTED_EMAILJS_SERVICE_ID';
+const EMAILJS_PUBLIC_KEY = 'REDACTED_EMAILJS_PUBLIC_KEY';
+
+// Template IDs for each form type
+const EMAILJS_TEMPLATE_IDS = {
+    registration: 'registration_confirmatio',
+    volunteer: 'volunteer_confirmation',
+    vendor: 'vendor_confirmation'
+};
+
+// Backward compatibility - default template ID
+const EMAILJS_TEMPLATE_ID = EMAILJS_TEMPLATE_IDS.registration;
 
 // Initialize EmailJS
 function initEmailJS() {

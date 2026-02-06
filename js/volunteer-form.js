@@ -307,8 +307,8 @@ Sarasota Gospel Temple
 
         // Send emails via EmailJS
         if (typeof emailjs !== 'undefined') {
-            await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, adminTemplateParams);
-            await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, confirmTemplateParams);
+            await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_IDS.volunteer, adminTemplateParams);
+            await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_IDS.volunteer, confirmTemplateParams);
             console.log('Volunteer notification emails sent');
         }
     } catch (error) {
