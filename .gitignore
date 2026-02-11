@@ -3,11 +3,11 @@
 .env.local
 .env.*.local
 
-# Config files (client-side API keys - safe to commit, security via API key restrictions)
-# config/firebase-config.js
-# config/google-sheets-config.js
-# public/config/firebase-config.js
-# public/config/google-sheets-config.js
+# Config files with API keys (generated at build time by build.sh)
+config/firebase-config.js
+config/google-sheets-config.js
+public/config/firebase-config.js
+public/config/google-sheets-config.js
 
 # Service account keys (NEVER commit these!)
 *service-account*.json
