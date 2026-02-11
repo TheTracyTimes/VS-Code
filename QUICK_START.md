@@ -6,49 +6,49 @@
 
 ### What Was Wrong:
 1. ❌ Firebase CLI was not installed
-2. ❌ No `.env` file existed
-3. ❌ Credentials were hardcoded in JavaScript files
+2. ❌ No way to configure Firebase Functions from terminal
 
 ### What's Fixed:
 1. ✅ Firebase CLI installed globally
-2. ✅ `.env` file created with your current credentials
-3. ✅ Setup script created to manage credentials properly
+2. ✅ `.env` file created for Firebase Functions configuration
+3. ✅ Setup script created for future credential management
 4. ✅ Package.json with helpful npm commands
+
+**Note:** Your client-side credentials are already configured in `config/firebase-config.js` and `config/google-sheets-config.js`. The `.env` file and setup script are for Firebase Functions (backend) configuration.
 
 ---
 
-## 🎯 How To Use (3 Simple Steps)
+## 🎯 How To Use Firebase CLI (3 Simple Steps)
 
-### Step 1: Verify Your Credentials
+### Step 1: Login to Firebase
 
-Open `.env` and check that all values look correct:
+Your terminal can now use Firebase commands:
 
 ```bash
-cat .env
+firebase login
 ```
 
-The file should have real values, not placeholders. ✅ **Already populated with your current credentials!**
-
-### Step 2: Run Setup
-
-This will regenerate your config files from the .env:
+### Step 2: Select Your Project
 
 ```bash
-npm run setup
+firebase use --add
 ```
 
-### Step 3: Configure Firebase Functions (Optional)
+Select `sarasota-gospel-temple` from the list.
 
-If you want to use Firebase Functions (backend):
+### Step 3: Configure Firebase Functions Backend
+
+To configure Firebase Functions (backend) with environment variables:
 
 ```bash
-# First login to Firebase
-npm run firebase:login
+# First, add your EmailJS private key and service account JSON to .env
+nano .env
 
-# Select your project
-npm run firebase:init
+# Then configure Firebase Functions
+firebase functions:config:set emailjs.service_id="your_service_id"
+firebase functions:config:set emailjs.private_key="your_private_key"
 
-# Then configure functions
+# Or use the helper script
 npm run setup:firebase
 ```
 
@@ -57,37 +57,37 @@ npm run setup:firebase
 ## 📋 Available Commands
 
 ```bash
-# Credential Management
-npm run setup              # Generate config files from .env
-npm run help               # Show all available commands
+# Firebase CLI Commands (Now Working!)
+firebase login                    # Login to Firebase
+firebase use --add                # Select Firebase project
+firebase deploy                   # Deploy everything
+firebase functions:config:set     # Set backend config
+firebase functions:config:get     # View backend config
 
-# Firebase Commands
-firebase login             # Login to Firebase
-firebase use --add         # Select Firebase project
-firebase deploy            # Deploy everything
-firebase functions:config:get    # View backend config
-
-# Or use npm shortcuts
-npm run firebase:login
-npm run firebase:deploy
+# Helper Scripts
+npm run firebase:login            # Login to Firebase
+npm run firebase:deploy           # Deploy everything
+npm run setup:firebase            # Configure Functions from .env
+npm run help                      # Show all commands
 ```
 
 ---
 
-## 🔍 What The Setup Script Does
+## 🔍 Understanding Your Credentials
 
-When you run `npm run setup`, it:
+Your project uses credentials in two places:
 
-1. ✅ Reads credentials from `.env`
-2. ✅ Validates all required credentials are present
-3. ✅ Generates `config/firebase-config.js` with Firebase & EmailJS config
-4. ✅ Generates `config/google-sheets-config.js` with Google Sheets config
-5. ✅ Optionally sets Firebase Functions backend config
+### 1. **Client-Side (Already Configured)** ✅
+- Location: `config/firebase-config.js` and `config/google-sheets-config.js`
+- Purpose: Frontend JavaScript that runs in the browser
+- Status: Already working with your current credentials
+- Update: Edit the files directly or manually update from `.env`
 
-**Benefits:**
-- No more hardcoded credentials in JavaScript
-- Easy to update credentials (just edit `.env`)
-- Secure (`.env` is not committed to git)
+### 2. **Backend (Firebase Functions)**
+- Location: Firebase Functions environment config
+- Purpose: Server-side code that runs on Firebase
+- Status: Needs configuration via `firebase functions:config:set`
+- Update: Use `firebase functions:config:set` commands
 
 ---
 
@@ -152,43 +152,44 @@ node setup-credentials.js
 ## ✅ What's Different Now?
 
 ### Before (The Problem):
-```javascript
-// config/firebase-config.js
-const firebaseConfig = {
-    apiKey: "AIza..." // Hardcoded! 😱
-};
+```bash
+# Terminal commands didn't work
+$ firebase login
+bash: firebase: command not found
+
+$ firebase functions:config:set emailjs.service_id="..."
+bash: firebase: command not found
 ```
 
 ### After (The Solution):
 ```bash
-# .env (not committed to git)
-FIREBASE_API_KEY=AIza...
-```
+# Firebase CLI is now installed and working!
+$ firebase login
+✔ Success! Logged in as ...
 
-```bash
-# Run setup script
-npm run setup
-```
+$ firebase functions:config:set emailjs.service_id="..."
+✔ Functions config updated
 
-```javascript
-// config/firebase-config.js (auto-generated)
-const firebaseConfig = {
-    apiKey: "AIza..." // Generated from .env ✅
-};
+$ firebase deploy
+✔ Deploy complete!
 ```
 
 **Now you can:**
-- ✅ Update credentials by editing `.env`
-- ✅ Run `npm run setup` to regenerate config files
-- ✅ Keep credentials secure and out of git
-- ✅ Use Firebase CLI commands for backend config
+- ✅ Use all `firebase` terminal commands
+- ✅ Configure Firebase Functions from the command line
+- ✅ Deploy your site and functions
+- ✅ Manage backend configuration with environment variables
 
 ---
 
 ## 🎉 You're All Set!
 
-Your terminal can now read credentials properly. The Firebase CLI is installed and ready to use.
+Your terminal can now use Firebase CLI commands. The core issue is resolved!
 
-**Next step:** Run `npm run setup` to test the new system!
+**Next steps:**
+1. Login to Firebase: `firebase login`
+2. Select your project: `firebase use --add`
+3. Configure Functions: Add private keys to `.env`, then use `firebase functions:config:set`
+4. Deploy when ready: `firebase deploy`
 
 **Questions?** Check `CREDENTIAL_SETUP_GUIDE.md` for detailed help.
