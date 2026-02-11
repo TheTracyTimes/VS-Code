@@ -102,15 +102,35 @@
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="phone">Phone Number (with country code) <span class="required">*</span></label>
-                            <input type="tel" id="phone" name="phone" placeholder="+1-941-555-1234" required>
-                            <span class="helper-text">Include country code (e.g., +1 for USA)</span>
+                            <label for="phone">Phone Number <span class="required">*</span></label>
+                            <div class="phone-input-group">
+                                <select id="countryCode" name="countryCode" required>
+                                    <option value="+1" selected>🇺🇸 +1 (USA)</option>
+                                    <option value="+1">🇨🇦 +1 (Canada)</option>
+                                    <option value="+44">🇬🇧 +44 (UK)</option>
+                                    <option value="+61">🇦🇺 +61 (Australia)</option>
+                                    <option value="+91">🇮🇳 +91 (India)</option>
+                                    <option value="+86">🇨🇳 +86 (China)</option>
+                                    <option value="+81">🇯🇵 +81 (Japan)</option>
+                                    <option value="+82">🇰🇷 +82 (South Korea)</option>
+                                    <option value="+49">🇩🇪 +49 (Germany)</option>
+                                    <option value="+33">🇫🇷 +33 (France)</option>
+                                    <option value="+39">🇮🇹 +39 (Italy)</option>
+                                    <option value="+34">🇪🇸 +34 (Spain)</option>
+                                    <option value="+52">🇲🇽 +52 (Mexico)</option>
+                                    <option value="+55">🇧🇷 +55 (Brazil)</option>
+                                    <option value="+7">🇷🇺 +7 (Russia)</option>
+                                    <option value="+234">🇳🇬 +234 (Nigeria)</option>
+                                    <option value="+27">🇿🇦 +27 (South Africa)</option>
+                                </select>
+                                <input type="tel" id="phone" name="phone" placeholder="941-555-1234" autocomplete="tel" required>
+                            </div>
                             <span class="error-message">Please enter a valid phone number</span>
                         </div>
 
                         <div class="form-group">
-                            <label for="email">Email Address</label>
-                            <input type="email" id="email" name="email" placeholder="your@email.com">
+                            <label for="email">Email Address <span class="required">*</span></label>
+                            <input type="email" id="email" name="email" placeholder="your@email.com" required>
                             <span class="error-message">Please enter a valid email address</span>
                         </div>
                     </div>

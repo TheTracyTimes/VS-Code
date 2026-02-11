@@ -249,6 +249,21 @@ input[type="radio"] {
   font-weight: 400;
 }
 
+/* Phone Input Group */
+.phone-input-group {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.phone-input-group select {
+  flex: 0 0 120px;
+  min-width: 120px;
+}
+
+.phone-input-group input {
+  flex: 1;
+}
+
 /* Helper Text */
 .helper-text {
   font-size: 14px;
