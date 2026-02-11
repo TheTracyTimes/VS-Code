@@ -23,6 +23,7 @@
   ],
   "author": "Sarasota Gospel Temple",
   "license": "UNLICENSED",
-  "devDependencies": {},
-  "dependencies": {}
+  "devDependencies": {
+    "firebase-tools": "^15.5.1"
+  }
 }

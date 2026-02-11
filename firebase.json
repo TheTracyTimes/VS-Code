@@ -1,12 +1,10 @@
 {
   "hosting": {
-    "public": ".",
+    "public": "public",
     "ignore": [
       "firebase.json",
       "**/.*",
-      "**/node_modules/**",
-      "functions/**",
-      "*.md"
+      "**/node_modules/**"
     ],
     "headers": [
       {
@@ -42,7 +40,7 @@
   },
   "functions": {
     "source": "functions",
-    "runtime": "nodejs18"
+    "runtime": "nodejs20"
   },
   "firestore": {
     "rules": "firestore.rules"
