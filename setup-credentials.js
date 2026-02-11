@@ -192,26 +192,44 @@ if (typeof module !== 'undefined' && module.exports) {
 function setFirebaseFunctionsConfig(env) {
     log('\n📋 Setting Firebase Functions configuration...', 'cyan');
 
-    const commands = [
-        `firebase functions:config:set emailjs.service_id="${env.EMAILJS_SERVICE_ID}"`,
-        `firebase functions:config:set emailjs.private_key="${env.EMAILJS_PRIVATE_KEY}"`,
-        `firebase functions:config:set google.credentials='${env.GOOGLE_SERVICE_ACCOUNT_JSON || '{}'}'`,
-        `firebase functions:config:set sheets.registrations_id="${env.GOOGLE_SHEETS_REGISTRATIONS_ID || ''}"`,
-        `firebase functions:config:set sheets.volunteers_id="${env.GOOGLE_SHEETS_VOLUNTEERS_ID || ''}"`,
-        `firebase functions:config:set sheets.vendors_id="${env.GOOGLE_SHEETS_VENDORS_ID || ''}"`
-    ];
+    // Create .env file for Firebase Functions (modern approach)
+    const functionsDir = path.join(__dirname, 'functions');
+
+    // Ensure functions directory exists
+    if (!fs.existsSync(functionsDir)) {
+        log('⚠️  functions/ directory not found', 'yellow');
+        return;
+    }
+
+    const functionsEnvPath = path.join(functionsDir, '.env');
+
+    // Build .env content
+    const envContent = `# Firebase Functions Environment Variables
+# Auto-generated from root .env file - DO NOT EDIT MANUALLY
+# Run 'npm run setup' from root to regenerate
+
+# EmailJS Configuration
+EMAILJS_SERVICE_ID=${env.EMAILJS_SERVICE_ID || ''}
+EMAILJS_PUBLIC_KEY=${env.EMAILJS_PUBLIC_KEY || ''}
+EMAILJS_PRIVATE_KEY=${env.EMAILJS_PRIVATE_KEY || ''}
+
+# Google Service Account (JSON string)
+GOOGLE_SERVICE_ACCOUNT_JSON=${env.GOOGLE_SERVICE_ACCOUNT_JSON || '{}'}
+
+# Google Sheets IDs
+GOOGLE_SHEETS_REGISTRATIONS_ID=${env.GOOGLE_SHEETS_REGISTRATIONS_ID || ''}
+GOOGLE_SHEETS_VOLUNTEERS_ID=${env.GOOGLE_SHEETS_VOLUNTEERS_ID || ''}
+GOOGLE_SHEETS_VENDORS_ID=${env.GOOGLE_SHEETS_VENDORS_ID || ''}
+`;
 
     try {
-        commands.forEach(cmd => {
-            log(`  Running: ${cmd.split('=')[0]}=...`, 'yellow');
-            execSync(cmd, { stdio: 'inherit', cwd: __dirname });
-        });
-        log('✅ Firebase Functions config updated successfully', 'green');
-        log('\n💡 To deploy: firebase deploy --only functions', 'cyan');
+        fs.writeFileSync(functionsEnvPath, envContent);
+        log(`  ✅ Created ${functionsEnvPath}`, 'green');
+        log('\n💡 Firebase Functions will use environment variables from functions/.env', 'cyan');
+        log('💡 To deploy: firebase deploy --only functions', 'cyan');
     } catch (error) {
-        log('❌ Error setting Firebase Functions config:', 'red');
-        log('Make sure you are logged in: firebase login', 'yellow');
-        log('And have selected a project: firebase use --add', 'yellow');
+        log('❌ Error creating functions/.env file:', 'red');
+        log(error.message, 'red');
     }
 }
 

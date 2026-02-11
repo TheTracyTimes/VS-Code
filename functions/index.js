@@ -217,10 +217,10 @@ exports.sendEmail = functions.https.onCall(async (data, context) => {
             throw new functions.https.HttpsError('invalid-argument', 'Missing template or parameters');
         }
 
-        // Get EmailJS credentials from environment config
-        const serviceId = functions.config().emailjs.service_id;
-        const publicKey = functions.config().emailjs.public_key;
-        const privateKey = functions.config().emailjs.private_key;
+        // Get EmailJS credentials from environment variables
+        const serviceId = process.env.EMAILJS_SERVICE_ID;
+        const publicKey = process.env.EMAILJS_PUBLIC_KEY;
+        const privateKey = process.env.EMAILJS_PRIVATE_KEY;
 
         if (!serviceId || !publicKey || !privateKey) {
             throw new functions.https.HttpsError('failed-precondition', 'EmailJS not configured');
@@ -253,8 +253,8 @@ exports.appendToSheet = functions.https.onCall(async (data, context) => {
             throw new functions.https.HttpsError('unauthenticated', 'Must be authenticated');
         }
 
-        // Get Google Sheets credentials from environment
-        const credentials = functions.config().google.credentials;
+        // Get Google Sheets credentials from environment variables
+        const credentials = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
         if (!credentials) {
             throw new functions.https.HttpsError('failed-precondition', 'Google Sheets not configured');
         }
@@ -269,9 +269,9 @@ exports.appendToSheet = functions.https.onCall(async (data, context) => {
 
         // Get spreadsheet ID based on form type
         const spreadsheetIds = {
-            registrations: functions.config().sheets.registrations_id,
-            volunteers: functions.config().sheets.volunteers_id,
-            vendors: functions.config().sheets.vendors_id
+            registrations: process.env.GOOGLE_SHEETS_REGISTRATIONS_ID,
+            volunteers: process.env.GOOGLE_SHEETS_VOLUNTEERS_ID,
+            vendors: process.env.GOOGLE_SHEETS_VENDORS_ID
         };
 
         const spreadsheetId = spreadsheetIds[data.formType];
