@@ -64,19 +64,48 @@ public/config/
 
 ## API Key Security Levels
 
-### Client-Side Keys (Public)
-These keys are meant to be exposed in the browser but should still be protected:
+### ⚠️ Important: Client-Side API Keys Are Meant to Be Public
 
-- **Firebase API Key**: Can be public but enable Firebase security rules
-- **EmailJS Public Key**: Meant for client-side use
-- **Google Sheets API Key**: Use API restrictions in Google Cloud Console
-- **Google OAuth Client ID**: Public, but restrict to authorized domains
+**This is a client-side web application.** The JavaScript code runs in the browser, which means API keys MUST be sent to the browser to work. This is by design.
 
-**Protection measures:**
-- Enable Firebase security rules to restrict database access
-- Use EmailJS reCAPTCHA and domain restrictions
-- Restrict Google API keys by HTTP referrer and API scope
-- Monitor API usage for abuse
+### Client-Side Keys (Intentionally Public)
+These keys are exposed in the browser but protected through OTHER mechanisms:
+
+- **Firebase API Key**:
+  - ✅ Can be public - it's just an identifier
+  - 🔒 Security enforced through **Firebase Security Rules** (not by hiding the key)
+  - ⚠️ MUST configure Firestore rules to prevent unauthorized access
+
+- **EmailJS Public Key**:
+  - ✅ Meant for client-side use
+  - 🔒 Protected by domain restrictions and reCAPTCHA in EmailJS dashboard
+
+- **Google Sheets API Key**:
+  - ✅ Client-side API key
+  - 🔒 Must be restricted by **HTTP referrer** in Google Cloud Console
+  - 🔒 Must be scoped to only Google Sheets API
+
+- **Google OAuth Client ID**:
+  - ✅ Public identifier
+  - 🔒 Restricted to authorized domains/origins in Google Cloud Console
+
+### Why This Is Secure
+
+Firebase's own documentation states:
+> "Unlike how API keys are typically used, API keys for Firebase services are not used to control access to backend resources. They simply identify your Firebase project on the Google servers. They aren't secret."
+
+**Real security comes from:**
+1. **Firebase Security Rules** - Control who can read/write data
+2. **API Restrictions** - Limit API keys to specific domains and APIs
+3. **Rate Limiting** - Prevent abuse
+4. **Domain Restrictions** - Only allow requests from your domains
+
+**Protection measures you MUST implement:**
+- ✅ Enable Firebase security rules to restrict database access
+- ✅ Use EmailJS reCAPTCHA and domain restrictions
+- ✅ Restrict Google API keys by HTTP referrer (your domain only)
+- ✅ Restrict API keys by API scope (Sheets API only)
+- ✅ Monitor API usage for abuse
 
 ### Server-Side Keys (Private)
 These keys should NEVER be exposed to the client:
@@ -84,6 +113,42 @@ These keys should NEVER be exposed to the client:
 - **EmailJS Private Key**: Keep in Firebase Functions only
 - **Google Service Account JSON**: Keep in Firebase Functions only
 - **Firebase Admin SDK credentials**: Server-side only
+
+## Local Development Security
+
+### Question: "Can config files go public during local development?"
+
+**Short Answer:** The config files are accessible via HTTP during development, but this is acceptable because:
+1. Client-side API keys are meant to be public (see above)
+2. The dev server has additional protections
+
+**Protections in `dev-server.sh`:**
+
+1. **Localhost-only binding**: Server binds to `127.0.0.1`, not accessible from network
+   ```bash
+   python3 -m http.server 8000 --bind 127.0.0.1
+   ```
+
+2. **Automatic cleanup**: Config files deleted when server stops
+   ```bash
+   trap cleanup EXIT INT TERM  # Removes public/config/ on exit
+   ```
+
+3. **Git protection**: Config files in `.gitignore`, won't be committed
+
+4. **Temporary files**: Config files only exist while server is running
+
+### Network Access Risk
+
+- ❌ **Without --bind flag**: Server accessible from any machine on your network
+- ✅ **With --bind 127.0.0.1**: Only accessible from your own machine
+
+### What About Deployed Sites?
+
+When deployed to production (Netlify):
+- Config files ARE publicly accessible (e.g., `https://yoursite.com/config/firebase-config.js`)
+- **This is expected and acceptable** for client-side applications
+- Security comes from Firebase rules, API restrictions, and domain restrictions (NOT from hiding keys)
 
 ## File Structure for Security
 
