@@ -38,9 +38,9 @@ service_vdrrcls
 EMAILJS_PUBLIC_KEY
 T35UiRys7umDsRZw8
 
-⚠️ IMPORTANT FIX - This had a typo (was missing 'n' at end):
+⚠️ IMPORTANT - Exact value (no 'n' at end due to EmailJS character limit):
 EMAILJS_TEMPLATE_REGISTRATION
-registration_confirmation
+registration_confirmatio
 
 EMAILJS_TEMPLATE_VENDOR
 vendor_confirmation
@@ -70,14 +70,9 @@ GOOGLE_SHEETS_VENDORS_ID
 TOTAL: 17 environment variables
 =================================================================
 
-CRITICAL FIX:
-The registration template ID had a typo. It was:
-  ❌ registration_confirmatio (missing 'n')
-
-It should be:
-  ✅ registration_confirmation
-
-This is why registration form emails weren't working!
+IMPORTANT NOTE:
+The registration template ID is "registration_confirmatio" (without the final 'n')
+This is NOT a typo - EmailJS has a character limit for template IDs.
 
 -----------------------------------------------------------------
 HOW TO ADD TO NETLIFY:
