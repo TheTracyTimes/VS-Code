@@ -51,39 +51,54 @@ spreadsheetIds: {
 }
 ```
 
-## How to Test Locally
+## How to Test Locally (Secure Method)
 
-### Option 1: Run the Build Script
-```bash
-# Export environment variables from .env and run build
-export $(cat .env | grep -v '^#' | xargs) && bash build.sh
-```
+### ⚠️ Security Warning
+**NEVER** manually copy config files with real credentials to `public/config/`! This directory is served publicly and could expose your API keys.
 
-This will create `public/config/` with the config files.
+### Recommended: Use the Development Server Script
 
-### Option 2: Copy Config Files Manually
-```bash
-# Create the public/config directory
-mkdir -p public/config
-
-# Copy the config files
-cp config/firebase-config.js public/config/
-cp config/google-sheets-config.js public/config/
-```
-
-### Option 3: Use a Local Web Server
-The forms need to be served through a web server (not opened directly as files) for the JavaScript modules to work properly:
+The safe way to test locally is to use the provided development server script:
 
 ```bash
-# Using Python 3
-cd public
-python3 -m http.server 8000
+# Start the development server (generates configs and starts HTTP server)
+npm run dev
 
-# Or using Node.js http-server
-npx http-server public -p 8000
+# Or directly:
+bash dev-server.sh
 ```
 
-Then visit: `http://localhost:8000/forms/volunteer.html`
+This script:
+1. Checks for `.env` file
+2. Generates config files from environment variables into `public/config/`
+3. Starts a local Python HTTP server on port 8000
+4. Config files are in `.gitignore` and will NOT be committed
+
+Then visit:
+- http://localhost:8000/ (homepage)
+- http://localhost:8000/forms/registration.html
+- http://localhost:8000/forms/volunteer.html
+- http://localhost:8000/forms/vendor.html
+
+### Alternative: Manual Build + Server
+
+If you prefer to run steps separately:
+
+```bash
+# Step 1: Generate config files from .env
+npm run build
+# Or: export $(cat .env | grep -v '^#' | xargs) && bash build.sh
+
+# Step 2: Start a local server
+cd public && python3 -m http.server 8000
+```
+
+### Why This Approach is Secure
+
+1. **Config files generated at runtime** - Not stored in git
+2. **Environment variables used** - Credentials stay in `.env` (which is in `.gitignore`)
+3. **Build-time generation** - Same process used in production (Netlify)
+4. **No credential exposure** - Config files are temporary and local only
 
 ## Deployment
 

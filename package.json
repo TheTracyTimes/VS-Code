@@ -4,6 +4,8 @@
   "description": "Sarasota Gospel Temple Website with credential management",
   "private": true,
   "scripts": {
+    "dev": "bash dev-server.sh",
+    "build": "bash build.sh",
     "setup": "node setup-credentials.js --from-env",
     "setup:interactive": "node setup-credentials.js",
     "setup:firebase": "node setup-credentials.js --firebase-only",
@@ -14,7 +16,7 @@
     "firebase:deploy:functions": "firebase deploy --only functions",
     "firebase:config:get": "firebase functions:config:get",
     "firebase:serve": "firebase serve",
-    "help": "node -e \"console.log('\\n📋 Available Commands:\\n\\n  npm run setup              - Setup credentials from .env file\\n  npm run setup:interactive  - Interactive credential setup\\n  npm run setup:firebase     - Configure Firebase Functions only\\n  npm run firebase:login     - Login to Firebase\\n  npm run firebase:init      - Select Firebase project\\n  npm run firebase:deploy    - Deploy everything\\n  npm run help               - Show this help\\n')\""
+    "help": "node -e \"console.log('\\n📋 Available Commands:\\n\\n  npm run dev                - Start local development server\\n  npm run build              - Generate config files\\n  npm run setup              - Setup credentials from .env file\\n  npm run setup:interactive  - Interactive credential setup\\n  npm run setup:firebase     - Configure Firebase Functions only\\n  npm run firebase:login     - Login to Firebase\\n  npm run firebase:init      - Select Firebase project\\n  npm run firebase:deploy    - Deploy everything\\n  npm run help               - Show this help\\n')\""
   },
   "keywords": [
     "firebase",
