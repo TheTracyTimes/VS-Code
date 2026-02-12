@@ -5,33 +5,22 @@
 require('dotenv').config();
 
 const functions = require('firebase-functions');
+const { defineSecret } = require('firebase-functions/params');
 const admin = require('firebase-admin');
 const emailjs = require('@emailjs/nodejs');
 const { google } = require('googleapis');
 
 admin.initializeApp();
 
-// ===== ENVIRONMENT CONFIGURATION =====
-// Helper function to get config from either .env or Firebase config
-function getConfig(envKey, firebaseConfigPath) {
-    // Try process.env first (local development with .env)
-    if (process.env[envKey]) {
-        return process.env[envKey];
-    }
-
-    // Try Firebase config (production)
-    try {
-        const configParts = firebaseConfigPath.split('.');
-        let value = functions.config();
-        for (const part of configParts) {
-            value = value[part];
-            if (!value) return null;
-        }
-        return value;
-    } catch (error) {
-        return null;
-    }
-}
+// ===== SECRETS CONFIGURATION =====
+// Define secrets for production use (automatically uses process.env in local dev)
+const EMAILJS_SERVICE_ID = defineSecret('EMAILJS_SERVICE_ID');
+const EMAILJS_PUBLIC_KEY = defineSecret('EMAILJS_PUBLIC_KEY');
+const EMAILJS_PRIVATE_KEY = defineSecret('EMAILJS_PRIVATE_KEY');
+const GOOGLE_SERVICE_ACCOUNT_JSON = defineSecret('GOOGLE_SERVICE_ACCOUNT_JSON');
+const GOOGLE_SHEETS_REGISTRATIONS_ID = defineSecret('GOOGLE_SHEETS_REGISTRATIONS_ID');
+const GOOGLE_SHEETS_VOLUNTEERS_ID = defineSecret('GOOGLE_SHEETS_VOLUNTEERS_ID');
+const GOOGLE_SHEETS_VENDORS_ID = defineSecret('GOOGLE_SHEETS_VENDORS_ID');
 
 // ===== VALIDATION UTILITIES =====
 
@@ -235,94 +224,105 @@ exports.submitVendor = functions.https.onCall(async (data, context) => {
 
 // ===== SEND EMAIL VIA EMAILJS =====
 
-exports.sendEmail = functions.https.onCall(async (data, context) => {
-    try {
-        // Validate request
-        if (!data.templateId || !data.params) {
-            throw new functions.https.HttpsError('invalid-argument', 'Missing template or parameters');
-        }
-
-        // Get EmailJS credentials from environment variables or Firebase config
-        const serviceId = getConfig('EMAILJS_SERVICE_ID', 'emailjs.service_id');
-        const publicKey = getConfig('EMAILJS_PUBLIC_KEY', 'emailjs.public_key');
-        const privateKey = getConfig('EMAILJS_PRIVATE_KEY', 'emailjs.private_key');
-
-        if (!serviceId || !publicKey || !privateKey) {
-            throw new functions.https.HttpsError('failed-precondition', 'EmailJS not configured');
-        }
-
-        // Send email using EmailJS
-        const response = await emailjs.send(
-            serviceId,
-            data.templateId,
-            data.params,
-            {
-                publicKey: publicKey,
-                privateKey: privateKey,
+exports.sendEmail = functions
+    .runWith({ secrets: [EMAILJS_SERVICE_ID, EMAILJS_PUBLIC_KEY, EMAILJS_PRIVATE_KEY] })
+    .https.onCall(async (data, context) => {
+        try {
+            // Validate request
+            if (!data.templateId || !data.params) {
+                throw new functions.https.HttpsError('invalid-argument', 'Missing template or parameters');
             }
-        );
 
-        return { success: true, response };
-    } catch (error) {
-        console.error('Error sending email:', error);
-        throw new functions.https.HttpsError('internal', 'Failed to send email');
-    }
-});
+            // Get EmailJS credentials from secrets
+            const serviceId = EMAILJS_SERVICE_ID.value();
+            const publicKey = EMAILJS_PUBLIC_KEY.value();
+            const privateKey = EMAILJS_PRIVATE_KEY.value();
+
+            if (!serviceId || !publicKey || !privateKey) {
+                throw new functions.https.HttpsError('failed-precondition', 'EmailJS not configured');
+            }
+
+            // Send email using EmailJS
+            const response = await emailjs.send(
+                serviceId,
+                data.templateId,
+                data.params,
+                {
+                    publicKey: publicKey,
+                    privateKey: privateKey,
+                }
+            );
+
+            return { success: true, response };
+        } catch (error) {
+            console.error('Error sending email:', error);
+            throw new functions.https.HttpsError('internal', 'Failed to send email');
+        }
+    });
 
 // ===== GOOGLE SHEETS SYNC =====
 
-exports.appendToSheet = functions.https.onCall(async (data, context) => {
-    try {
-        // Note: Authentication not required for public form submissions
-        // Data validation will ensure integrity
+exports.appendToSheet = functions
+    .runWith({
+        secrets: [
+            GOOGLE_SERVICE_ACCOUNT_JSON,
+            GOOGLE_SHEETS_REGISTRATIONS_ID,
+            GOOGLE_SHEETS_VOLUNTEERS_ID,
+            GOOGLE_SHEETS_VENDORS_ID
+        ]
+    })
+    .https.onCall(async (data, context) => {
+        try {
+            // Note: Authentication not required for public form submissions
+            // Data validation will ensure integrity
 
-        // Validate form type
-        if (!data.formType || !['registrations', 'volunteers', 'vendors'].includes(data.formType)) {
-            throw new functions.https.HttpsError('invalid-argument', 'Invalid form type');
+            // Validate form type
+            if (!data.formType || !['registrations', 'volunteers', 'vendors'].includes(data.formType)) {
+                throw new functions.https.HttpsError('invalid-argument', 'Invalid form type');
+            }
+
+            // Get Google Sheets credentials from secrets
+            const credentials = GOOGLE_SERVICE_ACCOUNT_JSON.value();
+            if (!credentials) {
+                console.warn('Google Sheets not configured - skipping sync');
+                return { success: false, message: 'Google Sheets not configured' };
+            }
+
+            // Authenticate using service account
+            const auth = new google.auth.GoogleAuth({
+                credentials: typeof credentials === 'string' ? JSON.parse(credentials) : credentials,
+                scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+            });
+
+            const sheets = google.sheets({ version: 'v4', auth });
+
+            // Get spreadsheet ID based on form type
+            const spreadsheetIds = {
+                registrations: GOOGLE_SHEETS_REGISTRATIONS_ID.value(),
+                volunteers: GOOGLE_SHEETS_VOLUNTEERS_ID.value(),
+                vendors: GOOGLE_SHEETS_VENDORS_ID.value()
+            };
+
+            const spreadsheetId = spreadsheetIds[data.formType];
+            if (!spreadsheetId) {
+                throw new functions.https.HttpsError('invalid-argument', 'Invalid form type');
+            }
+
+            // Format data as row values
+            const values = [data.rowData];
+
+            // Append to sheet
+            const response = await sheets.spreadsheets.values.append({
+                spreadsheetId: spreadsheetId,
+                range: 'Sheet1!A:Z',
+                valueInputOption: 'RAW',
+                insertDataOption: 'INSERT_ROWS',
+                resource: { values },
+            });
+
+            return { success: true, updatedRows: response.data.updates.updatedRows };
+        } catch (error) {
+            console.error('Error appending to sheet:', error);
+            throw new functions.https.HttpsError('internal', 'Failed to append to sheet');
         }
-
-        // Get Google Sheets credentials from environment variables or Firebase config
-        const credentials = getConfig('GOOGLE_SERVICE_ACCOUNT_JSON', 'google.service_account');
-        if (!credentials) {
-            console.warn('Google Sheets not configured - skipping sync');
-            return { success: false, message: 'Google Sheets not configured' };
-        }
-
-        // Authenticate using service account
-        const auth = new google.auth.GoogleAuth({
-            credentials: typeof credentials === 'string' ? JSON.parse(credentials) : credentials,
-            scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-        });
-
-        const sheets = google.sheets({ version: 'v4', auth });
-
-        // Get spreadsheet ID based on form type
-        const spreadsheetIds = {
-            registrations: getConfig('GOOGLE_SHEETS_REGISTRATIONS_ID', 'sheets.registrations_id'),
-            volunteers: getConfig('GOOGLE_SHEETS_VOLUNTEERS_ID', 'sheets.volunteers_id'),
-            vendors: getConfig('GOOGLE_SHEETS_VENDORS_ID', 'sheets.vendors_id')
-        };
-
-        const spreadsheetId = spreadsheetIds[data.formType];
-        if (!spreadsheetId) {
-            throw new functions.https.HttpsError('invalid-argument', 'Invalid form type');
-        }
-
-        // Format data as row values
-        const values = [data.rowData];
-
-        // Append to sheet
-        const response = await sheets.spreadsheets.values.append({
-            spreadsheetId: spreadsheetId,
-            range: 'Sheet1!A:Z',
-            valueInputOption: 'RAW',
-            insertDataOption: 'INSERT_ROWS',
-            resource: { values },
-        });
-
-        return { success: true, updatedRows: response.data.updates.updatedRows };
-    } catch (error) {
-        console.error('Error appending to sheet:', error);
-        throw new functions.https.HttpsError('internal', 'Failed to append to sheet');
-    }
-});
+    });
