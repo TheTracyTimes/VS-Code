@@ -116,9 +116,9 @@ const EMAILJS_PUBLIC_KEY = "${env.EMAILJS_PUBLIC_KEY}";
 // IMPORTANT: These must match the template IDs in your EmailJS dashboard
 // If emails are not sending, verify these IDs in https://dashboard.emailjs.com/admin/templates
 const EMAILJS_TEMPLATE_IDS = {
-    registration: '${env.EMAILJS_TEMPLATE_REGISTRATION || 'template_registration'}',  // Replace with your actual registration template ID
-    vendor: '${env.EMAILJS_TEMPLATE_VENDOR || 'template_vendor'}',              // Replace with your actual vendor template ID
-    volunteer: '${env.EMAILJS_TEMPLATE_VOLUNTEER || 'template_volunteer'}'         // Replace with your actual volunteer template ID
+    registration: '${env.EMAILJS_TEMPLATE_REGISTRATION || 'registration_confirmation'}',
+    vendor: '${env.EMAILJS_TEMPLATE_VENDOR || 'vendor_confirmation'}',
+    volunteer: '${env.EMAILJS_TEMPLATE_VOLUNTEER || 'volunteer_confirmation'}'
 };
 
 // Initialize EmailJS

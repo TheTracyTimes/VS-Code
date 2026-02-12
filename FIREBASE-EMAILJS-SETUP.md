@@ -274,19 +274,19 @@ If you want different email templates for each form type:
 ### For Registration Form (`js/registration-form.js`)
 Update the EmailJS template ID to your registration template:
 ```javascript
-const EMAILJS_TEMPLATE_ID = 'template_registration123';
+const EMAILJS_TEMPLATE_ID = 'registration_confirmation';
 ```
 
 ### For Volunteer Form (`js/volunteer-form.js`)
 Update to your volunteer template:
 ```javascript
-const EMAILJS_TEMPLATE_ID = 'template_volunteer456';
+const EMAILJS_TEMPLATE_ID = 'volunteer_confirmation';
 ```
 
 ### For Vendor Form (`js/vendor-form.js`)
 Update to your vendor template:
 ```javascript
-const EMAILJS_TEMPLATE_ID = 'template_vendor789';
+const EMAILJS_TEMPLATE_ID = 'vendor_confirmation';
 ```
 
 ---
