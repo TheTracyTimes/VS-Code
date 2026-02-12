@@ -73,19 +73,9 @@ async function submitVolunteer(data) {
     }
 }
 
-// ===== EMAILJS TEMPLATE IDS =====
-// These are used by the form JavaScript files for sending emails
-
-const EMAILJS_TEMPLATE_IDS = {
-    registration: 'template_registration',
-    vendor: 'template_vendor',
-    volunteer: 'template_volunteer'
-};
-
 // Export for use in other scripts
 if (typeof window !== 'undefined') {
     window.submitRegistration = submitRegistration;
     window.submitVendor = submitVendor;
     window.submitVolunteer = submitVolunteer;
-    window.EMAILJS_TEMPLATE_IDS = EMAILJS_TEMPLATE_IDS;
 }

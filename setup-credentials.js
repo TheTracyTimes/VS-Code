@@ -112,6 +112,15 @@ try {
 const EMAILJS_SERVICE_ID = "${env.EMAILJS_SERVICE_ID}";
 const EMAILJS_PUBLIC_KEY = "${env.EMAILJS_PUBLIC_KEY}";
 
+// EmailJS Template IDs
+// IMPORTANT: These must match the template IDs in your EmailJS dashboard
+// If emails are not sending, verify these IDs in https://dashboard.emailjs.com/admin/templates
+const EMAILJS_TEMPLATE_IDS = {
+    registration: '${env.EMAILJS_TEMPLATE_REGISTRATION || 'template_registration'}',  // Replace with your actual registration template ID
+    vendor: '${env.EMAILJS_TEMPLATE_VENDOR || 'template_vendor'}',              // Replace with your actual vendor template ID
+    volunteer: '${env.EMAILJS_TEMPLATE_VOLUNTEER || 'template_volunteer'}'         // Replace with your actual volunteer template ID
+};
+
 // Initialize EmailJS
 function initEmailJS() {
     if (typeof emailjs !== 'undefined') {
@@ -128,8 +137,14 @@ if (document.readyState === 'loading') {
 }
 
 // Export for use in other scripts
+if (typeof window !== 'undefined') {
+    window.EMAILJS_SERVICE_ID = EMAILJS_SERVICE_ID;
+    window.EMAILJS_PUBLIC_KEY = EMAILJS_PUBLIC_KEY;
+    window.EMAILJS_TEMPLATE_IDS = EMAILJS_TEMPLATE_IDS;
+}
+
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { firebaseConfig, db, auth, EMAILJS_SERVICE_ID, EMAILJS_PUBLIC_KEY };
+    module.exports = { firebaseConfig, db, auth, EMAILJS_SERVICE_ID, EMAILJS_PUBLIC_KEY, EMAILJS_TEMPLATE_IDS };
 }
 `;
 }
