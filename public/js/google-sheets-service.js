@@ -4,13 +4,18 @@
 window.GoogleSheetsService = {
     /**
      * Check if Google Sheets is properly configured
+     * With Firebase Functions approach, we only need Firebase to be initialized
      */
     isGoogleSheetsConfigured() {
-        return typeof GOOGLE_SHEETS_CONFIG !== 'undefined' &&
-               GOOGLE_SHEETS_CONFIG.apiKey &&
-               GOOGLE_SHEETS_CONFIG.clientId &&
-               GOOGLE_SHEETS_CONFIG.apiKey !== 'your_google_api_key' &&
-               GOOGLE_SHEETS_CONFIG.clientId !== 'your_client_id.apps.googleusercontent.com';
+        // Check if Firebase Functions is available
+        if (typeof firebase === 'undefined' || !firebase.functions) {
+            console.warn('Firebase Functions not available - Google Sheets sync disabled');
+            return false;
+        }
+
+        // If old config exists with spreadsheet IDs, use it
+        // Otherwise Firebase Functions will use the IDs from secrets
+        return true;
     },
 
     /**
@@ -25,22 +30,11 @@ window.GoogleSheetsService = {
         }
 
         try {
-            const spreadsheetId = GOOGLE_SHEETS_CONFIG.spreadsheetIds[formType];
-            if (!spreadsheetId) {
-                console.warn(`No spreadsheet ID configured for ${formType}`);
-                return;
-            }
-
-            // Check if Firebase Functions are available
-            if (typeof firebase === 'undefined' || !firebase.functions) {
-                console.warn('Firebase Functions not available - skipping Google Sheets sync');
-                return;
-            }
-
             // Format data for Google Sheets based on form type
             const row = this.formatDataForSheet(formType, data);
 
             // Call Firebase Cloud Function to append to sheet
+            // The function will use spreadsheet IDs from Firebase Secrets
             const appendToSheet = firebase.functions().httpsCallable('appendToSheet');
             const response = await appendToSheet({
                 formType: formType,
