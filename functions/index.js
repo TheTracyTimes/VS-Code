@@ -1,7 +1,7 @@
 // ===== FIREBASE CLOUD FUNCTIONS =====
 // Secure backend endpoints for Sarasota Gospel Temple
 
-// Load environment variables from .env file
+// Load environment variables from .env file (for local development)
 require('dotenv').config();
 
 const functions = require('firebase-functions');
@@ -10,6 +10,28 @@ const emailjs = require('@emailjs/nodejs');
 const { google } = require('googleapis');
 
 admin.initializeApp();
+
+// ===== ENVIRONMENT CONFIGURATION =====
+// Helper function to get config from either .env or Firebase config
+function getConfig(envKey, firebaseConfigPath) {
+    // Try process.env first (local development with .env)
+    if (process.env[envKey]) {
+        return process.env[envKey];
+    }
+
+    // Try Firebase config (production)
+    try {
+        const configParts = firebaseConfigPath.split('.');
+        let value = functions.config();
+        for (const part of configParts) {
+            value = value[part];
+            if (!value) return null;
+        }
+        return value;
+    } catch (error) {
+        return null;
+    }
+}
 
 // ===== VALIDATION UTILITIES =====
 
@@ -220,10 +242,10 @@ exports.sendEmail = functions.https.onCall(async (data, context) => {
             throw new functions.https.HttpsError('invalid-argument', 'Missing template or parameters');
         }
 
-        // Get EmailJS credentials from environment variables
-        const serviceId = process.env.EMAILJS_SERVICE_ID;
-        const publicKey = process.env.EMAILJS_PUBLIC_KEY;
-        const privateKey = process.env.EMAILJS_PRIVATE_KEY;
+        // Get EmailJS credentials from environment variables or Firebase config
+        const serviceId = getConfig('EMAILJS_SERVICE_ID', 'emailjs.service_id');
+        const publicKey = getConfig('EMAILJS_PUBLIC_KEY', 'emailjs.public_key');
+        const privateKey = getConfig('EMAILJS_PRIVATE_KEY', 'emailjs.private_key');
 
         if (!serviceId || !publicKey || !privateKey) {
             throw new functions.https.HttpsError('failed-precondition', 'EmailJS not configured');
@@ -259,8 +281,8 @@ exports.appendToSheet = functions.https.onCall(async (data, context) => {
             throw new functions.https.HttpsError('invalid-argument', 'Invalid form type');
         }
 
-        // Get Google Sheets credentials from environment variables
-        const credentials = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
+        // Get Google Sheets credentials from environment variables or Firebase config
+        const credentials = getConfig('GOOGLE_SERVICE_ACCOUNT_JSON', 'google.service_account');
         if (!credentials) {
             console.warn('Google Sheets not configured - skipping sync');
             return { success: false, message: 'Google Sheets not configured' };
@@ -268,7 +290,7 @@ exports.appendToSheet = functions.https.onCall(async (data, context) => {
 
         // Authenticate using service account
         const auth = new google.auth.GoogleAuth({
-            credentials: JSON.parse(credentials),
+            credentials: typeof credentials === 'string' ? JSON.parse(credentials) : credentials,
             scopes: ['https://www.googleapis.com/auth/spreadsheets'],
         });
 
@@ -276,9 +298,9 @@ exports.appendToSheet = functions.https.onCall(async (data, context) => {
 
         // Get spreadsheet ID based on form type
         const spreadsheetIds = {
-            registrations: process.env.GOOGLE_SHEETS_REGISTRATIONS_ID,
-            volunteers: process.env.GOOGLE_SHEETS_VOLUNTEERS_ID,
-            vendors: process.env.GOOGLE_SHEETS_VENDORS_ID
+            registrations: getConfig('GOOGLE_SHEETS_REGISTRATIONS_ID', 'sheets.registrations_id'),
+            volunteers: getConfig('GOOGLE_SHEETS_VOLUNTEERS_ID', 'sheets.volunteers_id'),
+            vendors: getConfig('GOOGLE_SHEETS_VENDORS_ID', 'sheets.vendors_id')
         };
 
         const spreadsheetId = spreadsheetIds[data.formType];
