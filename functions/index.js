@@ -1,6 +1,9 @@
 // ===== FIREBASE CLOUD FUNCTIONS =====
 // Secure backend endpoints for Sarasota Gospel Temple
 
+// Load environment variables from .env file
+require('dotenv').config();
+
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const emailjs = require('@emailjs/nodejs');
