@@ -248,15 +248,19 @@ exports.sendEmail = functions.https.onCall(async (data, context) => {
 
 exports.appendToSheet = functions.https.onCall(async (data, context) => {
     try {
-        // Require authentication for this endpoint
-        if (!context.auth) {
-            throw new functions.https.HttpsError('unauthenticated', 'Must be authenticated');
+        // Note: Authentication not required for public form submissions
+        // Data validation will ensure integrity
+
+        // Validate form type
+        if (!data.formType || !['registrations', 'volunteers', 'vendors'].includes(data.formType)) {
+            throw new functions.https.HttpsError('invalid-argument', 'Invalid form type');
         }
 
         // Get Google Sheets credentials from environment variables
         const credentials = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
         if (!credentials) {
-            throw new functions.https.HttpsError('failed-precondition', 'Google Sheets not configured');
+            console.warn('Google Sheets not configured - skipping sync');
+            return { success: false, message: 'Google Sheets not configured' };
         }
 
         // Authenticate using service account

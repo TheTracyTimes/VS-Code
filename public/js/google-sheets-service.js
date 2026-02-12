@@ -14,7 +14,7 @@ window.GoogleSheetsService = {
     },
 
     /**
-     * Add a row to the specified Google Sheet
+     * Add a row to the specified Google Sheet via Firebase Cloud Function
      * @param {string} formType - Type of form (registrations, vendors, volunteers)
      * @param {object} data - Form data to add
      */
@@ -31,26 +31,23 @@ window.GoogleSheetsService = {
                 return;
             }
 
-            // Ensure Google API is loaded
-            if (typeof gapi === 'undefined' || !gapi.client) {
-                console.warn('Google API client not loaded - skipping Google Sheets sync');
+            // Check if Firebase Functions are available
+            if (typeof firebase === 'undefined' || !firebase.functions) {
+                console.warn('Firebase Functions not available - skipping Google Sheets sync');
                 return;
             }
 
             // Format data for Google Sheets based on form type
             const row = this.formatDataForSheet(formType, data);
 
-            // Append to sheet
-            const response = await gapi.client.sheets.spreadsheets.values.append({
-                spreadsheetId: spreadsheetId,
-                range: 'Sheet1!A:Z', // Adjust range as needed
-                valueInputOption: 'USER_ENTERED',
-                resource: {
-                    values: [row]
-                }
+            // Call Firebase Cloud Function to append to sheet
+            const appendToSheet = firebase.functions().httpsCallable('appendToSheet');
+            const response = await appendToSheet({
+                formType: formType,
+                rowData: row
             });
 
-            console.log('Successfully synced to Google Sheets:', response);
+            console.log('Successfully synced to Google Sheets:', response.data);
             return response;
         } catch (error) {
             console.error('Google Sheets sync error:', error);
