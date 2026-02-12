@@ -1,0 +1,109 @@
+=================================================================
+NETLIFY ENVIRONMENT VARIABLES - EXACT VALUES TO ADD
+=================================================================
+
+Go to Netlify Dashboard → Site Settings → Environment Variables
+Add each of these variables with the EXACT values shown below:
+
+-----------------------------------------------------------------
+FIREBASE CONFIGURATION (7 variables)
+-----------------------------------------------------------------
+FIREBASE_API_KEY
+AIzaSyBZVYB04dtsa9AL7e5xw1W5ZVOrqds6Akk
+
+FIREBASE_AUTH_DOMAIN
+sarasota-gospel-temple.firebaseapp.com
+
+FIREBASE_PROJECT_ID
+sarasota-gospel-temple
+
+FIREBASE_APP_ID
+1:868460102497:web:d36ace1f5fd535b21c7b20
+
+FIREBASE_MEASUREMENT_ID
+G-BQG0SYFGQ9
+
+FIREBASE_MESSAGING_SENDER_ID
+868460102497
+
+FIREBASE_STORAGE_BUCKET
+sarasota-gospel-temple.firebasestorage.app
+
+-----------------------------------------------------------------
+EMAILJS CONFIGURATION (5 variables)
+-----------------------------------------------------------------
+EMAILJS_SERVICE_ID
+service_vdrrcls
+
+EMAILJS_PUBLIC_KEY
+T35UiRys7umDsRZw8
+
+⚠️ IMPORTANT FIX - This had a typo (was missing 'n' at end):
+EMAILJS_TEMPLATE_REGISTRATION
+registration_confirmation
+
+EMAILJS_TEMPLATE_VENDOR
+vendor_confirmation
+
+EMAILJS_TEMPLATE_VOLUNTEER
+volunteer_confirmation
+
+-----------------------------------------------------------------
+GOOGLE SHEETS CONFIGURATION (5 variables)
+-----------------------------------------------------------------
+GOOGLE_SHEETS_API_KEY
+AIzaSyBuGOqgq-M6Q9bNeW29xihdRqGHDWbiEew
+
+GOOGLE_SHEETS_CLIENT_ID
+506893960681-9nb4cq1jkgg7d5bvuf527ah0sh93j5ad.apps.googleusercontent.com
+
+GOOGLE_SHEETS_REGISTRATIONS_ID
+1q7vxkgof14p6OpHehTySIU6c0qNpbencA6E09agYJTg
+
+GOOGLE_SHEETS_VOLUNTEERS_ID
+1T45QcAsY7m5SO8gSQKTvHI_PFFa4qx1x6dwW3iwG0s0
+
+GOOGLE_SHEETS_VENDORS_ID
+1V6G2KN1vvTB5Ng249rg9K6ijbUT7tou_jaE9ygALxeM
+
+=================================================================
+TOTAL: 17 environment variables
+=================================================================
+
+CRITICAL FIX:
+The registration template ID had a typo. It was:
+  ❌ registration_confirmatio (missing 'n')
+
+It should be:
+  ✅ registration_confirmation
+
+This is why registration form emails weren't working!
+
+-----------------------------------------------------------------
+HOW TO ADD TO NETLIFY:
+-----------------------------------------------------------------
+1. Go to your Netlify site dashboard
+2. Click "Site settings"
+3. Click "Environment variables" in left sidebar
+4. For each variable above:
+   - Click "Add a variable"
+   - Key: Copy the variable name (e.g., FIREBASE_API_KEY)
+   - Value: Copy the value below it
+   - Scopes: Select all (Production, Deploy previews, Branch deploys)
+   - Click "Create variable"
+
+5. After adding all 17 variables:
+   - Go to "Deploys" tab
+   - Click "Trigger deploy" → "Deploy site"
+   - Wait for build to complete
+
+-----------------------------------------------------------------
+VERIFICATION:
+-----------------------------------------------------------------
+After deploy completes, test your site:
+1. Open browser console (F12)
+2. Go to any form page
+3. Check for: "Firebase initialized successfully"
+4. Check for: "EmailJS initialized"
+5. Submit a test form
+6. Verify email is received
