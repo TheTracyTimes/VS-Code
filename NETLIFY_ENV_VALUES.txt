@@ -33,7 +33,7 @@ sarasota-gospel-temple.firebasestorage.app
 EMAILJS CONFIGURATION (5 variables)
 -----------------------------------------------------------------
 EMAILJS_SERVICE_ID
-service_vdrrcls
+service_vh342rf
 
 EMAILJS_PUBLIC_KEY
 T35UiRys7umDsRZw8
