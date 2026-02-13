@@ -460,18 +460,38 @@ exports.syncAllToSheet = functions
                 console.log('Existing data cleared successfully');
             } catch (clearError) {
                 console.error('Error clearing spreadsheet:', clearError);
-                if (clearError.code === 404) {
+
+                // Google API errors have status code in response.status
+                const statusCode = clearError.response?.status || clearError.code;
+                const errorMessage = clearError.message || 'Unknown error';
+
+                if (statusCode === 404 || statusCode === '404') {
                     throw new functions.https.HttpsError(
                         'failed-precondition',
                         `Spreadsheet not found (ID: ${spreadsheetId}). Please verify the spreadsheet ID is correct.`
                     );
-                } else if (clearError.code === 403) {
+                } else if (statusCode === 403 || statusCode === '403') {
                     throw new functions.https.HttpsError(
                         'failed-precondition',
                         `Service account does not have access to spreadsheet (ID: ${spreadsheetId}). Please share the spreadsheet with the service account email.`
                     );
+                } else if (statusCode === 401 || statusCode === '401') {
+                    throw new functions.https.HttpsError(
+                        'failed-precondition',
+                        `Authentication failed. The service account credentials may be invalid or expired.`
+                    );
+                } else if (statusCode === 400 || statusCode === '400') {
+                    throw new functions.https.HttpsError(
+                        'invalid-argument',
+                        `Invalid request to Google Sheets API: ${errorMessage}`
+                    );
+                } else {
+                    // Include the actual error message for other errors
+                    throw new functions.https.HttpsError(
+                        'internal',
+                        `Failed to clear spreadsheet data: ${errorMessage}`
+                    );
                 }
-                throw clearError;
             }
 
             // Prepare data with headers
@@ -498,13 +518,43 @@ exports.syncAllToSheet = functions
                 };
             } catch (writeError) {
                 console.error('Error writing to spreadsheet:', writeError);
-                if (writeError.code === 403) {
+
+                // Google API errors have status code in response.status
+                const statusCode = writeError.response?.status || writeError.code;
+                const errorMessage = writeError.message || 'Unknown error';
+
+                if (statusCode === 403 || statusCode === '403') {
                     throw new functions.https.HttpsError(
                         'failed-precondition',
                         `Service account does not have write permission to spreadsheet (ID: ${spreadsheetId}). Please ensure the service account has Editor access.`
                     );
+                } else if (statusCode === 404 || statusCode === '404') {
+                    throw new functions.https.HttpsError(
+                        'failed-precondition',
+                        `Spreadsheet not found (ID: ${spreadsheetId}). Please verify the spreadsheet ID is correct.`
+                    );
+                } else if (statusCode === 401 || statusCode === '401') {
+                    throw new functions.https.HttpsError(
+                        'failed-precondition',
+                        `Authentication failed. The service account credentials may be invalid or expired.`
+                    );
+                } else if (statusCode === 400 || statusCode === '400') {
+                    throw new functions.https.HttpsError(
+                        'invalid-argument',
+                        `Invalid data format for Google Sheets: ${errorMessage}`
+                    );
+                } else if (statusCode === 429 || statusCode === '429') {
+                    throw new functions.https.HttpsError(
+                        'resource-exhausted',
+                        `Google Sheets API quota exceeded. Please try again later.`
+                    );
+                } else {
+                    // Include the actual error message for other errors
+                    throw new functions.https.HttpsError(
+                        'internal',
+                        `Failed to write to spreadsheet: ${errorMessage}`
+                    );
                 }
-                throw writeError;
             }
         } catch (error) {
             console.error('Error syncing all to sheet:', {
@@ -515,7 +565,12 @@ exports.syncAllToSheet = functions
                 response: error.response?.data
             });
 
-            // Provide detailed error message
+            // If it's already an HttpsError from our specific error handling, re-throw it
+            if (error.code && error.code.startsWith('functions/')) {
+                throw error;
+            }
+
+            // For other errors, provide detailed error message
             const errorMessage = error.message || error.toString() || 'Unknown error occurred';
             throw new functions.https.HttpsError(
                 'internal',

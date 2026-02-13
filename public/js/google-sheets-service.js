@@ -110,6 +110,12 @@ window.GoogleSheetsService = {
             } else if (error.code === 'functions/failed-precondition') {
                 // This error includes detailed message about what's missing
                 throw new Error(error.message || 'Google Sheets configuration incomplete.');
+            } else if (error.code === 'functions/invalid-argument') {
+                // Invalid data or request format
+                throw new Error(error.message || 'Invalid data format for Google Sheets.');
+            } else if (error.code === 'functions/resource-exhausted') {
+                // API quota exceeded
+                throw new Error(error.message || 'Google Sheets API quota exceeded. Please try again later.');
             } else if (error.code === 'functions/internal') {
                 // For internal errors, use the detailed message from the function
                 throw new Error(error.message || 'Internal server error. Check Firebase Functions logs.');
