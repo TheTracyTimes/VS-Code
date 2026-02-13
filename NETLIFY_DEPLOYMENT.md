@@ -1,5 +1,77 @@
 # Netlify Deployment Guide
 
+## ⚠️ IMPORTANT: API Key Security Explained
+
+### 🔓 SAFE to Expose (Client-Side Credentials)
+
+These credentials **MUST** be in your Netlify deployment and are **designed** to be public:
+
+#### ✅ Firebase Configuration (ALL SAFE)
+- `FIREBASE_API_KEY` - **NOT a secret!** Firebase security comes from Security Rules, not hiding this key
+- `FIREBASE_AUTH_DOMAIN`
+- `FIREBASE_PROJECT_ID`
+- `FIREBASE_STORAGE_BUCKET`
+- `FIREBASE_MESSAGING_SENDER_ID`
+- `FIREBASE_APP_ID`
+- `FIREBASE_MEASUREMENT_ID`
+
+**Why Safe?** Every mobile app and website using Firebase includes these values. Firebase enforces security through Firestore Security Rules and Authentication, NOT by hiding the API key.
+
+#### ✅ Google Sheets OAuth (SAFE)
+- `GOOGLE_SHEETS_API_KEY` - Safe when restricted by HTTP referrer
+- `GOOGLE_SHEETS_CLIENT_ID` - **OAuth Client IDs are meant to be public**
+
+**Why Safe?** OAuth Client IDs only work with authorized redirect URIs you configure. The API key should be restricted to your domain in Google Cloud Console.
+
+#### ✅ EmailJS (Public Keys Only)
+- `EMAILJS_SERVICE_ID` - Safe (public identifier)
+- `EMAILJS_PUBLIC_KEY` - Safe (designed for client-side)
+- `EMAILJS_TEMPLATE_*` - Safe (template IDs)
+
+**Why Safe?** These are specifically designed for client-side use. EmailJS enforces rate limits and domain restrictions.
+
+#### ✅ Google Sheets IDs (SAFE)
+- `GOOGLE_SHEETS_REGISTRATIONS_ID`
+- `GOOGLE_SHEETS_VOLUNTEERS_ID`
+- `GOOGLE_SHEETS_VENDORS_ID`
+
+**Why Safe?** These are just spreadsheet IDs. Access is controlled by Google Sheets permissions and OAuth authentication.
+
+---
+
+### 🔒 NEVER Expose to Netlify (Server-Side Secrets)
+
+These credentials must **ONLY** be in Firebase Functions, **NEVER** in Netlify:
+
+#### ❌ DO NOT ADD TO NETLIFY
+- `EMAILJS_PRIVATE_KEY` - **Server-side only!** Only for Firebase Functions
+- `GOOGLE_SERVICE_ACCOUNT_JSON` - **Server-side only!** Contains private key for service account
+
+**Why NOT Safe?** These contain private keys that give direct backend access. They bypass user authentication and should only be in secure server environments (Firebase Functions with Secret Manager).
+
+**Where They Belong:**
+- Firebase Functions using `firebase functions:secrets:set`
+- Never in git, never in Netlify, never in client-side code
+
+---
+
+### 📝 Summary
+
+**For Netlify deployment, you MUST set these environment variables:**
+- All Firebase config values ✅
+- EmailJS public keys only ✅
+- Google Sheets API key & Client ID ✅
+- Google Sheets spreadsheet IDs ✅
+
+**DO NOT set these in Netlify:**
+- `EMAILJS_PRIVATE_KEY` ❌
+- `GOOGLE_SERVICE_ACCOUNT_JSON` ❌
+
+**What happens during build:**
+The `build.sh` script generates `public/config/` files from environment variables. It only includes safe, public credentials. The private keys are excluded and only used in Firebase Functions.
+
+---
+
 ## Quick Start Checklist
 
 ### ✅ Prerequisites
@@ -25,36 +97,40 @@
 
 ## Step 2: Configure Environment Variables
 
-Go to **Site settings** → **Environment variables** and add these:
+Go to **Site settings** → **Environment variables** and add ALL of these:
 
-### Firebase Configuration
-```
-FIREBASE_API_KEY=your_firebase_api_key
-FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
-FIREBASE_PROJECT_ID=your-project-id
-FIREBASE_STORAGE_BUCKET=your-project.firebasestorage.app
-FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-FIREBASE_APP_ID=your_app_id
-FIREBASE_MEASUREMENT_ID=your_measurement_id
+### ✅ Firebase Configuration (ALL SAFE TO EXPOSE)
+```bash
+FIREBASE_API_KEY=AIzaSyBZVYB04dtsa9AL7e5xw1W5ZVOrqds6Akk
+FIREBASE_AUTH_DOMAIN=sarasota-gospel-temple.firebaseapp.com
+FIREBASE_PROJECT_ID=sarasota-gospel-temple
+FIREBASE_STORAGE_BUCKET=sarasota-gospel-temple.firebasestorage.app
+FIREBASE_MESSAGING_SENDER_ID=868460102497
+FIREBASE_APP_ID=1:868460102497:web:d36ace1f5fd535b21c7b20
+FIREBASE_MEASUREMENT_ID=G-BQG0SYFGQ9
 ```
 
-### EmailJS Configuration
-```
-EMAILJS_SERVICE_ID=your_service_id
-EMAILJS_PUBLIC_KEY=your_public_key
-EMAILJS_TEMPLATE_REGISTRATION=registration_confirmation
+### ✅ EmailJS Configuration (PUBLIC KEYS ONLY)
+```bash
+EMAILJS_SERVICE_ID=service_vdrrcls
+EMAILJS_PUBLIC_KEY=T35UiRys7umDsRZw8
+EMAILJS_TEMPLATE_REGISTRATION=registration_confirmatio
 EMAILJS_TEMPLATE_VENDOR=vendor_confirmation
 EMAILJS_TEMPLATE_VOLUNTEER=volunteer_confirmation
 ```
 
-### Google Sheets Configuration
-```
-GOOGLE_SHEETS_API_KEY=your_google_api_key
-GOOGLE_SHEETS_CLIENT_ID=your_client_id.apps.googleusercontent.com
+⚠️ **IMPORTANT:** Do NOT add `EMAILJS_PRIVATE_KEY` to Netlify! It's only for Firebase Functions.
+
+### ✅ Google Sheets Configuration (SAFE TO EXPOSE)
+```bash
+GOOGLE_SHEETS_API_KEY=AIzaSyDevOx2Y-yYoDlWA5NMFGRM8HomDIBTaO8
+GOOGLE_SHEETS_CLIENT_ID=432405234611-ekkjucft12cp1p5ushg77pgvme6237lf.apps.googleusercontent.com
 GOOGLE_SHEETS_REGISTRATIONS_ID=1q7vxkgof14p6OpHehTySIU6c0qNpbencA6E09agYJTg
 GOOGLE_SHEETS_VOLUNTEERS_ID=1T45QcAsY7m5SO8gSQKTvHI_PFFa4qx1x6dwW3iwG0s0
 GOOGLE_SHEETS_VENDORS_ID=1V6G2KN1vvTB5Ng249rg9K6ijbUT7tou_jaE9ygALxeM
 ```
+
+⚠️ **IMPORTANT:** Do NOT add `GOOGLE_SERVICE_ACCOUNT_JSON` to Netlify! It's only for Firebase Functions.
 
 ### How to Add Each Variable
 

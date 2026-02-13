@@ -1,7 +1,27 @@
 #!/bin/bash
-# Build script for Netlify - generates config files from environment variables
+# ===== NETLIFY BUILD SCRIPT =====
+# Generates config files from environment variables
+#
+# SECURITY NOTE:
+# This script ONLY includes CLIENT-SIDE credentials that are safe to expose publicly.
+# The following credentials are EXCLUDED and should NEVER be in client-side code:
+#   - EMAILJS_PRIVATE_KEY (server-side only, for Firebase Functions)
+#   - GOOGLE_SERVICE_ACCOUNT_JSON (server-side only, for Firebase Functions)
+#
+# All credentials generated here are designed to be public and are secured through:
+#   - Firebase Security Rules (not hiding the API key)
+#   - Google OAuth authorized domains
+#   - Google Cloud API restrictions (HTTP referrers)
+#   - EmailJS domain restrictions
 
-echo "Generating config files from environment variables..."
+echo "========================================="
+echo "Netlify Build: Generating Config Files"
+echo "========================================="
+echo ""
+echo "⚠️  SECURITY CHECK:"
+echo "✅ Only public client-side credentials will be included"
+echo "❌ Private keys (EMAILJS_PRIVATE_KEY, SERVICE_ACCOUNT) excluded"
+echo ""
 
 # Create public/config directory
 mkdir -p public/config
@@ -128,6 +148,40 @@ if (typeof module !== 'undefined' && module.exports) {
 }
 SHEETS_EOF
 
-echo "Config files generated successfully!"
+echo ""
+echo "========================================="
+echo "✅ Config files generated successfully!"
+echo "========================================="
 echo "  - public/config/firebase-config.js"
 echo "  - public/config/google-sheets-config.js"
+echo ""
+
+# ===== SECURITY VALIDATION =====
+echo "🔒 Running security validation..."
+
+# Check that private keys are NOT in generated files
+SECURITY_ERROR=0
+
+if grep -r "EMAILJS_PRIVATE_KEY\|emailjs.private\|private_key.*BEGIN PRIVATE KEY" public/config/ 2>/dev/null; then
+    echo "❌ ERROR: Private key detected in generated config files!"
+    SECURITY_ERROR=1
+fi
+
+if grep -r "GOOGLE_SERVICE_ACCOUNT_JSON\|service_account.*private_key" public/config/ 2>/dev/null; then
+    echo "❌ ERROR: Service account credentials detected in generated config files!"
+    SECURITY_ERROR=1
+fi
+
+if [ $SECURITY_ERROR -eq 1 ]; then
+    echo ""
+    echo "❌ BUILD FAILED: Security validation error"
+    echo "   Private credentials were found in client-side config files."
+    echo "   This is a critical security issue."
+    exit 1
+fi
+
+echo "✅ Security validation passed - no private keys in client-side code"
+echo ""
+echo "========================================="
+echo "🚀 Build completed successfully!"
+echo "========================================="

@@ -110,9 +110,38 @@ Firebase's own documentation states:
 ### Server-Side Keys (Private)
 These keys should NEVER be exposed to the client:
 
-- **EmailJS Private Key**: Keep in Firebase Functions only
-- **Google Service Account JSON**: Keep in Firebase Functions only
+- **EmailJS Private Key** (`EMAILJS_PRIVATE_KEY`):
+  - ❌ NEVER add to Netlify environment variables
+  - ✅ Only in Firebase Functions secrets
+  - 🔒 Contains actual secret that bypasses rate limits
+
+- **Google Service Account JSON** (`GOOGLE_SERVICE_ACCOUNT_JSON`):
+  - ❌ NEVER add to Netlify environment variables
+  - ✅ Only in Firebase Functions secrets
+  - 🔒 Contains private key that grants backend access
+
 - **Firebase Admin SDK credentials**: Server-side only
+
+### Netlify Deployment Security
+
+**IMPORTANT:** When deploying to Netlify, you should ONLY set the following environment variables:
+
+✅ **Safe to add to Netlify:**
+- All `FIREBASE_*` variables (API key, auth domain, project ID, etc.)
+- `EMAILJS_SERVICE_ID` and `EMAILJS_PUBLIC_KEY` (but NOT private key!)
+- `GOOGLE_SHEETS_API_KEY` and `GOOGLE_SHEETS_CLIENT_ID`
+- All `GOOGLE_SHEETS_*_ID` spreadsheet IDs
+- `EMAILJS_TEMPLATE_*` template IDs
+
+❌ **NEVER add to Netlify:**
+- `EMAILJS_PRIVATE_KEY` - This is a secret for server-side use only
+- `GOOGLE_SERVICE_ACCOUNT_JSON` - This contains a private key for server-side use only
+
+**Why this is safe:**
+The `build.sh` script only includes client-side credentials in the generated config files. It automatically excludes private keys. The build process includes security validation to prevent accidental exposure.
+
+**Verification:**
+Run `bash validate-security.sh` before deploying to ensure no private keys are leaked.
 
 ## Local Development Security
 
