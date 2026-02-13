@@ -1,25 +1,35 @@
 // ===== GOOGLE SHEETS SERVICE =====
-// Handles syncing form submissions to Google Sheets
+// Handles syncing form submissions to Google Sheets using client-side API
 
 window.GoogleSheetsService = {
     /**
      * Check if Google Sheets is properly configured
-     * With Firebase Functions approach, we only need Firebase to be initialized
+     * For client-side approach, we need API key, client ID, and initialized gapi
      */
     isGoogleSheetsConfigured() {
-        // Check if Firebase Functions is available
-        if (typeof firebase === 'undefined' || !firebase.functions) {
-            console.warn('Firebase Functions not available - Google Sheets sync disabled');
+        // Check if Google Sheets config exists
+        if (typeof GOOGLE_SHEETS_CONFIG === 'undefined') {
+            console.warn('Google Sheets configuration not found');
             return false;
         }
 
-        // If old config exists with spreadsheet IDs, use it
-        // Otherwise Firebase Functions will use the IDs from secrets
+        // Check if API key and client ID are configured
+        if (!GOOGLE_SHEETS_CONFIG.apiKey || !GOOGLE_SHEETS_CONFIG.clientId) {
+            console.warn('Google Sheets API key or Client ID not configured');
+            return false;
+        }
+
+        // Check if gapi is loaded
+        if (typeof gapi === 'undefined' || !gapi.client) {
+            console.warn('Google API client not loaded');
+            return false;
+        }
+
         return true;
     },
 
     /**
-     * Add a row to the specified Google Sheet via Firebase Cloud Function
+     * Add a row to the specified Google Sheet via client-side API
      * @param {string} formType - Type of form (registrations, vendors, volunteers)
      * @param {object} data - Form data to add
      */
@@ -30,21 +40,36 @@ window.GoogleSheetsService = {
         }
 
         try {
+            // Ensure user is authenticated (silent if already authenticated)
+            if (!isGoogleAuthenticated()) {
+                console.log('Not authenticated, skipping Google Sheets sync for form submission');
+                return;
+            }
+
             // Format data for Google Sheets based on form type
             const row = this.formatDataForSheet(formType, data);
 
-            // Call Firebase Cloud Function to append to sheet
-            // The function will use spreadsheet IDs from Firebase Secrets
-            const appendToSheet = firebase.functions().httpsCallable('appendToSheet');
-            const response = await appendToSheet({
-                formType: formType,
-                rowData: row
+            // Get spreadsheet ID for the form type
+            const spreadsheetId = GOOGLE_SHEETS_CONFIG.spreadsheetIds[formType];
+            if (!spreadsheetId) {
+                throw new Error(`No spreadsheet ID configured for ${formType}`);
+            }
+
+            // Append row to sheet using Google Sheets API
+            const response = await gapi.client.sheets.spreadsheets.values.append({
+                spreadsheetId: spreadsheetId,
+                range: 'Sheet1!A:Z',
+                valueInputOption: 'RAW',
+                insertDataOption: 'INSERT_ROWS',
+                resource: {
+                    values: [row]
+                }
             });
 
-            console.log('Successfully synced to Google Sheets:', response.data);
+            console.log('✅ Successfully synced to Google Sheets:', response.result);
             return response;
         } catch (error) {
-            console.error('Google Sheets sync error:', error);
+            console.error('❌ Google Sheets sync error:', error);
             // Don't throw - form was already submitted successfully
         }
     },
@@ -56,7 +81,14 @@ window.GoogleSheetsService = {
      */
     async syncAllDataToSheets(section) {
         if (!this.isGoogleSheetsConfigured()) {
-            throw new Error('Google Sheets not configured');
+            throw new Error('Google Sheets not configured. Please check API key and Client ID.');
+        }
+
+        // Request OAuth authentication (requires user interaction)
+        try {
+            await requestGoogleAuth();
+        } catch (error) {
+            throw new Error('Failed to authenticate with Google. Please try again.');
         }
 
         // Get data from global variables based on section
@@ -79,46 +111,82 @@ window.GoogleSheetsService = {
             throw new Error(`No ${section} data to sync`);
         }
 
+        // Get spreadsheet ID for the section
+        const spreadsheetId = GOOGLE_SHEETS_CONFIG.spreadsheetIds[section];
+        if (!spreadsheetId) {
+            throw new Error(`No spreadsheet ID configured for ${section}`);
+        }
+
         // Format all data rows
         const formattedRows = data.map(record => this.formatDataForSheet(section, record));
 
+        // Define headers based on form type
+        const headers = {
+            registrations: [
+                'Timestamp', 'ID', 'First Name', 'Last Name', 'Phone', 'Email',
+                'Pastor Name', 'Assembly Name', 'Services', 'Airport Transport',
+                'Local Transport', 'Has Children', 'Number of Children',
+                'VBS Attendance', 'Nursery Attendance'
+            ],
+            volunteers: [
+                'Timestamp', 'ID', 'First Name', 'Last Name', 'Phone', 'Email',
+                'Committees', 'Availability', 'Committee Assignments'
+            ],
+            vendors: [
+                'Timestamp', 'ID', 'Business Name', 'First Name', 'Last Name',
+                'Phone', 'Email', 'Website', 'Pastor Name', 'Assembly Name',
+                'Selling', 'Goods Type', 'Table Staffed', 'Availability',
+                'Status', 'Approved'
+            ]
+        };
+
         try {
-            // Call Firebase Cloud Function to sync all data
-            console.log(`Syncing ${formattedRows.length} ${section} records to Google Sheets...`);
-            const syncAllToSheet = firebase.functions().httpsCallable('syncAllToSheet');
-            const response = await syncAllToSheet({
-                formType: section,
-                rows: formattedRows
+            console.log(`🔄 Syncing ${formattedRows.length} ${section} records to Google Sheets...`);
+
+            // Clear existing data
+            console.log('🗑️ Clearing existing data...');
+            await gapi.client.sheets.spreadsheets.values.clear({
+                spreadsheetId: spreadsheetId,
+                range: 'Sheet1!A:Z'
             });
 
-            console.log('Successfully synced all data to Google Sheets:', response.data);
-            console.log(`Spreadsheet URL: https://docs.google.com/spreadsheets/d/[SHEET_ID]/edit`);
-            return response.data.syncedCount || data.length;
+            // Prepare data with headers
+            const allRows = [
+                headers[section],
+                ...formattedRows
+            ];
+
+            // Write all data at once
+            console.log(`📝 Writing ${allRows.length} rows (including header)...`);
+            const response = await gapi.client.sheets.spreadsheets.values.update({
+                spreadsheetId: spreadsheetId,
+                range: 'Sheet1!A1',
+                valueInputOption: 'RAW',
+                resource: {
+                    values: allRows
+                }
+            });
+
+            console.log(`✅ Successfully synced ${formattedRows.length} records to Google Sheets`);
+            console.log(`📊 Spreadsheet URL: https://docs.google.com/spreadsheets/d/${spreadsheetId}/edit`);
+
+            return formattedRows.length;
         } catch (error) {
-            console.error('Google Sheets bulk sync error details:', {
-                message: error.message,
-                code: error.code,
-                details: error.details,
-                fullError: error
-            });
+            console.error('❌ Google Sheets bulk sync error:', error);
 
-            // Provide more specific error messages based on error code
-            if (error.code === 'functions/not-found') {
-                throw new Error('Firebase Function not deployed. Please deploy functions first.');
-            } else if (error.code === 'functions/permission-denied') {
-                throw new Error('Permission denied. Check Firebase Secrets configuration.');
-            } else if (error.code === 'functions/failed-precondition') {
-                // This error includes detailed message about what's missing
-                throw new Error(error.message || 'Google Sheets configuration incomplete.');
-            } else if (error.code === 'functions/invalid-argument') {
-                // Invalid data or request format
-                throw new Error(error.message || 'Invalid data format for Google Sheets.');
-            } else if (error.code === 'functions/resource-exhausted') {
-                // API quota exceeded
-                throw new Error(error.message || 'Google Sheets API quota exceeded. Please try again later.');
-            } else if (error.code === 'functions/internal') {
-                // For internal errors, use the detailed message from the function
-                throw new Error(error.message || 'Internal server error. Check Firebase Functions logs.');
+            // Provide more specific error messages based on error status
+            const status = error.status || error.code;
+
+            if (status === 404) {
+                throw new Error(`Spreadsheet not found. Please verify the spreadsheet ID is correct.`);
+            } else if (status === 403) {
+                throw new Error(`Permission denied. Please ensure you have edit access to the spreadsheet.`);
+            } else if (status === 401) {
+                throw new Error(`Authentication failed. Please sign in again.`);
+            } else if (status === 400) {
+                throw new Error(`Invalid request: ${error.message}`);
+            } else if (status === 429) {
+                throw new Error(`Google Sheets API quota exceeded. Please try again later.`);
             } else {
                 throw new Error(error.message || 'Failed to sync to Google Sheets');
             }
