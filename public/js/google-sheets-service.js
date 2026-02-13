@@ -84,6 +84,7 @@ window.GoogleSheetsService = {
 
         try {
             // Call Firebase Cloud Function to sync all data
+            console.log(`Syncing ${formattedRows.length} ${section} records to Google Sheets...`);
             const syncAllToSheet = firebase.functions().httpsCallable('syncAllToSheet');
             const response = await syncAllToSheet({
                 formType: section,
@@ -91,10 +92,24 @@ window.GoogleSheetsService = {
             });
 
             console.log('Successfully synced all data to Google Sheets:', response.data);
+            console.log(`Spreadsheet URL: https://docs.google.com/spreadsheets/d/[SHEET_ID]/edit`);
             return response.data.syncedCount || data.length;
         } catch (error) {
-            console.error('Google Sheets bulk sync error:', error);
-            throw new Error(error.message || 'Failed to sync to Google Sheets');
+            console.error('Google Sheets bulk sync error details:', {
+                message: error.message,
+                code: error.code,
+                details: error.details,
+                fullError: error
+            });
+
+            // Provide more specific error messages
+            if (error.code === 'functions/not-found') {
+                throw new Error('Firebase Function not deployed. Please deploy functions first.');
+            } else if (error.code === 'functions/permission-denied') {
+                throw new Error('Permission denied. Check Firebase Secrets configuration.');
+            } else {
+                throw new Error(error.message || 'Failed to sync to Google Sheets');
+            }
         }
     },
 
