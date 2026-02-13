@@ -50,6 +50,55 @@ window.GoogleSheetsService = {
     },
 
     /**
+     * Sync all data for a section to Google Sheets
+     * @param {string} section - Section name (registrations, volunteers, vendors)
+     * @returns {number} - Number of records synced
+     */
+    async syncAllDataToSheets(section) {
+        if (!this.isGoogleSheetsConfigured()) {
+            throw new Error('Google Sheets not configured');
+        }
+
+        // Get data from global variables based on section
+        let data;
+        switch (section) {
+            case 'registrations':
+                data = window.registrationsData || [];
+                break;
+            case 'volunteers':
+                data = window.volunteersData || [];
+                break;
+            case 'vendors':
+                data = window.vendorsData || [];
+                break;
+            default:
+                throw new Error(`Unknown section: ${section}`);
+        }
+
+        if (data.length === 0) {
+            throw new Error(`No ${section} data to sync`);
+        }
+
+        // Format all data rows
+        const formattedRows = data.map(record => this.formatDataForSheet(section, record));
+
+        try {
+            // Call Firebase Cloud Function to sync all data
+            const syncAllToSheet = firebase.functions().httpsCallable('syncAllToSheet');
+            const response = await syncAllToSheet({
+                formType: section,
+                rows: formattedRows
+            });
+
+            console.log('Successfully synced all data to Google Sheets:', response.data);
+            return response.data.syncedCount || data.length;
+        } catch (error) {
+            console.error('Google Sheets bulk sync error:', error);
+            throw new Error(error.message || 'Failed to sync to Google Sheets');
+        }
+    },
+
+    /**
      * Format form data for Google Sheets
      */
     formatDataForSheet(formType, data) {

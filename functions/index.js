@@ -326,3 +326,104 @@ exports.appendToSheet = functions
             throw new functions.https.HttpsError('internal', 'Failed to append to sheet');
         }
     });
+
+// Bulk sync all data to Google Sheets
+exports.syncAllToSheet = functions
+    .runWith({
+        secrets: [
+            GOOGLE_SERVICE_ACCOUNT_JSON,
+            GOOGLE_SHEETS_REGISTRATIONS_ID,
+            GOOGLE_SHEETS_VOLUNTEERS_ID,
+            GOOGLE_SHEETS_VENDORS_ID
+        ]
+    })
+    .https.onCall(async (data, context) => {
+        try {
+            // Validate form type
+            if (!data.formType || !['registrations', 'volunteers', 'vendors'].includes(data.formType)) {
+                throw new functions.https.HttpsError('invalid-argument', 'Invalid form type');
+            }
+
+            // Validate that we have data to sync
+            if (!data.rows || !Array.isArray(data.rows)) {
+                throw new functions.https.HttpsError('invalid-argument', 'Invalid data: rows must be an array');
+            }
+
+            // Get Google Sheets credentials from secrets
+            const credentials = GOOGLE_SERVICE_ACCOUNT_JSON.value();
+            if (!credentials) {
+                console.warn('Google Sheets not configured - skipping sync');
+                return { success: false, message: 'Google Sheets not configured' };
+            }
+
+            // Authenticate using service account
+            const auth = new google.auth.GoogleAuth({
+                credentials: typeof credentials === 'string' ? JSON.parse(credentials) : credentials,
+                scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+            });
+
+            const sheets = google.sheets({ version: 'v4', auth });
+
+            // Get spreadsheet ID based on form type
+            const spreadsheetIds = {
+                registrations: GOOGLE_SHEETS_REGISTRATIONS_ID.value(),
+                volunteers: GOOGLE_SHEETS_VOLUNTEERS_ID.value(),
+                vendors: GOOGLE_SHEETS_VENDORS_ID.value()
+            };
+
+            const spreadsheetId = spreadsheetIds[data.formType];
+            if (!spreadsheetId) {
+                throw new functions.https.HttpsError('invalid-argument', 'Invalid form type');
+            }
+
+            // Define headers based on form type
+            const headers = {
+                registrations: [
+                    'Timestamp', 'ID', 'First Name', 'Last Name', 'Phone', 'Email',
+                    'Pastor Name', 'Assembly Name', 'Services', 'Airport Transport',
+                    'Local Transport', 'Has Children', 'Number of Children',
+                    'VBS Attendance', 'Nursery Attendance'
+                ],
+                volunteers: [
+                    'Timestamp', 'ID', 'First Name', 'Last Name', 'Phone', 'Email',
+                    'Committees', 'Availability', 'Committee Assignments'
+                ],
+                vendors: [
+                    'Timestamp', 'ID', 'Business Name', 'First Name', 'Last Name',
+                    'Phone', 'Email', 'Website', 'Pastor Name', 'Assembly Name',
+                    'Selling', 'Goods Type', 'Table Staffed', 'Availability',
+                    'Status', 'Approved'
+                ]
+            };
+
+            // Clear existing data (except headers) and write new data
+            // First, clear all data
+            await sheets.spreadsheets.values.clear({
+                spreadsheetId: spreadsheetId,
+                range: 'Sheet1!A:Z'
+            });
+
+            // Prepare data with headers
+            const allRows = [
+                headers[data.formType],
+                ...data.rows
+            ];
+
+            // Write all data at once
+            const response = await sheets.spreadsheets.values.update({
+                spreadsheetId: spreadsheetId,
+                range: 'Sheet1!A1',
+                valueInputOption: 'RAW',
+                resource: { values: allRows }
+            });
+
+            return {
+                success: true,
+                updatedRows: response.data.updatedRows,
+                syncedCount: data.rows.length
+            };
+        } catch (error) {
+            console.error('Error syncing all to sheet:', error);
+            throw new functions.https.HttpsError('internal', `Failed to sync to sheet: ${error.message}`);
+        }
+    });
