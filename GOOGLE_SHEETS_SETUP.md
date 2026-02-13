@@ -18,46 +18,21 @@ Or follow the manual steps below.
 
 Before you begin, make sure you have:
 - ✅ A Google Cloud account
-- ✅ Firebase CLI installed (`npm install -g firebase-tools`)
-- ✅ Firebase project set up (`sarasota-gospel-temple`)
+- ✅ Admin access to your website files
+- ✅ The three forms (registration, volunteer, vendor) already working
 
 ---
 
 ## Manual Setup Steps
 
-### 1️⃣ Create Google Cloud Service Account
+### 1️⃣ Create or Select Google Cloud Project
 
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Select or create a project
-3. Navigate to **APIs & Services → Credentials**
-4. Click **Create Credentials → Service Account**
-5. Fill in:
-   - **Name**: `firebase-sheets-sync`
-   - **Description**: `Service account for syncing Firebase data to Google Sheets`
-6. Click **Create and Continue**
-7. Grant role: **Editor**
-8. Click **Done**
-9. Click on the service account you just created
-10. Go to **Keys** tab
-11. Click **Add Key → Create new key**
-12. Choose **JSON** format
-13. Download the JSON file (save it securely!)
-
-**Example JSON file** (`service-account.json`):
-```json
-{
-  "type": "service_account",
-  "project_id": "your-project",
-  "private_key_id": "...",
-  "private_key": "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n",
-  "client_email": "firebase-sheets-sync@your-project.iam.gserviceaccount.com",
-  "client_id": "...",
-  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-  "token_uri": "https://oauth2.googleapis.com/token",
-  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": "..."
-}
-```
+2. Click the project dropdown at the top
+3. Either:
+   - Select an existing project, OR
+   - Click **New Project** and create one (e.g., "Sarasota Gospel Temple Forms")
+4. Make note of your project name
 
 ### 2️⃣ Enable Google Sheets API
 
@@ -65,9 +40,63 @@ Before you begin, make sure you have:
 2. Search for **"Google Sheets API"**
 3. Click **Enable**
 
-### 3️⃣ Create Google Sheets
+### 3️⃣ Configure OAuth Consent Screen
 
-Create 3 spreadsheets with these headers:
+1. In the left sidebar, go to **APIs & Services → OAuth consent screen**
+2. Select **External** as the user type
+3. Click **CREATE**
+4. Fill in the required fields:
+   - **App name**: Sarasota Gospel Temple Forms (or your preferred name)
+   - **User support email**: Your email address
+   - **Developer contact**: Your email address
+5. Click **SAVE AND CONTINUE**
+6. On the "Scopes" page, click **ADD OR REMOVE SCOPES**
+7. Search for "Google Sheets API"
+8. Check the box for: `https://www.googleapis.com/auth/spreadsheets`
+9. Click **UPDATE** then **SAVE AND CONTINUE**
+10. On "Test users" page, click **SAVE AND CONTINUE**
+11. Review and click **BACK TO DASHBOARD**
+
+### 4️⃣ Create API Credentials
+
+#### Create API Key (for read access)
+
+1. Go to **APIs & Services → Credentials**
+2. Click **CREATE CREDENTIALS** → **API key**
+3. Copy the API key that appears
+4. Click **RESTRICT KEY** (recommended)
+5. Under "API restrictions":
+   - Select "Restrict key"
+   - Check only "Google Sheets API"
+6. Under "Application restrictions":
+   - Select "HTTP referrers (web sites)"
+   - Add your domain (e.g., `https://yourdomain.com/*`)
+7. Click **SAVE**
+8. **Keep this API key safe** - you'll need it for Step 6
+
+#### Create OAuth 2.0 Client ID (for write access)
+
+1. Still in **Credentials**, click **CREATE CREDENTIALS** → **OAuth client ID**
+2. Select **Web application** as the application type
+3. Give it a name: "Forms Web Client"
+4. Under **Authorized JavaScript origins**, add:
+   - `http://localhost` (for testing)
+   - `http://localhost:8000` (for testing)
+   - `https://yourdomain.com` (your actual production domain)
+   - `https://www.yourdomain.com` (with www)
+5. Click **CREATE**
+6. Copy the **Client ID** (looks like: `123456789-abc123.apps.googleusercontent.com`)
+7. **Keep this Client ID safe** - you'll need it for Step 6
+
+### 5️⃣ Create Google Sheets
+
+1. Go to [Google Sheets](https://sheets.google.com)
+2. Create THREE new spreadsheets:
+   - "2026 Meeting - Registrations"
+   - "2026 Meeting - Volunteers"
+   - "2026 Meeting - Vendors"
+
+3. For each spreadsheet, add the appropriate headers:
 
 #### **Registrations Sheet**
 ```
@@ -84,23 +113,12 @@ Timestamp | ID | First Name | Last Name | Phone | Email | Committees | Availabil
 Timestamp | ID | Business Name | First Name | Last Name | Phone | Email | Website | Pastor Name | Assembly Name | Selling | Goods Type | Table Staffed | Availability | Status | Approved
 ```
 
-### 4️⃣ Share Sheets with Service Account
-
-For **each of the 3 spreadsheets**:
-
-1. Open the Google Sheet
-2. Click the **Share** button
-3. Add the **service account email** from your JSON file
-   - Find `client_email` in the JSON file
-   - Example: `firebase-sheets-sync@your-project.iam.gserviceaccount.com`
-4. Give it **Editor** permissions
-5. Click **Send**
-
-⚠️ **Important**: If you forget this step, you'll get "Permission denied" errors!
-
-### 5️⃣ Get Spreadsheet IDs
-
-For each sheet, copy the Spreadsheet ID from the URL:
+4. For **each spreadsheet**, click the **Share** button and configure:
+   - Under "General access", you can either:
+     - Set to **Anyone with the link** → **Viewer** (public read access)
+     - OR keep as **Restricted** and share with specific email addresses
+   - The admin who uses the sync feature will authenticate via OAuth
+5. Note the **Spreadsheet ID** from each URL:
 
 ```
 https://docs.google.com/spreadsheets/d/1q7vxkgof14p6OpHehTySIU6c0qNpbencA6E09agYJTg/edit
@@ -108,52 +126,55 @@ https://docs.google.com/spreadsheets/d/1q7vxkgof14p6OpHehTySIU6c0qNpbencA6E09agY
                                       This is the Spreadsheet ID
 ```
 
-You'll need:
+**Keep these IDs safe** - you'll need:
 - Registrations Spreadsheet ID
 - Volunteers Spreadsheet ID
 - Vendors Spreadsheet ID
 
-### 6️⃣ Configure Firebase Secrets
+### 6️⃣ Configure Google Sheets API (OAuth Method)
 
-**Option A: Using the Firebase Console**
+**This project uses Google Sheets API with OAuth authentication (client-side), NOT Firebase Functions.**
 
-1. Go to [Firebase Console](https://console.firebase.google.com/)
-2. Select your project: `sarasota-gospel-temple`
-3. Go to **Functions** → **Secrets**
-4. Add the following secrets:
-   - `GOOGLE_SERVICE_ACCOUNT_JSON` - Paste the entire JSON file contents
-   - `GOOGLE_SHEETS_REGISTRATIONS_ID` - Your registrations spreadsheet ID
-   - `GOOGLE_SHEETS_VOLUNTEERS_ID` - Your volunteers spreadsheet ID
-   - `GOOGLE_SHEETS_VENDORS_ID` - Your vendors spreadsheet ID
+1. Open the file `config/google-sheets-config.js` in your website code
 
-**Option B: Using Firebase CLI** (Recommended)
+2. Replace the placeholder values with your actual credentials:
 
-```bash
-# 1. Login to Firebase
-firebase login
+```javascript
+const GOOGLE_SHEETS_CONFIG = {
+    // Replace with your API Key from Step 2
+    apiKey: 'YOUR_GOOGLE_API_KEY',
 
-# 2. Select your project
-firebase use sarasota-gospel-temple
+    // Replace with your Client ID from Step 2
+    clientId: 'YOUR_CLIENT_ID.apps.googleusercontent.com',
 
-# 3. Set service account JSON
-firebase functions:secrets:set GOOGLE_SERVICE_ACCOUNT_JSON < /path/to/service-account.json
+    // Replace with your Spreadsheet IDs from Step 5
+    spreadsheetIds: {
+        registrations: 'YOUR_REGISTRATIONS_SPREADSHEET_ID',
+        volunteers: 'YOUR_VOLUNTEERS_SPREADSHEET_ID',
+        vendors: 'YOUR_VENDORS_SPREADSHEET_ID'
+    },
 
-# 4. Set spreadsheet IDs (replace with your actual IDs)
-echo "1q7vxkgof14p6OpHehTySIU6c0qNpbencA6E09agYJTg" | firebase functions:secrets:set GOOGLE_SHEETS_REGISTRATIONS_ID
-echo "1T45QcAsY7m5SO8gSQKTvHI_PFFa4qx1x6dwW3iwG0s0" | firebase functions:secrets:set GOOGLE_SHEETS_VOLUNTEERS_ID
-echo "1V6G2KN1vvTB5Ng249rg9K6ijbUT7tou_jaE9ygALxeM" | firebase functions:secrets:set GOOGLE_SHEETS_VENDORS_ID
+    // ... rest of the config (don't change)
+};
 ```
 
-### 7️⃣ Deploy Firebase Functions
+3. Save the file
 
-```bash
-# Deploy functions with the new secrets
-firebase deploy --only functions
-```
+**Security Note**: The Google Sheets API key and OAuth Client ID are safe to expose in client-side code when properly restricted. Make sure to:
+- Restrict your API key to your domain in Google Cloud Console
+- Configure authorized domains for your OAuth Client ID
 
-This will deploy:
-- `appendToSheet` - Syncs individual form submissions
-- `syncAllToSheet` - Bulk syncs all data from admin dashboard
+### 7️⃣ Deploy Your Website
+
+Once configured, deploy your website:
+
+**For Netlify:**
+- See `NETLIFY_DEPLOYMENT.md` for deployment instructions
+- Add your credentials as Netlify environment variables
+
+**For other hosting:**
+- Upload your files to your web server
+- Ensure `config/google-sheets-config.js` has your credentials
 
 ---
 
@@ -178,90 +199,94 @@ This will deploy:
 
 ## Troubleshooting
 
-### Error: "Permission denied"
-**Solution**: Make sure you shared the Google Sheets with the service account email (`client_email` from JSON file)
+### Error: "Google Sheets is not configured yet"
 
-### Error: "Google Sheets not configured"
-**Solution**: Check that all Firebase Secrets are set correctly:
-```bash
-firebase functions:secrets:access GOOGLE_SERVICE_ACCOUNT_JSON
-firebase functions:secrets:access GOOGLE_SHEETS_REGISTRATIONS_ID
-firebase functions:secrets:access GOOGLE_SHEETS_VOLUNTEERS_ID
-firebase functions:secrets:access GOOGLE_SHEETS_VENDORS_ID
-```
+**Solution**: Check that you've replaced all placeholder values in `config/google-sheets-config.js` and the file is uploaded to your server.
 
-### Error: "Invalid credentials"
-**Solution**: Verify your service account JSON is valid and the Google Sheets API is enabled
+### Error: "Authentication failed"
 
-### Data not appearing in sheets
 **Solutions**:
-1. Check Firebase Functions logs: `firebase functions:log`
-2. Verify sheet names are "Sheet1" (or update range in `functions/index.js:346`)
-3. Ensure service account has Editor permissions on the sheets
+1. Verify your OAuth Client ID is correct in `config/google-sheets-config.js`
+2. Check that your domain is added to Authorized JavaScript origins in Google Cloud Console
+3. Try clearing browser cache and cookies
+4. Make sure OAuth consent screen is configured
 
-### Check Firebase Functions Logs
+### Error: "Permission denied"
 
-```bash
-# View recent logs
-firebase functions:log
+**Solutions**:
+1. Check spreadsheet sharing settings - make sure your Google account has access
+2. Verify the Spreadsheet IDs are correct in `config/google-sheets-config.js`
+3. Make sure Google Sheets API is enabled in Google Cloud Console
+4. Authenticate via the admin dashboard sync button (OAuth)
 
-# View logs in real-time
-firebase functions:log --follow
-```
+### Error: "API key invalid"
+
+**Solutions**:
+1. Verify your API key is correct in `config/google-sheets-config.js`
+2. Check that the API key is restricted to Google Sheets API
+3. Ensure your domain is added to the HTTP referrer restrictions
+
+### Rows not appearing in spreadsheet
+
+**Solutions**:
+1. Check browser console for errors (F12 → Console tab)
+2. Verify the Spreadsheet ID is correct
+3. Make sure the spreadsheet isn't deleted or moved
+4. Check that you've authenticated via OAuth (for manual sync)
+5. Verify automatic sync is configured in the form submission code
+
+### API quota exceeded
+
+Google Sheets API has usage limits:
+- **Read requests**: 300 per minute per project
+- **Write requests**: 300 per minute per project
+
+**Solutions**:
+- Wait a few minutes and try again
+- Consider batching updates
+- Request a quota increase from Google Cloud Console
 
 ---
 
 ## How It Works
 
-### Architecture
+### Automatic Sync (Form Submissions)
 
 ```
-┌─────────────┐
-│ User Fills  │
-│ Form        │
-└──────┬──────┘
-       │
-       ▼
-┌─────────────────────┐
-│ Frontend JavaScript │
-│ (registration-form) │
-└──────┬──────────────┘
-       │ Calls Firebase Function
-       ▼
-┌──────────────────────────────┐
-│ Firebase Cloud Function      │
-│ (appendToSheet)              │
-│                              │
-│ - Validates data             │
-│ - Gets credentials from      │
-│   Firebase Secrets           │
-│ - Authenticates with Google  │
-└──────┬───────────────────────┘
-       │
-       ▼
-┌─────────────────┐
-│ Google Sheets   │
-│ API             │
-│                 │
-│ Appends new row │
-└─────────────────┘
+User fills out form → Submits form → Data saved to Firebase → Data synced to Google Sheets via API
 ```
+
+- Happens automatically on every form submission
+- Uses Google Sheets API with your API key
+- Non-blocking: Form submission succeeds even if Sheets sync fails
+
+### Manual Sync (Admin Dashboard)
+
+```
+Admin clicks sync button → Authenticates with Google OAuth → All Firebase data synced to Sheet
+```
+
+- Syncs ALL existing data from Firebase
+- Requires admin to authenticate with Google (one-time)
+- Uses OAuth 2.0 for secure write access
+- Useful for bulk updates or recovering from sync failures
 
 ### Security
 
-✅ **Service account credentials** are stored in Firebase Secrets (not in code)
-✅ **Spreadsheet IDs** are stored in Firebase Secrets
-✅ **No credentials** are exposed in client-side code
-✅ **Google Sheets API** access is controlled by service account permissions
+✅ **API Key** is restricted to Google Sheets API and your domain
+✅ **OAuth Client ID** only works with authorized redirect URIs
+✅ **No private keys** in client-side code
+✅ **Admin authentication** required for write access via OAuth
+✅ **Spreadsheet permissions** control who can view/edit data
 
 ---
 
 ## Files Modified
 
-- `functions/index.js` - Contains `appendToSheet` and `syncAllToSheet` functions
-- `public/js/google-sheets-service.js` - Frontend service for calling Cloud Functions
+- `config/google-sheets-config.js` - Google Sheets API configuration
+- `public/js/google-sheets-service.js` - Frontend service for Google Sheets API
 - `public/admin/dashboard.html` - Admin UI with sync buttons
-- `.env.example` - Example environment variables (for local dev)
+- `.env` - Environment variables for development (contains your credentials)
 
 ---
 
@@ -271,34 +296,26 @@ firebase functions:log --follow
 
 If you create new spreadsheets:
 
-```bash
-echo "NEW_SPREADSHEET_ID" | firebase functions:secrets:set GOOGLE_SHEETS_REGISTRATIONS_ID
-firebase deploy --only functions
-```
+1. Update `config/google-sheets-config.js` with the new spreadsheet IDs
+2. Redeploy your website or update Netlify environment variables
 
-### Rotate Service Account Credentials
+### Rotate API Credentials
 
-If you need to rotate the service account:
+If you need to rotate your API key or OAuth Client ID:
 
-1. Create a new service account key in Google Cloud Console
-2. Update the Firebase Secret:
-   ```bash
-   firebase functions:secrets:set GOOGLE_SERVICE_ACCOUNT_JSON < new-service-account.json
-   ```
-3. Deploy functions:
-   ```bash
-   firebase deploy --only functions
-   ```
-4. Delete the old service account key in Google Cloud Console
+1. Create new credentials in Google Cloud Console
+2. Update `config/google-sheets-config.js` with the new values
+3. Delete the old credentials in Google Cloud Console
+4. Redeploy your website
 
 ---
 
 ## Support
 
 For issues, check:
-- Firebase Functions logs: `firebase functions:log`
+- Browser console (F12) for JavaScript errors
 - Google Cloud Console: [Error Reporting](https://console.cloud.google.com/errors)
-- Browser console (F12) when testing frontend
+- Google Cloud Console: [API Dashboard](https://console.cloud.google.com/apis/dashboard) for API usage
 
 **Contact**:
 - Email: sarasotagospel@gmail.com
@@ -308,6 +325,7 @@ For issues, check:
 
 ## Additional Resources
 
-- [Firebase Secrets Manager Docs](https://firebase.google.com/docs/functions/config-env#secret-manager)
 - [Google Sheets API Docs](https://developers.google.com/sheets/api)
-- [Service Account Auth Guide](https://cloud.google.com/iam/docs/service-accounts)
+- [OAuth 2.0 Documentation](https://developers.google.com/identity/protocols/oauth2)
+- [Google API Client Library for JavaScript](https://github.com/google/google-api-javascript-client)
+- [Netlify Deployment Guide](./NETLIFY_DEPLOYMENT.md) - For deploying your site

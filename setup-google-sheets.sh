@@ -1,7 +1,35 @@
 #!/bin/bash
-# Google Sheets Setup Script for Firebase
-# This script helps you configure Google Sheets integration
+# ⚠️ DEPRECATED - This script is no longer needed
+#
+# This project now uses Google Sheets API with OAuth (client-side),
+# NOT Firebase Functions with service accounts.
+#
+# Please see: GOOGLE-SHEETS-SETUP.md for current setup instructions
+#
+# This script is kept for reference only.
 
+echo "======================================"
+echo "⚠️  DEPRECATION NOTICE"
+echo "======================================"
+echo ""
+echo "This script is DEPRECATED and no longer used."
+echo ""
+echo "This project now uses Google Sheets API with OAuth"
+echo "authentication, which does NOT require Firebase secrets"
+echo "or service accounts."
+echo ""
+echo "Please see: GOOGLE-SHEETS-SETUP.md"
+echo "Or: NETLIFY_DEPLOYMENT.md"
+echo ""
+echo "======================================"
+echo ""
+read -p "Do you want to continue anyway? (y/n): " CONTINUE
+if [ "$CONTINUE" != "y" ] && [ "$CONTINUE" != "Y" ]; then
+    echo "Setup cancelled."
+    exit 0
+fi
+
+echo ""
 echo "======================================"
 echo "Google Sheets Integration Setup"
 echo "======================================"
