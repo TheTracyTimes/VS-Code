@@ -52,10 +52,10 @@ volunteer_confirmation
 GOOGLE SHEETS CONFIGURATION (5 variables)
 -----------------------------------------------------------------
 GOOGLE_SHEETS_API_KEY
-AIzaSyBuGOqgq-M6Q9bNeW29xihdRqGHDWbiEew
+AIzaSyDxHQa2ZxOOv-73WggqywIaFN_Wi4IxDRs
 
 GOOGLE_SHEETS_CLIENT_ID
-506893960681-9nb4cq1jkgg7d5bvuf527ah0sh93j5ad.apps.googleusercontent.com
+432405234611-ekkjucft12cp1p5ushg77pgvme6237lf.apps.googleusercontent.com
 
 GOOGLE_SHEETS_REGISTRATIONS_ID
 1q7vxkgof14p6OpHehTySIU6c0qNpbencA6E09agYJTg
