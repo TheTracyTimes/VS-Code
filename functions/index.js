@@ -392,25 +392,41 @@ exports.syncAllToSheet = functions
 
             // Authenticate using service account
             console.log('Authenticating with Google Sheets API...');
+            let parsedCredentials;
+            try {
+                parsedCredentials = typeof credentials === 'string' ? JSON.parse(credentials) : credentials;
+            } catch (parseError) {
+                console.error('Failed to parse service account credentials:', parseError);
+                throw new functions.https.HttpsError(
+                    'failed-precondition',
+                    'Invalid Google service account credentials format. Please check the GOOGLE_SERVICE_ACCOUNT_JSON secret.'
+                );
+            }
+
             const auth = new google.auth.GoogleAuth({
-                credentials: typeof credentials === 'string' ? JSON.parse(credentials) : credentials,
+                credentials: parsedCredentials,
                 scopes: ['https://www.googleapis.com/auth/spreadsheets'],
             });
 
             const sheets = google.sheets({ version: 'v4', auth });
             console.log('Google Sheets API client initialized');
 
-            // Get spreadsheet ID based on form type
+            // Get spreadsheet ID based on form type using getSecretValue for better error handling
+            console.log(`Retrieving spreadsheet ID for ${data.formType}...`);
             const spreadsheetIds = {
-                registrations: GOOGLE_SHEETS_REGISTRATIONS_ID.value(),
-                volunteers: GOOGLE_SHEETS_VOLUNTEERS_ID.value(),
-                vendors: GOOGLE_SHEETS_VENDORS_ID.value()
+                registrations: getSecretValue(GOOGLE_SHEETS_REGISTRATIONS_ID, 'GOOGLE_SHEETS_REGISTRATIONS_ID'),
+                volunteers: getSecretValue(GOOGLE_SHEETS_VOLUNTEERS_ID, 'GOOGLE_SHEETS_VOLUNTEERS_ID'),
+                vendors: getSecretValue(GOOGLE_SHEETS_VENDORS_ID, 'GOOGLE_SHEETS_VENDORS_ID')
             };
 
             const spreadsheetId = spreadsheetIds[data.formType];
             console.log(`Spreadsheet ID for ${data.formType}:`, spreadsheetId ? 'Found' : 'NOT FOUND');
             if (!spreadsheetId) {
-                throw new functions.https.HttpsError('invalid-argument', `Missing spreadsheet ID for ${data.formType}`);
+                const secretName = `GOOGLE_SHEETS_${data.formType.toUpperCase()}_ID`;
+                throw new functions.https.HttpsError(
+                    'failed-precondition',
+                    `Missing spreadsheet ID for ${data.formType}. Please configure the ${secretName} secret in Firebase.`
+                );
             }
 
             // Define headers based on form type
@@ -436,11 +452,27 @@ exports.syncAllToSheet = functions
             // Clear existing data (except headers) and write new data
             // First, clear all data
             console.log(`Clearing existing data from spreadsheet ${spreadsheetId}...`);
-            await sheets.spreadsheets.values.clear({
-                spreadsheetId: spreadsheetId,
-                range: 'Sheet1!A:Z'
-            });
-            console.log('Existing data cleared successfully');
+            try {
+                await sheets.spreadsheets.values.clear({
+                    spreadsheetId: spreadsheetId,
+                    range: 'Sheet1!A:Z'
+                });
+                console.log('Existing data cleared successfully');
+            } catch (clearError) {
+                console.error('Error clearing spreadsheet:', clearError);
+                if (clearError.code === 404) {
+                    throw new functions.https.HttpsError(
+                        'failed-precondition',
+                        `Spreadsheet not found (ID: ${spreadsheetId}). Please verify the spreadsheet ID is correct.`
+                    );
+                } else if (clearError.code === 403) {
+                    throw new functions.https.HttpsError(
+                        'failed-precondition',
+                        `Service account does not have access to spreadsheet (ID: ${spreadsheetId}). Please share the spreadsheet with the service account email.`
+                    );
+                }
+                throw clearError;
+            }
 
             // Prepare data with headers
             const allRows = [
@@ -450,19 +482,30 @@ exports.syncAllToSheet = functions
             console.log(`Preparing to write ${allRows.length} rows (including header) to spreadsheet...`);
 
             // Write all data at once
-            const response = await sheets.spreadsheets.values.update({
-                spreadsheetId: spreadsheetId,
-                range: 'Sheet1!A1',
-                valueInputOption: 'RAW',
-                resource: { values: allRows }
-            });
-            console.log(`Successfully wrote ${response.data.updatedRows} rows to spreadsheet`);
+            try {
+                const response = await sheets.spreadsheets.values.update({
+                    spreadsheetId: spreadsheetId,
+                    range: 'Sheet1!A1',
+                    valueInputOption: 'RAW',
+                    resource: { values: allRows }
+                });
+                console.log(`Successfully wrote ${response.data.updatedRows} rows to spreadsheet`);
 
-            return {
-                success: true,
-                updatedRows: response.data.updatedRows,
-                syncedCount: data.rows.length
-            };
+                return {
+                    success: true,
+                    updatedRows: response.data.updatedRows,
+                    syncedCount: data.rows.length
+                };
+            } catch (writeError) {
+                console.error('Error writing to spreadsheet:', writeError);
+                if (writeError.code === 403) {
+                    throw new functions.https.HttpsError(
+                        'failed-precondition',
+                        `Service account does not have write permission to spreadsheet (ID: ${spreadsheetId}). Please ensure the service account has Editor access.`
+                    );
+                }
+                throw writeError;
+            }
         } catch (error) {
             console.error('Error syncing all to sheet:', {
                 message: error.message,

@@ -102,11 +102,17 @@ window.GoogleSheetsService = {
                 fullError: error
             });
 
-            // Provide more specific error messages
+            // Provide more specific error messages based on error code
             if (error.code === 'functions/not-found') {
                 throw new Error('Firebase Function not deployed. Please deploy functions first.');
             } else if (error.code === 'functions/permission-denied') {
                 throw new Error('Permission denied. Check Firebase Secrets configuration.');
+            } else if (error.code === 'functions/failed-precondition') {
+                // This error includes detailed message about what's missing
+                throw new Error(error.message || 'Google Sheets configuration incomplete.');
+            } else if (error.code === 'functions/internal') {
+                // For internal errors, use the detailed message from the function
+                throw new Error(error.message || 'Internal server error. Check Firebase Functions logs.');
             } else {
                 throw new Error(error.message || 'Failed to sync to Google Sheets');
             }
