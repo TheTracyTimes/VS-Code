@@ -22,6 +22,35 @@ const GOOGLE_SHEETS_REGISTRATIONS_ID = defineSecret('GOOGLE_SHEETS_REGISTRATIONS
 const GOOGLE_SHEETS_VOLUNTEERS_ID = defineSecret('GOOGLE_SHEETS_VOLUNTEERS_ID');
 const GOOGLE_SHEETS_VENDORS_ID = defineSecret('GOOGLE_SHEETS_VENDORS_ID');
 
+// ===== HELPER FUNCTIONS =====
+
+/**
+ * Gets a secret value with fallback to environment variable
+ * @param {Object} secret - The secret object from defineSecret
+ * @param {string} envKey - The environment variable key to use as fallback
+ * @returns {string|null} The secret value or null if not found
+ */
+function getSecretValue(secret, envKey) {
+    try {
+        // Try to get value from Firebase Secrets first
+        const value = secret.value();
+        if (value) return value;
+    } catch (error) {
+        // Secret not available, will try environment variable
+        console.log(`Secret not available for ${envKey}, trying environment variable`);
+    }
+
+    // Fallback to environment variable
+    const envValue = process.env[envKey];
+    if (envValue) {
+        console.log(`Using environment variable for ${envKey}`);
+        return envValue;
+    }
+
+    console.warn(`Neither secret nor environment variable found for ${envKey}`);
+    return null;
+}
+
 // ===== VALIDATION UTILITIES =====
 
 function validateEmail(email) {
@@ -349,20 +378,27 @@ exports.syncAllToSheet = functions
                 throw new functions.https.HttpsError('invalid-argument', 'Invalid data: rows must be an array');
             }
 
-            // Get Google Sheets credentials from secrets
-            const credentials = GOOGLE_SERVICE_ACCOUNT_JSON.value();
+            // Get Google Sheets credentials from secrets or environment
+            console.log('Attempting to retrieve Google Sheets credentials...');
+            const credentials = getSecretValue(GOOGLE_SERVICE_ACCOUNT_JSON, 'GOOGLE_SERVICE_ACCOUNT_JSON');
             if (!credentials) {
-                console.warn('Google Sheets not configured - skipping sync');
-                return { success: false, message: 'Google Sheets not configured' };
+                console.error('Google Sheets credentials not configured');
+                throw new functions.https.HttpsError(
+                    'failed-precondition',
+                    'Google Sheets not configured. Please set GOOGLE_SERVICE_ACCOUNT_JSON secret or environment variable.'
+                );
             }
+            console.log('Credentials retrieved successfully');
 
             // Authenticate using service account
+            console.log('Authenticating with Google Sheets API...');
             const auth = new google.auth.GoogleAuth({
                 credentials: typeof credentials === 'string' ? JSON.parse(credentials) : credentials,
                 scopes: ['https://www.googleapis.com/auth/spreadsheets'],
             });
 
             const sheets = google.sheets({ version: 'v4', auth });
+            console.log('Google Sheets API client initialized');
 
             // Get spreadsheet ID based on form type
             const spreadsheetIds = {
@@ -372,8 +408,9 @@ exports.syncAllToSheet = functions
             };
 
             const spreadsheetId = spreadsheetIds[data.formType];
+            console.log(`Spreadsheet ID for ${data.formType}:`, spreadsheetId ? 'Found' : 'NOT FOUND');
             if (!spreadsheetId) {
-                throw new functions.https.HttpsError('invalid-argument', 'Invalid form type');
+                throw new functions.https.HttpsError('invalid-argument', `Missing spreadsheet ID for ${data.formType}`);
             }
 
             // Define headers based on form type
@@ -398,16 +435,19 @@ exports.syncAllToSheet = functions
 
             // Clear existing data (except headers) and write new data
             // First, clear all data
+            console.log(`Clearing existing data from spreadsheet ${spreadsheetId}...`);
             await sheets.spreadsheets.values.clear({
                 spreadsheetId: spreadsheetId,
                 range: 'Sheet1!A:Z'
             });
+            console.log('Existing data cleared successfully');
 
             // Prepare data with headers
             const allRows = [
                 headers[data.formType],
                 ...data.rows
             ];
+            console.log(`Preparing to write ${allRows.length} rows (including header) to spreadsheet...`);
 
             // Write all data at once
             const response = await sheets.spreadsheets.values.update({
@@ -416,6 +456,7 @@ exports.syncAllToSheet = functions
                 valueInputOption: 'RAW',
                 resource: { values: allRows }
             });
+            console.log(`Successfully wrote ${response.data.updatedRows} rows to spreadsheet`);
 
             return {
                 success: true,
@@ -423,7 +464,20 @@ exports.syncAllToSheet = functions
                 syncedCount: data.rows.length
             };
         } catch (error) {
-            console.error('Error syncing all to sheet:', error);
-            throw new functions.https.HttpsError('internal', `Failed to sync to sheet: ${error.message}`);
+            console.error('Error syncing all to sheet:', {
+                message: error.message,
+                stack: error.stack,
+                code: error.code,
+                details: error.details,
+                response: error.response?.data
+            });
+
+            // Provide detailed error message
+            const errorMessage = error.message || error.toString() || 'Unknown error occurred';
+            throw new functions.https.HttpsError(
+                'internal',
+                `Failed to sync to sheet: ${errorMessage}`,
+                { originalError: error.code, stack: error.stack }
+            );
         }
     });
