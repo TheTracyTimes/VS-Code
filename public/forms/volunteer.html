@@ -86,6 +86,17 @@
             font-size: 14px;
             color: var(--charcoal);
         }
+
+        .committee-note {
+            margin-top: 6px;
+            padding: 8px 12px;
+            background-color: #fff3e0;
+            border-left: 3px solid var(--burnt-orange);
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--charcoal);
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
@@ -162,6 +173,9 @@
                         <div class="checkbox-item">
                             <input type="checkbox" id="comm2" name="committees" value="Nursery" onchange="updateCommitteeSelection()">
                             <label for="comm2">Nursery</label>
+                            <div id="nurseryNote" class="committee-note" style="display: none;">
+                                Includes VBS: Vacation Bible School
+                            </div>
                         </div>
                         <div class="checkbox-item">
                             <input type="checkbox" id="comm3" name="committees" value="Usher" onchange="updateCommitteeSelection()">
@@ -194,6 +208,9 @@
                         <div class="checkbox-item">
                             <input type="checkbox" id="comm10" name="committees" value="Medical" onchange="updateCommitteeSelection()">
                             <label for="comm10">Medical</label>
+                            <div id="medicalNote" class="committee-note" style="display: none;">
+                                Required: Medical Experience and/or BLS certification
+                            </div>
                         </div>
                         <div class="checkbox-item">
                             <input type="checkbox" id="comm11" name="committees" value="Floater (Wherever Needed)" onchange="updateCommitteeSelection()">
