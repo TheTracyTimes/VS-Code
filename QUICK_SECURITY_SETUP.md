@@ -9,7 +9,7 @@ Your API integration **is NOT secure** until you complete these steps.
 ## Step 1: Restrict API Key (2 minutes)
 
 1. Go to: https://console.cloud.google.com/apis/credentials
-2. Click on API key: `AIzaSyBuGOqgq-M6Q9bNeW29xihdRqGHDWbiEew`
+2. Click on API key: `AIzaSyXXXXXXXXXXXXXXXXXXXXXXXX` (your actual API key)
 3. Under **Application restrictions**:
    - Select: `HTTP referrers (websites)`
    - Add your domain: `https://yourdomain.com/*`

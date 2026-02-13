@@ -101,33 +101,33 @@ Go to **Site settings** → **Environment variables** and add ALL of these:
 
 ### ✅ Firebase Configuration (ALL SAFE TO EXPOSE)
 ```bash
-FIREBASE_API_KEY=AIzaSyBZVYB04dtsa9AL7e5xw1W5ZVOrqds6Akk
-FIREBASE_AUTH_DOMAIN=sarasota-gospel-temple.firebaseapp.com
-FIREBASE_PROJECT_ID=sarasota-gospel-temple
-FIREBASE_STORAGE_BUCKET=sarasota-gospel-temple.firebasestorage.app
-FIREBASE_MESSAGING_SENDER_ID=868460102497
-FIREBASE_APP_ID=1:868460102497:web:d36ace1f5fd535b21c7b20
-FIREBASE_MEASUREMENT_ID=G-BQG0SYFGQ9
+FIREBASE_API_KEY=your_firebase_api_key_here
+FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+FIREBASE_PROJECT_ID=your-project-id
+FIREBASE_STORAGE_BUCKET=your-project.firebasestorage.app
+FIREBASE_MESSAGING_SENDER_ID=123456789
+FIREBASE_APP_ID=1:123456789:web:abcdef123456
+FIREBASE_MEASUREMENT_ID=G-XXXXXXXXXX
 ```
 
 ### ✅ EmailJS Configuration (PUBLIC KEYS ONLY)
 ```bash
-EMAILJS_SERVICE_ID=service_vdrrcls
-EMAILJS_PUBLIC_KEY=T35UiRys7umDsRZw8
-EMAILJS_TEMPLATE_REGISTRATION=registration_confirmatio
-EMAILJS_TEMPLATE_VENDOR=vendor_confirmation
-EMAILJS_TEMPLATE_VOLUNTEER=volunteer_confirmation
+EMAILJS_SERVICE_ID=your_service_id
+EMAILJS_PUBLIC_KEY=your_public_key
+EMAILJS_TEMPLATE_REGISTRATION=your_registration_template_id
+EMAILJS_TEMPLATE_VENDOR=your_vendor_template_id
+EMAILJS_TEMPLATE_VOLUNTEER=your_volunteer_template_id
 ```
 
 ⚠️ **IMPORTANT:** Do NOT add `EMAILJS_PRIVATE_KEY` to Netlify! It's only for Firebase Functions.
 
 ### ✅ Google Sheets Configuration (SAFE TO EXPOSE)
 ```bash
-GOOGLE_SHEETS_API_KEY=AIzaSyDevOx2Y-yYoDlWA5NMFGRM8HomDIBTaO8
-GOOGLE_SHEETS_CLIENT_ID=432405234611-ekkjucft12cp1p5ushg77pgvme6237lf.apps.googleusercontent.com
-GOOGLE_SHEETS_REGISTRATIONS_ID=1q7vxkgof14p6OpHehTySIU6c0qNpbencA6E09agYJTg
-GOOGLE_SHEETS_VOLUNTEERS_ID=1T45QcAsY7m5SO8gSQKTvHI_PFFa4qx1x6dwW3iwG0s0
-GOOGLE_SHEETS_VENDORS_ID=1V6G2KN1vvTB5Ng249rg9K6ijbUT7tou_jaE9ygALxeM
+GOOGLE_SHEETS_API_KEY=your_google_sheets_api_key_here
+GOOGLE_SHEETS_CLIENT_ID=your-client-id.apps.googleusercontent.com
+GOOGLE_SHEETS_REGISTRATIONS_ID=your_registrations_spreadsheet_id
+GOOGLE_SHEETS_VOLUNTEERS_ID=your_volunteers_spreadsheet_id
+GOOGLE_SHEETS_VENDORS_ID=your_vendors_spreadsheet_id
 ```
 
 ⚠️ **IMPORTANT:** Do NOT add `GOOGLE_SERVICE_ACCOUNT_JSON` to Netlify! It's only for Firebase Functions.

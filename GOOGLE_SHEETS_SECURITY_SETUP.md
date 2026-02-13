@@ -30,7 +30,7 @@ This guide explains how to securely configure client-side Google Sheets integrat
 1. Go to [Google Cloud Console](https://console.cloud.google.com)
 2. Select your project
 3. Navigate to **APIs & Services** → **Credentials**
-4. Find your API key: `AIzaSyBuGOqgq-M6Q9bNeW29xihdRqGHDWbiEew`
+4. Find your API key: `AIzaSyXXXXXXXXXXXXXXXXXXXXXXXX` (your actual API key)
 5. Click on the API key to edit it
 
 #### Apply These Restrictions:

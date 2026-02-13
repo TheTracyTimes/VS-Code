@@ -18,7 +18,7 @@ This checklist guides you through securing your Google Sheets API integration. *
 - [ ] Go to [Google Cloud Console](https://console.cloud.google.com)
 - [ ] Select your project
 - [ ] Click **APIs & Services** → **Credentials**
-- [ ] Find API key: `AIzaSyBuGOqgq-M6Q9bNeW29xihdRqGHDWbiEew`
+- [ ] Find API key: `AIzaSyXXXXXXXXXXXXXXXXXXXXXXXX` (your actual API key)
 - [ ] Click on the API key name to edit
 
 ### 1.2 Set Application Restrictions
