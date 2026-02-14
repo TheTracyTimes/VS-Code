@@ -286,10 +286,10 @@
                     <h2 class="section-title">Child Care</h2>
 
                     <div class="form-group">
-                        <label>Will you have children under 5? <span class="required">*</span></label>
+                        <label>Will you have children under 10? <span class="required">*</span></label>
                         <div class="radio-group">
                             <div class="radio-item">
-                                <input type="radio" id="childrenYes" name="hasChildren" value="Yes" onchange="toggleChildrenFields(true)" required>
+                                <input type="radio" id="childrenYes" name="hasChildren" value="Yes" required>
                                 <label for="childrenYes">Yes</label>
                             </div>
                             <div class="radio-item">
@@ -300,16 +300,8 @@
                         <span class="error-message">Please select an option</span>
                     </div>
 
-                    <div id="childrenFields" style="display: none;">
-                        <div class="form-group">
-                            <label for="numChildren">How many children under 5?</label>
-                            <input type="number" id="numChildren" name="numChildren" min="1" placeholder="e.g., 2">
-                            <span class="error-message">Please enter number of children</span>
-                        </div>
-                    </div>
-
                     <div class="form-group" style="margin-top: 32px;">
-                        <label>Will your child/children attend VBS (Vacation Bible School)? <span class="required">*</span></label>
+                        <label>Will your child/children attend VBS (Vacation Bible School) - ages 4 to 10? <span class="required">*</span></label>
                         <div class="radio-group">
                             <div class="radio-item">
                                 <input type="radio" id="vbsYes" name="vbsAttendance" value="Yes" onchange="toggleVBSField(true)" required>
@@ -323,14 +315,17 @@
                         <span class="error-message">Please select an option</span>
                     </div>
 
-                    <div id="vbsField" class="form-group" style="display: none;">
-                        <label for="numVBS">How many will attend VBS?</label>
-                        <input type="number" id="numVBS" name="numVBS" min="1" placeholder="e.g., 2">
-                        <span class="error-message">Please enter number attending VBS</span>
+                    <div id="vbsField" style="display: none;">
+                        <div class="form-group">
+                            <label for="numVBS">How many children aged 4 to 10?</label>
+                            <input type="number" id="numVBS" name="numVBS" min="1" max="20" placeholder="e.g., 2" onchange="generateVBSChildFields()">
+                            <span class="error-message">Please enter number of children</span>
+                        </div>
+                        <div id="vbsChildrenDetails"></div>
                     </div>
 
                     <div class="form-group" style="margin-top: 32px;">
-                        <label>Will your child/children be in the nursery during service? <span class="required">*</span></label>
+                        <label>Will your child/children be in the nursery - ages 1 to 3? <span class="required">*</span></label>
                         <div class="radio-group">
                             <div class="radio-item">
                                 <input type="radio" id="nurseryYes" name="nurseryAttendance" value="Yes" onchange="toggleNurseryField(true)" required>
@@ -344,10 +339,13 @@
                         <span class="error-message">Please select an option</span>
                     </div>
 
-                    <div id="nurseryField" class="form-group" style="display: none;">
-                        <label for="numNursery">How many children in the nursery?</label>
-                        <input type="number" id="numNursery" name="numNursery" min="1" placeholder="e.g., 1">
-                        <span class="error-message">Please enter number in nursery</span>
+                    <div id="nurseryField" style="display: none;">
+                        <div class="form-group">
+                            <label for="numNursery">How many children aged 1 to 3?</label>
+                            <input type="number" id="numNursery" name="numNursery" min="1" max="20" placeholder="e.g., 1" onchange="generateNurseryChildFields()">
+                            <span class="error-message">Please enter number of children</span>
+                        </div>
+                        <div id="nurseryChildrenDetails"></div>
                     </div>
 
                     <div class="form-navigation">
