@@ -9,34 +9,34 @@ Add each of these variables with the EXACT values shown below:
 FIREBASE CONFIGURATION (7 variables)
 -----------------------------------------------------------------
 FIREBASE_API_KEY
-AIzaSyBZVYB04dtsa9AL7e5xw1W5ZVOrqds6Akk
+your_firebase_api_key_here
 
 FIREBASE_AUTH_DOMAIN
-sarasota-gospel-temple.firebaseapp.com
+your-project.firebaseapp.com
 
 FIREBASE_PROJECT_ID
-sarasota-gospel-temple
+your-project-id
 
 FIREBASE_APP_ID
-1:868460102497:web:d36ace1f5fd535b21c7b20
+1:123456789:web:abcdef123456
 
 FIREBASE_MEASUREMENT_ID
-G-BQG0SYFGQ9
+G-XXXXXXXXXX
 
 FIREBASE_MESSAGING_SENDER_ID
-868460102497
+123456789
 
 FIREBASE_STORAGE_BUCKET
-sarasota-gospel-temple.firebasestorage.app
+your-project.firebasestorage.app
 
 -----------------------------------------------------------------
 EMAILJS CONFIGURATION (5 variables)
 -----------------------------------------------------------------
 EMAILJS_SERVICE_ID
-service_vdrrcls
+your_service_id
 
 EMAILJS_PUBLIC_KEY
-T35UiRys7umDsRZw8
+your_public_key
 
 ⚠️ IMPORTANT - Exact value (no 'n' at end due to EmailJS character limit):
 EMAILJS_TEMPLATE_REGISTRATION
@@ -52,19 +52,19 @@ volunteer_confirmation
 GOOGLE SHEETS CONFIGURATION (5 variables)
 -----------------------------------------------------------------
 GOOGLE_SHEETS_API_KEY
-AIzaSyBuGOqgq-M6Q9bNeW29xihdRqGHDWbiEew
+your_google_sheets_api_key_here
 
 GOOGLE_SHEETS_CLIENT_ID
-506893960681-9nb4cq1jkgg7d5bvuf527ah0sh93j5ad.apps.googleusercontent.com
+your-client-id.apps.googleusercontent.com
 
 GOOGLE_SHEETS_REGISTRATIONS_ID
-1q7vxkgof14p6OpHehTySIU6c0qNpbencA6E09agYJTg
+your_registrations_spreadsheet_id
 
 GOOGLE_SHEETS_VOLUNTEERS_ID
-1T45QcAsY7m5SO8gSQKTvHI_PFFa4qx1x6dwW3iwG0s0
+your_volunteers_spreadsheet_id
 
 GOOGLE_SHEETS_VENDORS_ID
-1V6G2KN1vvTB5Ng249rg9K6ijbUT7tou_jaE9ygALxeM
+your_vendors_spreadsheet_id
 
 =================================================================
 TOTAL: 17 environment variables

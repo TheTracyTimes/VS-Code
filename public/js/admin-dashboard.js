@@ -64,6 +64,7 @@ async function loadRegistrations() {
         document.getElementById('registrationsEmpty').style.display = 'none';
 
         registrationsData = await getAllRegistrations();
+        window.registrationsData = registrationsData; // Expose for Google Sheets sync
 
         if (registrationsData.length === 0) {
             document.getElementById('registrationsLoading').style.display = 'none';
@@ -88,6 +89,7 @@ async function loadVolunteers() {
         document.getElementById('volunteersEmpty').style.display = 'none';
 
         volunteersData = await getAllVolunteers();
+        window.volunteersData = volunteersData; // Expose for Google Sheets sync
 
         if (volunteersData.length === 0) {
             document.getElementById('volunteersLoading').style.display = 'none';
@@ -111,6 +113,7 @@ async function loadVendors() {
         document.getElementById('vendorsEmpty').style.display = 'none';
 
         vendorsData = await getAllVendors();
+        window.vendorsData = vendorsData; // Expose for Google Sheets sync
 
         if (vendorsData.length === 0) {
             document.getElementById('vendorsLoading').style.display = 'none';
@@ -616,28 +619,8 @@ async function syncToGoogleSheets(section) {
     }
 
     if (!window.GoogleSheetsService.isGoogleSheetsConfigured()) {
-        alert('Google Sheets is not configured yet.\n\nPlease follow these steps:\n1. Set up Google Cloud Project\n2. Enable Google Sheets API\n3. Create API credentials\n4. Configure google-sheets-config.js\n\nSee GOOGLE-SHEETS-SETUP.md for detailed instructions.');
+        alert('Google Sheets is not configured yet.\n\nPlease configure Firebase Secrets for Google Sheets integration.');
         return;
-    }
-
-    // Request authentication if needed
-    if (!gapi.client.getToken()) {
-        try {
-            // Request auth first
-            await new Promise((resolve, reject) => {
-                window.GoogleSheetsService.requestGoogleSheetsAuth((response) => {
-                    if (response.error) {
-                        reject(response);
-                    } else {
-                        resolve(response);
-                    }
-                });
-            });
-        } catch (error) {
-            console.error('Authentication failed:', error);
-            alert('Google Sheets authentication failed. Please try again.');
-            return;
-        }
     }
 
     // Show loading state
@@ -658,7 +641,7 @@ async function syncToGoogleSheets(section) {
         }, 2000);
     } catch (error) {
         console.error('Sync error:', error);
-        alert(`Error syncing to Google Sheets: ${error.message || 'Unknown error'}\n\nPlease check:\n1. Spreadsheet ID is correct\n2. Spreadsheet sharing permissions\n3. API credentials are valid`);
+        alert(`Error syncing to Google Sheets: ${error.message || 'Unknown error'}\n\nPlease check:\n1. Firebase Secrets are configured\n2. Spreadsheet IDs are correct\n3. Service account has access to spreadsheets`);
         event.target.textContent = originalText;
         event.target.disabled = false;
     }

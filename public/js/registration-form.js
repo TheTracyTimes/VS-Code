@@ -106,6 +106,27 @@ function toggleAirportFields(show) {
             input.classList.remove('error');
             input.closest('.form-group').classList.remove('has-error');
         });
+        // Reset the "Will you be traveling alone?" and "How many?" fields
+        toggleHowManyField(false);
+        document.getElementById('travelAloneYes').checked = false;
+        document.getElementById('travelAloneNo').checked = false;
+    }
+}
+
+function toggleHowManyField(show) {
+    const field = document.getElementById('howManyField');
+    const input = document.getElementById('howManyPeople');
+
+    if (show) {
+        field.style.display = 'block';
+        input.setAttribute('required', 'required');
+    } else {
+        field.style.display = 'none';
+        input.removeAttribute('required');
+        input.value = '';
+        // Remove error state
+        input.classList.remove('error');
+        field.classList.remove('has-error');
     }
 }
 
@@ -127,17 +148,8 @@ function toggleLocalTransport(show) {
 }
 
 function toggleChildrenFields(show) {
-    const fields = document.getElementById('childrenFields');
-    const input = document.getElementById('numChildren');
-
-    if (show) {
-        fields.style.display = 'block';
-        input.setAttribute('required', 'required');
-    } else {
-        fields.style.display = 'none';
-        input.removeAttribute('required');
-        input.value = '';
-        // Also hide VBS and nursery fields
+    if (!show) {
+        // If no children under 10, also set VBS and nursery to No
         document.getElementById('vbsNo').checked = true;
         toggleVBSField(false);
         document.getElementById('nurseryNo').checked = true;
@@ -148,6 +160,7 @@ function toggleChildrenFields(show) {
 function toggleVBSField(show) {
     const field = document.getElementById('vbsField');
     const input = document.getElementById('numVBS');
+    const detailsContainer = document.getElementById('vbsChildrenDetails');
 
     if (show) {
         field.style.display = 'block';
@@ -156,6 +169,10 @@ function toggleVBSField(show) {
         field.style.display = 'none';
         input.removeAttribute('required');
         input.value = '';
+        // Clear dynamic child fields
+        if (detailsContainer) {
+            detailsContainer.innerHTML = '';
+        }
         // Remove error state
         input.classList.remove('error');
         field.classList.remove('has-error');
@@ -165,6 +182,7 @@ function toggleVBSField(show) {
 function toggleNurseryField(show) {
     const field = document.getElementById('nurseryField');
     const input = document.getElementById('numNursery');
+    const detailsContainer = document.getElementById('nurseryChildrenDetails');
 
     if (show) {
         field.style.display = 'block';
@@ -173,9 +191,125 @@ function toggleNurseryField(show) {
         field.style.display = 'none';
         input.removeAttribute('required');
         input.value = '';
+        // Clear dynamic child fields
+        if (detailsContainer) {
+            detailsContainer.innerHTML = '';
+        }
         // Remove error state
         input.classList.remove('error');
         field.classList.remove('has-error');
+    }
+}
+
+// Generate dynamic fields for nursery children
+function generateNurseryChildFields() {
+    const numChildren = parseInt(document.getElementById('numNursery').value) || 0;
+    const container = document.getElementById('nurseryChildrenDetails');
+
+    if (!container) return;
+
+    // Clear existing fields
+    container.innerHTML = '';
+
+    if (numChildren < 1) return;
+
+    // Create fields for each child
+    for (let i = 1; i <= numChildren; i++) {
+        const childSection = document.createElement('div');
+        childSection.style.marginTop = '24px';
+        childSection.style.padding = '16px';
+        childSection.style.backgroundColor = '#f8f9fa';
+        childSection.style.borderRadius = '8px';
+        childSection.style.border = '1px solid #dee2e6';
+
+        childSection.innerHTML = `
+            <h4 style="margin-top: 0; margin-bottom: 16px; font-size: 16px; color: var(--navy-blue);">Nursery Child ${i}</h4>
+
+            <div class="form-group">
+                <label for="nurseryChild${i}Name">Full Name <span class="required">*</span></label>
+                <input type="text" id="nurseryChild${i}Name" name="nurseryChild${i}Name" required>
+                <span class="error-message">Please enter child's full name</span>
+            </div>
+
+            <div class="form-group">
+                <label for="nurseryChild${i}Age">Age <span class="required">*</span></label>
+                <input type="number" id="nurseryChild${i}Age" name="nurseryChild${i}Age" min="1" max="3" required>
+                <span class="error-message">Please enter child's age (1-3)</span>
+            </div>
+
+            <div class="form-group">
+                <label for="nurseryChild${i}Allergies">Allergies</label>
+                <textarea id="nurseryChild${i}Allergies" name="nurseryChild${i}Allergies" placeholder="List any allergies or dietary restrictions, or write 'None'"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="nurseryChild${i}Medical">Medical Conditions</label>
+                <textarea id="nurseryChild${i}Medical" name="nurseryChild${i}Medical" placeholder="List any medical conditions, or write 'None'"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="nurseryChild${i}Behavioral">Behavioral/Sensory Needs</label>
+                <textarea id="nurseryChild${i}Behavioral" name="nurseryChild${i}Behavioral" placeholder="List any behavioral or sensory needs, or write 'None'"></textarea>
+            </div>
+        `;
+
+        container.appendChild(childSection);
+    }
+}
+
+// Generate dynamic fields for VBS children
+function generateVBSChildFields() {
+    const numChildren = parseInt(document.getElementById('numVBS').value) || 0;
+    const container = document.getElementById('vbsChildrenDetails');
+
+    if (!container) return;
+
+    // Clear existing fields
+    container.innerHTML = '';
+
+    if (numChildren < 1) return;
+
+    // Create fields for each child
+    for (let i = 1; i <= numChildren; i++) {
+        const childSection = document.createElement('div');
+        childSection.style.marginTop = '24px';
+        childSection.style.padding = '16px';
+        childSection.style.backgroundColor = '#f8f9fa';
+        childSection.style.borderRadius = '8px';
+        childSection.style.border = '1px solid #dee2e6';
+
+        childSection.innerHTML = `
+            <h4 style="margin-top: 0; margin-bottom: 16px; font-size: 16px; color: var(--navy-blue);">VBS Child ${i}</h4>
+
+            <div class="form-group">
+                <label for="vbsChild${i}Name">Full Name <span class="required">*</span></label>
+                <input type="text" id="vbsChild${i}Name" name="vbsChild${i}Name" required>
+                <span class="error-message">Please enter child's full name</span>
+            </div>
+
+            <div class="form-group">
+                <label for="vbsChild${i}Age">Age <span class="required">*</span></label>
+                <input type="number" id="vbsChild${i}Age" name="vbsChild${i}Age" min="4" max="10" required>
+                <span class="error-message">Please enter child's age (4-10)</span>
+            </div>
+
+            <div class="form-group">
+                <label for="vbsChild${i}Allergies">Allergies</label>
+                <textarea id="vbsChild${i}Allergies" name="vbsChild${i}Allergies" placeholder="List any allergies or dietary restrictions, or write 'None'"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="vbsChild${i}Medical">Medical Conditions</label>
+                <textarea id="vbsChild${i}Medical" name="vbsChild${i}Medical" placeholder="List any medical conditions, or write 'None'"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="vbsChild${i}Behavioral">Behavioral/Sensory Needs</label>
+                <textarea id="vbsChild${i}Behavioral" name="vbsChild${i}Behavioral" placeholder="List any behavioral or sensory needs, or write 'None'"></textarea>
+            </div>
+        `;
+
+        container.appendChild(childSection);
     }
 }
 
@@ -246,19 +380,8 @@ function validateSection(section) {
 
     // Section-specific validation
     if (section === 3) {
-        // Validate child care logic
-        const hasChildren = document.querySelector('input[name="hasChildren"]:checked');
-        if (hasChildren && hasChildren.value === 'Yes') {
-            const numChildren = parseInt(document.getElementById('numChildren').value) || 0;
-            const numVBS = parseInt(document.getElementById('numVBS').value) || 0;
-            const numNursery = parseInt(document.getElementById('numNursery').value) || 0;
-
-            // Check if VBS + Nursery doesn't exceed total children
-            if (numVBS + numNursery > numChildren) {
-                alert('The total number of children in VBS and nursery cannot exceed the total number of children under 5.');
-                isValid = false;
-            }
-        }
+        // Child care section - no additional validation needed
+        // Individual child fields are validated through standard required field validation
     }
 
     if (!isValid) {
@@ -305,6 +428,56 @@ function saveCurrentSectionData() {
             formData[input.name] = input.value;
         }
     });
+
+    // If on child care section, collect structured child data
+    if (currentStep === 3) {
+        collectChildData();
+    }
+}
+
+// Collect and structure child data
+function collectChildData() {
+    // Collect nursery children data
+    const numNursery = parseInt(document.getElementById('numNursery').value) || 0;
+    if (numNursery > 0) {
+        formData.nurseryChildren = [];
+        for (let i = 1; i <= numNursery; i++) {
+            const name = document.getElementById(`nurseryChild${i}Name`)?.value || '';
+            const age = document.getElementById(`nurseryChild${i}Age`)?.value || '';
+            const allergies = document.getElementById(`nurseryChild${i}Allergies`)?.value || 'None';
+            const medical = document.getElementById(`nurseryChild${i}Medical`)?.value || 'None';
+            const behavioral = document.getElementById(`nurseryChild${i}Behavioral`)?.value || 'None';
+
+            formData.nurseryChildren.push({
+                name: name,
+                age: age,
+                allergies: allergies,
+                medicalConditions: medical,
+                behavioralNeeds: behavioral
+            });
+        }
+    }
+
+    // Collect VBS children data
+    const numVBS = parseInt(document.getElementById('numVBS').value) || 0;
+    if (numVBS > 0) {
+        formData.vbsChildren = [];
+        for (let i = 1; i <= numVBS; i++) {
+            const name = document.getElementById(`vbsChild${i}Name`)?.value || '';
+            const age = document.getElementById(`vbsChild${i}Age`)?.value || '';
+            const allergies = document.getElementById(`vbsChild${i}Allergies`)?.value || 'None';
+            const medical = document.getElementById(`vbsChild${i}Medical`)?.value || 'None';
+            const behavioral = document.getElementById(`vbsChild${i}Behavioral`)?.value || 'None';
+
+            formData.vbsChildren.push({
+                name: name,
+                age: age,
+                allergies: allergies,
+                medicalConditions: medical,
+                behavioralNeeds: behavioral
+            });
+        }
+    }
 }
 
 // ===== FORM SUBMISSION =====
@@ -427,8 +600,25 @@ Services Attending: ${Array.isArray(data.services) ? data.services.join(', ') : 
 Airport Transportation: ${data.airportTransport}
 Local Transportation: ${data.localTransport}
 
-Children Under 5: ${data.hasChildren}
-${data.hasChildren === 'Yes' ? `Number of Children: ${data.numChildren}` : ''}
+Children Under 10: ${data.hasChildren}
+
+Nursery (Ages 1-3): ${data.nurseryAttendance}
+${data.nurseryAttendance === 'Yes' && data.nurseryChildren ? `
+Nursery Children (${data.nurseryChildren.length}):
+${data.nurseryChildren.map((child, idx) => `
+  ${idx + 1}. ${child.name}, Age ${child.age}
+     Allergies: ${child.allergies}
+     Medical Conditions: ${child.medicalConditions || 'None'}
+     Behavioral/Sensory Needs: ${child.behavioralNeeds || 'None'}`).join('\n')}` : ''}
+
+VBS (Ages 4-10): ${data.vbsAttendance}
+${data.vbsAttendance === 'Yes' && data.vbsChildren ? `
+VBS Children (${data.vbsChildren.length}):
+${data.vbsChildren.map((child, idx) => `
+  ${idx + 1}. ${child.name}, Age ${child.age}
+     Allergies: ${child.allergies}
+     Medical Conditions: ${child.medicalConditions || 'None'}
+     Behavioral/Sensory Needs: ${child.behavioralNeeds || 'None'}`).join('\n')}` : ''}
 
 Submitted: ${new Date().toLocaleString()}
             `.trim()
