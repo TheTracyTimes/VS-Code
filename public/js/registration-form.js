@@ -88,6 +88,27 @@ function toggleAirportFields(show) {
             input.classList.remove('error');
             input.closest('.form-group').classList.remove('has-error');
         });
+        // Reset the "Will you be traveling alone?" and "How many?" fields
+        toggleHowManyField(false);
+        document.getElementById('travelAloneYes').checked = false;
+        document.getElementById('travelAloneNo').checked = false;
+    }
+}
+
+function toggleHowManyField(show) {
+    const field = document.getElementById('howManyField');
+    const input = document.getElementById('howManyPeople');
+
+    if (show) {
+        field.style.display = 'block';
+        input.setAttribute('required', 'required');
+    } else {
+        field.style.display = 'none';
+        input.removeAttribute('required');
+        input.value = '';
+        // Remove error state
+        input.classList.remove('error');
+        field.classList.remove('has-error');
     }
 }
 
