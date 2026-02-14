@@ -1,11 +1,29 @@
 // ===== REGISTRATION FORM - JAVASCRIPT =====
 // Handles form navigation, validation, and Firebase submission
 
+// EmailJS Template IDs
+const EMAILJS_TEMPLATE_IDS = {
+    registration: 'registration_confirmatio',
+    volunteer: 'volunteer_confirmation',
+    vendor: 'vendor_confirmation'
+};
+
 // Current step tracker
 let currentStep = 1;
 
 // Form data object
 let formData = {};
+
+// ===== FIREBASE SUBMISSION =====
+
+async function submitRegistration(data) {
+    if (typeof db === 'undefined') {
+        throw new Error('Firebase is not initialized');
+    }
+    const docRef = await db.collection('registrations').add(data);
+    console.log('Registration saved with ID:', docRef.id);
+    return docRef.id;
+}
 
 // ===== STEP NAVIGATION =====
 
