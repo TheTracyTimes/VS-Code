@@ -223,6 +223,16 @@ function generateNurseryChildFields() {
                 <label for="nurseryChild${i}Allergies">Allergies</label>
                 <textarea id="nurseryChild${i}Allergies" name="nurseryChild${i}Allergies" placeholder="List any allergies or dietary restrictions, or write 'None'"></textarea>
             </div>
+
+            <div class="form-group">
+                <label for="nurseryChild${i}Medical">Medical Conditions</label>
+                <textarea id="nurseryChild${i}Medical" name="nurseryChild${i}Medical" placeholder="List any medical conditions, or write 'None'"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="nurseryChild${i}Behavioral">Behavioral/Sensory Needs</label>
+                <textarea id="nurseryChild${i}Behavioral" name="nurseryChild${i}Behavioral" placeholder="List any behavioral or sensory needs, or write 'None'"></textarea>
+            </div>
         `;
 
         container.appendChild(childSection);
@@ -268,6 +278,16 @@ function generateVBSChildFields() {
             <div class="form-group">
                 <label for="vbsChild${i}Allergies">Allergies</label>
                 <textarea id="vbsChild${i}Allergies" name="vbsChild${i}Allergies" placeholder="List any allergies or dietary restrictions, or write 'None'"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="vbsChild${i}Medical">Medical Conditions</label>
+                <textarea id="vbsChild${i}Medical" name="vbsChild${i}Medical" placeholder="List any medical conditions, or write 'None'"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="vbsChild${i}Behavioral">Behavioral/Sensory Needs</label>
+                <textarea id="vbsChild${i}Behavioral" name="vbsChild${i}Behavioral" placeholder="List any behavioral or sensory needs, or write 'None'"></textarea>
             </div>
         `;
 
@@ -407,11 +427,15 @@ function collectChildData() {
             const name = document.getElementById(`nurseryChild${i}Name`)?.value || '';
             const age = document.getElementById(`nurseryChild${i}Age`)?.value || '';
             const allergies = document.getElementById(`nurseryChild${i}Allergies`)?.value || 'None';
+            const medical = document.getElementById(`nurseryChild${i}Medical`)?.value || 'None';
+            const behavioral = document.getElementById(`nurseryChild${i}Behavioral`)?.value || 'None';
 
             formData.nurseryChildren.push({
                 name: name,
                 age: age,
-                allergies: allergies
+                allergies: allergies,
+                medicalConditions: medical,
+                behavioralNeeds: behavioral
             });
         }
     }
@@ -424,11 +448,15 @@ function collectChildData() {
             const name = document.getElementById(`vbsChild${i}Name`)?.value || '';
             const age = document.getElementById(`vbsChild${i}Age`)?.value || '';
             const allergies = document.getElementById(`vbsChild${i}Allergies`)?.value || 'None';
+            const medical = document.getElementById(`vbsChild${i}Medical`)?.value || 'None';
+            const behavioral = document.getElementById(`vbsChild${i}Behavioral`)?.value || 'None';
 
             formData.vbsChildren.push({
                 name: name,
                 age: age,
-                allergies: allergies
+                allergies: allergies,
+                medicalConditions: medical,
+                behavioralNeeds: behavioral
             });
         }
     }
@@ -561,14 +589,18 @@ ${data.nurseryAttendance === 'Yes' && data.nurseryChildren ? `
 Nursery Children (${data.nurseryChildren.length}):
 ${data.nurseryChildren.map((child, idx) => `
   ${idx + 1}. ${child.name}, Age ${child.age}
-     Allergies: ${child.allergies}`).join('\n')}` : ''}
+     Allergies: ${child.allergies}
+     Medical Conditions: ${child.medicalConditions || 'None'}
+     Behavioral/Sensory Needs: ${child.behavioralNeeds || 'None'}`).join('\n')}` : ''}
 
 VBS (Ages 4-10): ${data.vbsAttendance}
 ${data.vbsAttendance === 'Yes' && data.vbsChildren ? `
 VBS Children (${data.vbsChildren.length}):
 ${data.vbsChildren.map((child, idx) => `
   ${idx + 1}. ${child.name}, Age ${child.age}
-     Allergies: ${child.allergies}`).join('\n')}` : ''}
+     Allergies: ${child.allergies}
+     Medical Conditions: ${child.medicalConditions || 'None'}
+     Behavioral/Sensory Needs: ${child.behavioralNeeds || 'None'}`).join('\n')}` : ''}
 
 Submitted: ${new Date().toLocaleString()}
             `.trim()
