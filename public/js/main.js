@@ -123,6 +123,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize rain animation and lighthouse illumination if on homepage
     createRain();
     initLighthouseIllumination();
+
+    // Initialize Google Sheets API if available
+    if (typeof initGoogleSheetsAPI !== 'undefined') {
+        initGoogleSheetsAPI();
+    }
 });
 
 // ===== STICKY NAVIGATION =====
@@ -246,8 +251,19 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.textContent = 'Sending...';
 
             try {
-                // Send via EmailJS or your preferred method
-                console.log('Contact form submission:', formData);
+                // Submit to Firebase
+                const docId = await submitContact(formData);
+
+                // Add document ID to form data for Google Sheets
+                formData.id = docId;
+                formData.createdAt = { toDate: () => new Date() };
+
+                // Sync to Google Sheets (non-blocking - won't prevent form submission)
+                if (window.GoogleSheetsService && window.GoogleSheetsService.isGoogleSheetsConfigured()) {
+                    window.GoogleSheetsService.addRowToSheet('contacts', formData).catch(err => {
+                        console.warn('Google Sheets sync failed (form still submitted successfully)');
+                    });
+                }
 
                 // Show success message
                 alert('Thank you for your message! We\'ll get back to you soon.');

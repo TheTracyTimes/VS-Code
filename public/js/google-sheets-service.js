@@ -103,6 +103,9 @@ window.GoogleSheetsService = {
             case 'vendors':
                 data = window.vendorsData || [];
                 break;
+            case 'contacts':
+                data = window.contactsData || [];
+                break;
             default:
                 throw new Error(`Unknown section: ${section}`);
         }
@@ -137,6 +140,9 @@ window.GoogleSheetsService = {
                 'Phone', 'Email', 'Website', 'Pastor Name', 'Assembly Name',
                 'Selling', 'Goods Type', 'Table Staffed', 'Availability',
                 'Status', 'Approved'
+            ],
+            contacts: [
+                'Timestamp', 'ID', 'Name', 'Phone', 'Email', 'Message'
             ]
         };
 
@@ -252,6 +258,16 @@ window.GoogleSheetsService = {
                     Array.isArray(data.committees) ? data.committees.join(', ') : data.committees || '',
                     Array.isArray(data.availability) ? data.availability.join(', ') : data.availability || '',
                     data.committeeAssignments || ''
+                ];
+
+            case 'contacts':
+                return [
+                    timestamp,
+                    data.id || '',
+                    data.name || '',
+                    data.phone || '',
+                    data.email || '',
+                    data.message || ''
                 ];
 
             default:

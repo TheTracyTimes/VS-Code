@@ -73,9 +73,34 @@ async function submitVolunteer(data) {
     }
 }
 
+// ===== CONTACT SUBMISSIONS =====
+
+async function submitContact(data) {
+    try {
+        // Check if Firebase is initialized
+        if (typeof db === 'undefined' || !db) {
+            throw new Error('Firebase is not initialized. Please check your configuration.');
+        }
+
+        // Add to Firestore
+        const docRef = await db.collection('contacts').add({
+            ...data,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        console.log('Contact form submitted successfully:', docRef.id);
+        return docRef.id;
+    } catch (error) {
+        console.error('Firebase submission error:', error);
+        throw new Error('Failed to submit contact form: ' + error.message);
+    }
+}
+
 // Export for use in other scripts
 if (typeof window !== 'undefined') {
     window.submitRegistration = submitRegistration;
     window.submitVendor = submitVendor;
     window.submitVolunteer = submitVolunteer;
+    window.submitContact = submitContact;
 }
