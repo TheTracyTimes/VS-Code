@@ -16,14 +16,8 @@ function updateCommitteeSelection() {
     selectedCommittees = Array.from(checkboxes).map(cb => cb.value);
 
     // Toggle committee notes
-    const nurseryCheckbox = document.getElementById('comm2');
-    const nurseryNote = document.getElementById('nurseryNote');
     const medicalCheckbox = document.getElementById('comm10');
     const medicalNote = document.getElementById('medicalNote');
-
-    if (nurseryCheckbox && nurseryNote) {
-        nurseryNote.style.display = nurseryCheckbox.checked ? 'block' : 'none';
-    }
 
     if (medicalCheckbox && medicalNote) {
         medicalNote.style.display = medicalCheckbox.checked ? 'block' : 'none';
