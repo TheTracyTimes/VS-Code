@@ -536,27 +536,35 @@
 
             // Load photos and populate slides in order
             for (let i = 1; i <= photoCount; i++) {
-                const imgPath = `images/ministries/${ministryName}/${i}.jpg`;
                 const slideIndex = i - 1;
 
-                // Check if image exists
-                const img = new Image();
-                img.onload = function() {
-                    // Insert image into the correct slide
-                    slides[slideIndex].innerHTML = `<img src="${imgPath}" alt="${ministryName} photo ${i}">`;
-                    gallery.photos[slideIndex] = imgPath;
-                    loadedCount++;
+                // Try both .jpg and .JPG extensions
+                const tryLoadImage = (extension) => {
+                    const imgPath = `images/ministries/${ministryName}/${i}.${extension}`;
+                    const img = new Image();
 
-                    // If no photos loaded, restore placeholder
-                    if (loadedCount === 0 && i === photoCount) {
-                        container.innerHTML = '<div class="gallery-slide active"><div class="gallery-placeholder">📷</div></div>';
-                    }
+                    img.onload = function() {
+                        // Insert image into the correct slide
+                        slides[slideIndex].innerHTML = `<img src="${imgPath}" alt="${ministryName} photo ${i}">`;
+                        gallery.photos[slideIndex] = imgPath;
+                        loadedCount++;
+                    };
+
+                    img.onerror = function() {
+                        // Try uppercase extension if lowercase failed
+                        if (extension === 'jpg') {
+                            tryLoadImage('JPG');
+                        } else {
+                            // If both fail, remove the slide
+                            slides[slideIndex].remove();
+                        }
+                    };
+
+                    img.src = imgPath;
                 };
-                img.onerror = function() {
-                    // Remove slide if image doesn't exist
-                    slides[slideIndex].remove();
-                };
-                img.src = imgPath;
+
+                // Start with lowercase .jpg
+                tryLoadImage('jpg');
             }
         }
 
