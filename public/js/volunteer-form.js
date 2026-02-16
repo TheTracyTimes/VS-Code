@@ -11,16 +11,23 @@ let selectedAvailability = [];
 // ===== COMMITTEE SELECTION =====
 
 function updateCommitteeSelection() {
+    console.log('updateCommitteeSelection() called');
+
     // Get all checked committees
     const checkboxes = document.querySelectorAll('input[name="committees"]:checked');
     selectedCommittees = Array.from(checkboxes).map(cb => cb.value);
+    console.log('Selected committees:', selectedCommittees);
 
     // Toggle committee notes
     const medicalCheckbox = document.getElementById('comm10');
     const medicalNote = document.getElementById('medicalNote');
 
     if (medicalCheckbox && medicalNote) {
-        medicalNote.style.display = medicalCheckbox.checked ? 'block' : 'none';
+        const isChecked = medicalCheckbox.checked;
+        medicalNote.style.display = isChecked ? 'block' : 'none';
+        console.log('Medical checkbox checked:', isChecked, '| Medical note display:', medicalNote.style.display);
+    } else {
+        console.warn('Medical checkbox or note element not found');
     }
 
     // Toggle Principal Instrument field for Musician
@@ -32,13 +39,17 @@ function updateCommitteeSelection() {
         if (musicianCheckbox.checked) {
             principalInstrumentSection.style.display = 'block';
             principalInstrumentInput.required = true;
+            console.log('Musician selected: Showing principal instrument field');
         } else {
             principalInstrumentSection.style.display = 'none';
             principalInstrumentInput.required = false;
             principalInstrumentInput.value = '';
             principalInstrumentInput.classList.remove('error');
             principalInstrumentSection.classList.remove('has-error');
+            console.log('Musician deselected: Hiding principal instrument field');
         }
+    } else {
+        console.warn('Musician checkbox or principal instrument elements not found');
     }
 
     // Update matrix visibility and content
@@ -411,6 +422,20 @@ document.addEventListener('DOMContentLoaded', function() {
     if (typeof emailjs !== 'undefined') {
         initEmailJS();
     }
+
+    // Attach event listeners to committee checkboxes
+    const committeeCheckboxes = document.querySelectorAll('input[name="committees"]');
+    committeeCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateCommitteeSelection);
+    });
+
+    // Attach event listeners to availability checkboxes
+    const availabilityCheckboxes = document.querySelectorAll('input[name="availability"]');
+    availabilityCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateAvailabilitySelection);
+    });
+
+    console.log('Event listeners attached to committee and availability checkboxes');
 
     // Set focus on first input
     document.getElementById('firstName').focus();
