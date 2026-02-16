@@ -160,11 +160,6 @@ function initializeGalleries() {
     console.log('Gallery auto-rotation started (5 second interval)');
 }
 
-// Global function for backwards compatibility with inline onclick (if any remain)
-window.changeSlide = function(galleryId, direction) {
-    changeSlide(galleryId, direction, true);
-};
-
 // Initialize when DOM is loaded
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initializeGalleries);
