@@ -31,7 +31,7 @@ function updateCommitteeSelection() {
     }
 
     // Toggle Principal Instrument field for Musician
-    const musicianCheckbox = document.getElementById('comm9');
+    const musicianCheckbox = document.getElementById('comm8');
     const principalInstrumentSection = document.getElementById('principalInstrumentSection');
     const principalInstrumentInput = document.getElementById('principalInstrument');
 
@@ -181,7 +181,7 @@ function validateForm() {
     }
 
     // Validate principal instrument (if musician is selected)
-    const musicianCheckbox = document.getElementById('comm9');
+    const musicianCheckbox = document.getElementById('comm8');
     const principalInstrumentInput = document.getElementById('principalInstrument');
     if (musicianCheckbox && musicianCheckbox.checked && principalInstrumentInput) {
         if (!principalInstrumentInput.value.trim()) {
@@ -254,7 +254,7 @@ document.getElementById('volunteerForm').addEventListener('submit', async functi
     };
 
     // Add principal instrument if musician is selected
-    const musicianCheckbox = document.getElementById('comm9');
+    const musicianCheckbox = document.getElementById('comm8');
     const principalInstrumentInput = document.getElementById('principalInstrument');
     if (musicianCheckbox && musicianCheckbox.checked && principalInstrumentInput && principalInstrumentInput.value.trim()) {
         formData.principalInstrument = principalInstrumentInput.value.trim();
