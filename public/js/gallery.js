@@ -18,8 +18,8 @@ const galleries = {
 };
 
 let autoRotationInterval = null;
-let lastInteractionTime = Date.now();
-const AUTO_ROTATION_DELAY = 5000; // Resume auto-rotation after 5 seconds of no interaction
+let lastManualInteraction = 0;
+const AUTO_ROTATION_DELAY = 5000; // Pause auto-rotation for 5 seconds after manual interaction
 
 // Change slide function
 function changeSlide(galleryId, direction, isManual = false) {
@@ -65,25 +65,57 @@ function changeSlide(galleryId, direction, isManual = false) {
         counter.textContent = `${gallery.currentSlide + 1} / ${gallery.totalSlides}`;
     }
 
-    // If manual interaction, update last interaction time
+    // If manual interaction, update timestamp to pause auto-rotation
     if (isManual) {
-        lastInteractionTime = Date.now();
+        lastManualInteraction = Date.now();
         console.log(`Manual navigation on ${galleryId}: slide ${gallery.currentSlide + 1}/${gallery.totalSlides}`);
     }
 }
 
-// Auto-rotate galleries every 5 seconds
+// Auto-rotate all galleries every 5 seconds
 function autoRotateGalleries() {
-    // Only auto-rotate if enough time has passed since last manual interaction
-    const timeSinceLastInteraction = Date.now() - lastInteractionTime;
-    if (timeSinceLastInteraction < AUTO_ROTATION_DELAY) {
+    // Check if we should pause due to recent manual interaction
+    const timeSinceManual = Date.now() - lastManualInteraction;
+    if (timeSinceManual < AUTO_ROTATION_DELAY) {
+        console.log(`Auto-rotation paused (${Math.ceil((AUTO_ROTATION_DELAY - timeSinceManual) / 1000)}s remaining)`);
         return;
     }
 
+    // Rotate each gallery
     Object.keys(galleries).forEach(galleryId => {
         const container = document.getElementById(galleryId);
         if (container && galleries[galleryId].totalSlides > 0) {
             changeSlide(galleryId, 1, false);
+        }
+    });
+}
+
+// Attach event listeners to navigation buttons
+function attachNavigationListeners() {
+    Object.keys(galleries).forEach(galleryId => {
+        const galleryContainer = document.getElementById(galleryId);
+        if (!galleryContainer) return;
+
+        // Find the parent ministry-gallery div
+        const parentGallery = galleryContainer.closest('.ministry-gallery');
+        if (!parentGallery) return;
+
+        // Find prev and next buttons within this gallery
+        const prevBtn = parentGallery.querySelector('.gallery-nav.prev');
+        const nextBtn = parentGallery.querySelector('.gallery-nav.next');
+
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+                changeSlide(galleryId, -1, true);
+            });
+            console.log(`Attached prev button listener for ${galleryId}`);
+        }
+
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                changeSlide(galleryId, 1, true);
+            });
+            console.log(`Attached next button listener for ${galleryId}`);
         }
     });
 }
@@ -105,13 +137,22 @@ function initializeGalleries() {
                 slides[0].classList.add('active');
             }
 
+            // Update counter
+            const counter = document.getElementById(galleryId.replace('-gallery', '-counter'));
+            if (counter) {
+                counter.textContent = `1 / ${slides.length}`;
+            }
+
             console.log(`Gallery ${galleryId}: ${slides.length} slides initialized`);
         } else {
             console.warn(`Gallery container not found: ${galleryId}`);
         }
     });
 
-    // Start auto-rotation
+    // Attach navigation button listeners
+    attachNavigationListeners();
+
+    // Start auto-rotation (runs every 5 seconds)
     if (autoRotationInterval) {
         clearInterval(autoRotationInterval);
     }
@@ -119,7 +160,7 @@ function initializeGalleries() {
     console.log('Gallery auto-rotation started (5 second interval)');
 }
 
-// Global function for button clicks (needs to be accessible from HTML onclick)
+// Global function for backwards compatibility with inline onclick (if any remain)
 window.changeSlide = function(galleryId, direction) {
     changeSlide(galleryId, direction, true);
 };
