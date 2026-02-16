@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Upcoming events at Sarasota Gospel Temple including the 2026 International Meeting.">
+    <title>Events | Sarasota Gospel Temple</title>
+    <link rel="stylesheet" href="css/design-system.css">
+    <link rel="stylesheet" href="css/pages.css">
+    <style>
+        .events-section {
+            padding: var(--spacing-xxl) 0;
+            background-color: var(--off-white);
+        }
+
+        .event-card {
+            background: white;
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            margin-bottom: var(--spacing-lg);
+            display: flex;
+            gap: var(--spacing-xl);
+            transition: all var(--transition-normal);
+        }
+
+        .event-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .event-date {
+            min-width: 100px;
+            text-align: center;
+            padding: var(--spacing-md);
+            background: linear-gradient(135deg, var(--navy-blue), #1a3a6b);
+            border-radius: var(--radius-sm);
+            color: var(--off-white);
+        }
+
+        .event-month {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .event-day {
+            font-size: 48px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .event-info {
+            flex: 1;
+        }
+
+        .event-info h3 {
+            color: var(--navy-blue);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .event-meta {
+            display: flex;
+            gap: var(--spacing-lg);
+            color: var(--dark-gray);
+            font-size: 14px;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .event-meta span {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .event-description {
+            color: var(--charcoal);
+            line-height: 1.6;
+        }
+
+        .calendar-placeholder {
+            background: white;
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            text-align: center;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .calendar-placeholder h3 {
+            color: var(--navy-blue);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .social-links-section {
+            padding: var(--spacing-xxl) 0;
+            background-color: var(--beige);
+        }
+
+        .social-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-xl);
+        }
+
+        .social-card {
+            background: white;
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            text-align: center;
+            transition: all var(--transition-normal);
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .social-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .social-icon {
+            font-size: 64px;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .social-card h4 {
+            color: var(--navy-blue);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .social-card p {
+            color: var(--dark-gray);
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="mainNav">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="nav-brand">
+                    <a href="index.html">
+                        <img src="images/logos/light-logo.png" alt="SGT Logo" style="height: 40px; width: auto; margin-right: 12px;">
+                        <span class="brand-text">Sarasota Gospel Temple</span>
+                    </a>
+                </div>
+                <button class="nav-toggle" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="ministries.html">Ministries</a></li>
+                    <li><a href="2026-meeting.html" class="meeting-link">2026 Meeting</a></li>
+                    <li><a href="events.html" class="active">Events</a></li>
+                    <li><a href="give.html">Give</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <h1>Events</h1>
+            <p>Stay connected with what's happening</p>
+        </div>
+    </section>
+
+    <!-- Featured Event Banner - 2026 International Meeting -->
+    <section class="featured-meeting">
+        <div class="container">
+            <a href="2026-meeting.html" class="meeting-banner">
+                <div class="meeting-banner-content">
+                    <div class="meeting-badge">Featured Event</div>
+                    <h2>2026 International Meeting</h2>
+                    <p class="meeting-dates">April 9-11, 2026 (Thursday Morning - Saturday Afternoon)</p>
+                    <p class="meeting-description">Join us for three days of worship, fellowship, and spiritual renewal. Register now!</p>
+                    <div class="meeting-actions">
+                        <span class="btn btn-primary">Learn More & Register →</span>
+                    </div>
+                </div>
+                <div class="meeting-banner-graphic">
+                    <img src="images/logos/light-logo.png" alt="SGT Logo" style="max-width: 200px; height: auto;">
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Weekly Schedule -->
+    <section class="events-section">
+        <div class="container">
+            <div>
+                <h2 class="text-center">Weekly Schedule</h2>
+
+                <!-- Top Row -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--spacing-lg); margin-bottom: var(--spacing-lg);">
+                    <!-- Sunday -->
+                    <div class="event-card" style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+                        <div style="background: var(--navy-blue); color: white; padding: var(--spacing-md); border-radius: var(--radius-sm); margin-bottom: var(--spacing-md); width: 100%;">
+                            <h3 style="margin: 0; color: white;">Sunday</h3>
+                        </div>
+                        <h4>Service</h4>
+                        <p style="color: var(--burnt-orange); font-weight: 700; margin: 8px 0;">11:00 AM</p>
+                        <div style="display: flex; flex-direction: column; gap: 8px; align-items: center; width: 100%;">
+                            <a href="https://maps.apple.com/?address=3629+Tallevast+Rd,+Sarasota,+FL+34243" target="_blank" class="btn btn-outline" style="font-size: 13px; padding: 8px 16px; width: 130px;">Apple Maps</a>
+                            <a href="https://www.google.com/maps/dir/?api=1&destination=3629+Tallevast+Rd,+Sarasota,+FL+34243" target="_blank" class="btn btn-outline" style="font-size: 13px; padding: 8px 16px; width: 130px;">Google Maps</a>
+                            <a href="https://waze.com/ul?q=3629+Tallevast+Rd,+Sarasota,+FL+34243" target="_blank" class="btn btn-outline" style="font-size: 13px; padding: 8px 16px; width: 130px;">Waze</a>
+                        </div>
+                    </div>
+
+                    <!-- Monday -->
+                    <div class="event-card" style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+                        <div style="background: var(--navy-blue); color: white; padding: var(--spacing-md); border-radius: var(--radius-sm); margin-bottom: var(--spacing-md); width: 100%;">
+                            <h3 style="margin: 0; color: white;">Monday</h3>
+                        </div>
+                        <h4>Prayer</h4>
+                        <p style="color: var(--burnt-orange); font-weight: 700; margin: 8px 0;">9:00 PM</p>
+                        <a href="https://us02web.zoom.us/j/9222352941" target="_blank" class="btn btn-secondary" style="font-size: 14px; padding: 10px 20px;">Join on Zoom</a>
+                    </div>
+
+                    <!-- Tuesday -->
+                    <div class="event-card" style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+                        <div style="background: var(--navy-blue); color: white; padding: var(--spacing-md); border-radius: var(--radius-sm); margin-bottom: var(--spacing-md); width: 100%;">
+                            <h3 style="margin: 0; color: white;">Tuesday</h3>
+                        </div>
+                        <h4>Bible Study</h4>
+                        <p style="color: var(--burnt-orange); font-weight: 700; margin: 8px 0;">7:00 PM</p>
+                        <a href="https://us02web.zoom.us/j/9222352941" target="_blank" class="btn btn-secondary" style="font-size: 14px; padding: 10px 20px;">Join on Zoom</a>
+                    </div>
+
+                    <!-- Wednesday -->
+                    <div class="event-card" style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+                        <div style="background: var(--navy-blue); color: white; padding: var(--spacing-md); border-radius: var(--radius-sm); margin-bottom: var(--spacing-md); width: 100%;">
+                            <h3 style="margin: 0; color: white;">Wednesday</h3>
+                        </div>
+                        <h4>Prayer</h4>
+                        <p style="color: var(--burnt-orange); font-weight: 700; margin: 8px 0;">9:00 PM</p>
+                        <a href="https://us02web.zoom.us/j/9222352941" target="_blank" class="btn btn-secondary" style="font-size: 14px; padding: 10px 20px;">Join on Zoom</a>
+                    </div>
+                </div>
+
+                <!-- Bottom Row -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--spacing-lg);">
+                    <!-- Thursday -->
+                    <div class="event-card" style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+                        <div style="background: var(--navy-blue); color: white; padding: var(--spacing-md); border-radius: var(--radius-sm); margin-bottom: var(--spacing-md); width: 100%;">
+                            <h3 style="margin: 0; color: white;">Thursday</h3>
+                        </div>
+                        <h4>Prayer</h4>
+                        <p style="color: var(--burnt-orange); font-weight: 700; margin: 8px 0;">9:00 PM</p>
+                        <a href="https://us02web.zoom.us/j/9222352941" target="_blank" class="btn btn-secondary" style="font-size: 14px; padding: 10px 20px;">Join on Zoom</a>
+                    </div>
+
+                    <!-- Friday -->
+                    <div class="event-card" style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+                        <div style="background: var(--navy-blue); color: white; padding: var(--spacing-md); border-radius: var(--radius-sm); margin-bottom: var(--spacing-md); width: 100%;">
+                            <h3 style="margin: 0; color: white;">Friday</h3>
+                        </div>
+                        <h4>Service</h4>
+                        <p style="color: var(--burnt-orange); font-weight: 700; margin: 8px 0;">7:00 PM</p>
+                        <div style="display: flex; flex-direction: column; gap: 8px; align-items: center; width: 100%;">
+                            <a href="https://maps.apple.com/?address=3629+Tallevast+Rd,+Sarasota,+FL+34243" target="_blank" class="btn btn-outline" style="font-size: 13px; padding: 8px 16px; width: 130px;">Apple Maps</a>
+                            <a href="https://www.google.com/maps/dir/?api=1&destination=3629+Tallevast+Rd,+Sarasota,+FL+34243" target="_blank" class="btn btn-outline" style="font-size: 13px; padding: 8px 16px; width: 130px;">Google Maps</a>
+                            <a href="https://waze.com/ul?q=3629+Tallevast+Rd,+Sarasota,+FL+34243" target="_blank" class="btn btn-outline" style="font-size: 13px; padding: 8px 16px; width: 130px;">Waze</a>
+                        </div>
+                    </div>
+
+                    <!-- Saturday -->
+                    <div class="event-card" style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+                        <div style="background: var(--navy-blue); color: white; padding: var(--spacing-md); border-radius: var(--radius-sm); margin-bottom: var(--spacing-md); width: 100%;">
+                            <h3 style="margin: 0; color: white;">Saturday</h3>
+                        </div>
+                        <h4>Youth Bible Study</h4>
+                        <p style="color: var(--burnt-orange); font-weight: 700; margin: 8px 0;">9:00 PM</p>
+                        <a href="https://us02web.zoom.us/j/9222352941" target="_blank" class="btn btn-secondary" style="font-size: 12px; padding: 8px 16px; width: auto;">Join on Zoom</a>
+                    </div>
+
+                    <!-- More+ -->
+                    <a href="https://calendar.google.com/calendar/u/0?cid=NWEzZTRjZjEwMjEwMjg1N2IzZjlmZDNhMWQxNWU1MDhiZDE5M2RmZGFjZDRjZGI5ODJhNTM5Y2EwNTI3NTljZUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t" target="_blank" class="event-card" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; background: #c45508; color: white; text-decoration: none; cursor: pointer;">
+                        <h3 style="margin: 0; color: white; font-size: 32px;">More+</h3>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Connect With Us -->
+    <section class="social-links-section">
+        <div class="container">
+            <h2 class="text-center">Stay Connected</h2>
+            <p class="text-center lead">Follow us on social media for updates, live services, and more</p>
+
+            <div class="social-grid">
+                <a href="https://j-edouard-productions.client-gallery.com/gallery/jan-25th-2026-service" target="_blank" class="social-card">
+                    <div class="social-icon">
+                        <img src="images/logos/gallery-2-logo.png" alt="Gallery" style="width: 64px; height: 64px;">
+                    </div>
+                    <h4>Gallery</h4>
+                    <p>View our photo gallery</p>
+                </a>
+
+                <a href="https://www.facebook.com/people/Sarasota-Gospel-Temple/61557296390196/" target="_blank" class="social-card">
+                    <div class="social-icon">
+                        <img src="images/logos/facebook-logo.png" alt="Facebook" style="width: 64px; height: 64px;">
+                    </div>
+                    <h4>Facebook</h4>
+                    <p>Like and follow us</p>
+                </a>
+
+                <a href="https://www.instagram.com/sarasotagospeltemple/" target="_blank" class="social-card">
+                    <div class="social-icon">
+                        <img src="images/logos/instagram-logo.png" alt="Instagram" style="width: 64px; height: 64px;">
+                    </div>
+                    <h4>Instagram</h4>
+                    <p>See our latest photos</p>
+                </a>
+
+                <a href="https://www.youtube.com/@sarasotagospeltemple" target="_blank" class="social-card">
+                    <div class="social-icon">
+                        <img src="images/logos/youtube-logo.png" alt="YouTube" style="width: 64px; height: 64px;">
+                    </div>
+                    <h4>YouTube</h4>
+                    <p>Watch sermons & events</p>
+                </a>
+
+                <a href="https://theeagleandtheblackbird.pixieset.com/folder/qCk631Wge2Hn/" target="_blank" class="social-card">
+                    <div class="social-icon">
+                        <img src="images/logos/gallery-logo.png" alt="Gallery" style="width: 64px; height: 64px;">
+                    </div>
+                    <h4>Gallery</h4>
+                    <p>View our photo gallery</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container-narrow text-center">
+            <h2>Join Us for Our Next Event</h2>
+            <p class="lead">Experience the power of worship and fellowship. We'd love to see you there!</p>
+            <div class="cta-buttons">
+                <a href="2026-meeting.html" class="btn btn-primary btn-large">2026 International Meeting</a>
+                <a href="contact.html" class="btn btn-outline btn-large">Contact Us</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="index.html">
+                        <img src="images/logos/dark-logo.png" alt="Sarasota Gospel Temple" class="footer-logo">
+                    </a>
+                </div>
+
+                <div class="footer-col">
+                    <h3>Sarasota Gospel Temple</h3>
+                    <p>A City of Refuge</p>
+                    <div class="footer-social">
+                        <a href="https://j-edouard-productions.client-gallery.com/gallery/jan-25th-2026-service" target="_blank" aria-label="Gallery">
+                            <img src="images/logos/gallery-2-logo.png" alt="Gallery" style="width: 24px; height: 24px;">
+                        </a>
+                        <a href="https://www.facebook.com/people/Sarasota-Gospel-Temple/61557296390196/" target="_blank" aria-label="Facebook">
+                            <img src="images/logos/facebook-logo.png" alt="Facebook" style="width: 24px; height: 24px;">
+                        </a>
+                        <a href="https://www.instagram.com/sarasotagospeltemple/" target="_blank" aria-label="Instagram">
+                            <img src="images/logos/instagram-logo.png" alt="Instagram" style="width: 24px; height: 24px;">
+                        </a>
+                        <a href="https://www.youtube.com/@sarasotagospeltemple" target="_blank" aria-label="YouTube">
+                            <img src="images/logos/youtube-logo.png" alt="YouTube" style="width: 24px; height: 24px;">
+                        </a>
+                        <a href="https://theeagleandtheblackbird.pixieset.com/folder/qCk631Wge2Hn/" target="_blank" aria-label="Gallery">
+                            <img src="images/logos/gallery-logo.png" alt="Gallery" style="width: 24px; height: 24px;">
+                        </a>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="ministries.html">Ministries</a></li>
+                        <li><a href="events.html">Events</a></li>
+                        <li><a href="give.html">Give</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Contact</h4>
+                    <p>3629 Tallevast Road<br>
+                    Sarasota, FL 34243</p>
+                    <p><strong>Phone:</strong> <a href="tel:941-800-5211">(941) 800-5211</a></p>
+                    <p><strong>Email:</strong> <a href="mailto:sarasotagospel@gmail.com">sarasotagospel@gmail.com</a></p>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 Sarasota Gospel Temple. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Photo gallery of events and moments at Sarasota Gospel Temple.">
+    <title>Gallery | Sarasota Gospel Temple</title>
+    <link rel="stylesheet" href="css/design-system.css">
+    <link rel="stylesheet" href="css/pages.css">
+    <style>
+        .gallery-section {
+            padding: var(--spacing-xxl) 0;
+            background-color: var(--off-white);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-xl);
+        }
+
+        .gallery-item {
+            position: relative;
+            background: linear-gradient(135deg, var(--navy-blue), var(--dark-gray));
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            aspect-ratio: 4/3;
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-normal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--off-white);
+            font-size: 64px;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .gallery-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background-color: var(--burnt-orange);
+        }
+
+        .gallery-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: var(--spacing-md);
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .album-section {
+            padding: var(--spacing-xxl) 0;
+            background-color: var(--beige);
+        }
+
+        .album-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-xl);
+        }
+
+        .album-card {
+            background: white;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            transition: all var(--transition-normal);
+        }
+
+        .album-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .album-cover {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, var(--navy-blue), #1a3a6b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+            color: var(--off-white);
+            position: relative;
+        }
+
+        .album-cover::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background-color: var(--burnt-orange);
+        }
+
+        .album-info {
+            padding: var(--spacing-lg);
+        }
+
+        .album-info h3 {
+            color: var(--navy-blue);
+            margin-bottom: var(--spacing-sm);
+            font-size: 20px;
+        }
+
+        .album-meta {
+            display: flex;
+            justify-content: space-between;
+            color: var(--dark-gray);
+            font-size: 14px;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .album-description {
+            color: var(--charcoal);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .upload-notice {
+            background-color: #e3f2fd;
+            border-left: 4px solid var(--navy-blue);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-sm);
+            margin-bottom: var(--spacing-xl);
+            text-align: center;
+        }
+
+        .upload-notice h3 {
+            color: var(--navy-blue);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .upload-notice p {
+            color: var(--charcoal);
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="mainNav">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="nav-brand">
+                    <a href="index.html">
+                        <h2>SGT</h2>
+                        <span class="brand-text">Sarasota Gospel Temple</span>
+                    </a>
+                </div>
+                <button class="nav-toggle" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="ministries.html">Ministries</a></li>
+                    <li><a href="2026-meeting.html" class="meeting-link">2026 Meeting</a></li>
+                    <li><a href="events.html">Events</a></li>
+                    <li><a href="give.html">Give</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <h1>Gallery</h1>
+            <p>Moments from our church family</p>
+        </div>
+    </section>
+
+    <!-- Gallery Albums -->
+    <section class="album-section">
+        <div class="container">
+            <h2 class="text-center">Photo Albums</h2>
+            <p class="text-center lead">Browse our collection of memories</p>
+
+            <div class="upload-notice">
+                <h3>📸 Gallery Coming Soon!</h3>
+                <p>We're currently building our photo gallery. Check back soon to see photos from our services, events, and special moments.</p>
+            </div>
+
+            <div class="album-grid">
+                <!-- Album 1 -->
+                <div class="album-card">
+                    <div class="album-cover">
+                        🙏
+                    </div>
+                    <div class="album-info">
+                        <h3>Sunday Services</h3>
+                        <div class="album-meta">
+                            <span>📅 Ongoing</span>
+                            <span>📷 Coming Soon</span>
+                        </div>
+                        <p class="album-description">Weekly worship services and fellowship moments.</p>
+                    </div>
+                </div>
+
+                <!-- Album 2 -->
+                <div class="album-card">
+                    <div class="album-cover">
+                        👨‍👩‍👧‍👦
+                    </div>
+                    <div class="album-info">
+                        <h3>Youth Ministry</h3>
+                        <div class="album-meta">
+                            <span>📅 Ongoing</span>
+                            <span>📷 Coming Soon</span>
+                        </div>
+                        <p class="album-description">Youth events, activities, and special services.</p>
+                    </div>
+                </div>
+
+                <!-- Album 3 -->
+                <div class="album-card">
+                    <div class="album-cover">
+                        🎉
+                    </div>
+                    <div class="album-info">
+                        <h3>Special Events</h3>
+                        <div class="album-meta">
+                            <span>📅 Various</span>
+                            <span>📷 Coming Soon</span>
+                        </div>
+                        <p class="album-description">Conferences, revivals, and special meetings.</p>
+                    </div>
+                </div>
+
+                <!-- Album 4 -->
+                <div class="album-card">
+                    <div class="album-cover">
+                        🌍
+                    </div>
+                    <div class="album-info">
+                        <h3>Community Outreach</h3>
+                        <div class="album-meta">
+                            <span>📅 Ongoing</span>
+                            <span>📷 Coming Soon</span>
+                        </div>
+                        <p class="album-description">Serving our community with love and compassion.</p>
+                    </div>
+                </div>
+
+                <!-- Album 5 -->
+                <div class="album-card">
+                    <div class="album-cover">
+                        🎵
+                    </div>
+                    <div class="album-info">
+                        <h3>Music Ministry</h3>
+                        <div class="album-meta">
+                            <span>📅 Ongoing</span>
+                            <span>📷 Coming Soon</span>
+                        </div>
+                        <p class="album-description">Choir performances and worship team in action.</p>
+                    </div>
+                </div>
+
+                <!-- Album 6 -->
+                <div class="album-card">
+                    <div class="album-cover">
+                        ⚓
+                    </div>
+                    <div class="album-info">
+                        <h3>2026 International Meeting</h3>
+                        <div class="album-meta">
+                            <span>📅 April 2026</span>
+                            <span>📷 Coming Soon</span>
+                        </div>
+                        <p class="album-description">Photos from our three-day international gathering.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recent Photos Placeholder -->
+    <section class="gallery-section">
+        <div class="container">
+            <h2 class="text-center">Recent Photos</h2>
+
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    📸
+                    <div class="gallery-caption">Sunday Worship</div>
+                </div>
+                <div class="gallery-item">
+                    📸
+                    <div class="gallery-caption">Youth Service</div>
+                </div>
+                <div class="gallery-item">
+                    📸
+                    <div class="gallery-caption">Bible Study</div>
+                </div>
+                <div class="gallery-item">
+                    📸
+                    <div class="gallery-caption">Fellowship</div>
+                </div>
+                <div class="gallery-item">
+                    📸
+                    <div class="gallery-caption">Music Ministry</div>
+                </div>
+                <div class="gallery-item">
+                    📸
+                    <div class="gallery-caption">Prayer Meeting</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container-narrow text-center">
+            <h2>Be Part of Our Story</h2>
+            <p class="lead">Join us for worship and fellowship. Create memories with us!</p>
+            <div class="cta-buttons">
+                <a href="contact.html#visit" class="btn btn-primary btn-large">Plan Your Visit</a>
+                <a href="events.html" class="btn btn-outline btn-large">Upcoming Events</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="index.html">
+                        <img src="images/logos/dark-logo.png" alt="Sarasota Gospel Temple" class="footer-logo">
+                    </a>
+                </div>
+
+                <div class="footer-col">
+                    <h3>Sarasota Gospel Temple</h3>
+                    <p>A City of Refuge</p>
+                    <div class="footer-social">
+                        <a href="https://j-edouard-productions.client-gallery.com/gallery/jan-25th-2026-service" target="_blank" aria-label="Gallery">
+                            <img src="images/logos/gallery-2-logo.png" alt="Gallery" style="width: 24px; height: 24px;">
+                        </a>
+                        <a href="https://www.facebook.com/people/Sarasota-Gospel-Temple/61557296390196/" target="_blank" aria-label="Facebook">
+                            <img src="images/logos/facebook-logo.png" alt="Facebook" style="width: 24px; height: 24px;">
+                        </a>
+                        <a href="https://www.instagram.com/sarasotagospeltemple/" target="_blank" aria-label="Instagram">
+                            <img src="images/logos/instagram-logo.png" alt="Instagram" style="width: 24px; height: 24px;">
+                        </a>
+                        <a href="https://www.youtube.com/@sarasotagospeltemple" target="_blank" aria-label="YouTube">
+                            <img src="images/logos/youtube-logo.png" alt="YouTube" style="width: 24px; height: 24px;">
+                        </a>
+                        <a href="https://theeagleandtheblackbird.pixieset.com/folder/qCk631Wge2Hn/" target="_blank" aria-label="Gallery">
+                            <img src="images/logos/gallery-logo.png" alt="Gallery" style="width: 24px; height: 24px;">
+                        </a>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="ministries.html">Ministries</a></li>
+                        <li><a href="events.html">Events</a></li>
+                        <li><a href="give.html">Give</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Contact</h4>
+                    <p>3629 Tallevast Road<br>
+                    Sarasota, FL 34243</p>
+                    <p><strong>Phone:</strong> <a href="tel:941-800-5211">(941) 800-5211</a></p>
+                    <p><strong>Email:</strong> <a href="mailto:sarasotagospel@gmail.com">sarasotagospel@gmail.com</a></p>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 Sarasota Gospel Temple. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="js/main.js"></script>
+</body>
+</html>

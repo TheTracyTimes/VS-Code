@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sarasota Gospel Temple - A City of Refuge. Join us for worship, fellowship, and spiritual growth in St. Petersburg, FL.">
+    <title>Sarasota Gospel Temple | A City of Refuge</title>
+    <link rel="stylesheet" href="css/design-system.css">
+    <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="mainNav">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="nav-brand">
+                    <a href="index.html">
+                        <img src="images/logos/light-logo.png" alt="SGT Logo" style="height: 40px; width: auto; margin-right: 12px;">
+                        <span class="brand-text">Sarasota Gospel Temple</span>
+                    </a>
+                </div>
+                <button class="nav-toggle" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="active">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="ministries.html">Ministries</a></li>
+                    <li><a href="2026-meeting.html" class="meeting-link">2026 Meeting</a></li>
+                    <li><a href="events.html">Events</a></li>
+                    <li><a href="give.html">Give</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section with Animated Lighthouse -->
+    <section class="hero">
+        <div class="hero-animation">
+            <div class="rain-container" id="rainContainer"></div>
+
+            <div class="lighthouse-container">
+                <img src="images/logos/dark-trans-logo.png" alt="Lighthouse" class="lighthouse-image">
+                <div class="lighthouse-beam-3d"></div>
+            </div>
+        </div>
+        <div class="hero-content">
+            <h1 class="hero-title" id="heroTitle">Sarasota Gospel Temple</h1>
+            <p class="hero-subtitle" id="heroSubtitle">A City of Refuge</p>
+            <div class="hero-buttons">
+                <a href="2026-meeting.html" class="btn btn-primary">2026 International Meeting</a>
+                <a href="contact.html#visit" class="btn btn-outline">Plan Your Visit</a>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <span>↓</span>
+        </div>
+    </section>
+
+    <!-- Featured: 2026 International Meeting Banner -->
+    <section class="featured-meeting">
+        <div class="container">
+            <a href="2026-meeting.html" class="meeting-banner">
+                <div class="meeting-banner-content">
+                    <div class="meeting-badge">Featured Event</div>
+                    <h2>2026 International Meeting</h2>
+                    <p class="meeting-dates">April 9-11, 2026</p>
+                    <p class="meeting-description">Join us for three days of worship, fellowship, and spiritual renewal. Register now!</p>
+                    <div class="meeting-actions">
+                        <span class="btn btn-primary">Learn More →</span>
+                        <span class="link-text">Registration | Volunteering | Vendors</span>
+                    </div>
+                </div>
+                <div class="meeting-banner-graphic">
+                    <img src="images/logos/light-logo.png" alt="SGT Logo" style="max-width: 200px; height: auto;">
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Welcome Section -->
+    <section class="welcome-section">
+        <div class="container-narrow">
+            <h2 class="text-center">Our Mission</h2>
+            <p class="lead text-center">To be a City of Refuge where people can find hope, healing, and a relationship with Jesus Christ. We are committed to worshiping God, teaching His Word, and serving our community with love and compassion. To be a pillar in the house of the Lord is a vision every Christian should carry, as we learn to dwell continually in His presence together. As the Body of Christ, it is vital to understand what it means to be in the world and not of the world. Learning to stand apart, lead boldly, and press on faithfully until Jesus returns. We welcome you with the love of Christ into a place of safety and growth. Welcome to the City of Refuge, where you can set your anchor.</p>
+        </div>
+    </section>
+
+    <!-- Service Times -->
+    <section class="service-times">
+        <div class="container">
+            <h2 class="text-center">Our Services</h2>
+            <div class="times-grid">
+                <div class="time-card">
+                    <h3>Sunday</h3>
+                    <p class="time">11:00 AM</p>
+                    <p style="color: var(--dark-gray); font-size: 14px; margin-bottom: var(--spacing-md);">In Person</p>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <a href="https://maps.apple.com/?address=3629+Tallevast+Rd,+Sarasota,+FL+34243" target="_blank" class="btn btn-outline" style="font-size: 13px; padding: 8px 16px;">Apple Maps</a>
+                        <a href="https://www.google.com/maps/dir/?api=1&destination=3629+Tallevast+Rd,+Sarasota,+FL+34243" target="_blank" class="btn btn-outline" style="font-size: 13px; padding: 8px 16px;">Google Maps</a>
+                        <a href="https://waze.com/ul?q=3629+Tallevast+Rd,+Sarasota,+FL+34243" target="_blank" class="btn btn-outline" style="font-size: 13px; padding: 8px 16px;">Waze</a>
+                    </div>
+                </div>
+                <div class="time-card">
+                    <h3>Friday</h3>
+                    <p class="time">7:00 PM</p>
+                    <p style="color: var(--dark-gray); font-size: 14px; margin-bottom: var(--spacing-md);">In Person</p>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <a href="https://maps.apple.com/?address=3629+Tallevast+Rd,+Sarasota,+FL+34243" target="_blank" class="btn btn-outline" style="font-size: 13px; padding: 8px 16px;">Apple Maps</a>
+                        <a href="https://www.google.com/maps/dir/?api=1&destination=3629+Tallevast+Rd,+Sarasota,+FL+34243" target="_blank" class="btn btn-outline" style="font-size: 13px; padding: 8px 16px;">Google Maps</a>
+                        <a href="https://waze.com/ul?q=3629+Tallevast+Rd,+Sarasota,+FL+34243" target="_blank" class="btn btn-outline" style="font-size: 13px; padding: 8px 16px;">Waze</a>
+                    </div>
+                </div>
+            </div>
+            <p class="text-center" style="margin-top: 32px;">
+                <strong>Location:</strong> 3629 Tallevast Road, Sarasota, FL 34243<br>
+                <strong>Phone:</strong> <a href="tel:941-800-5211">(941) 800-5211</a>
+            </p>
+        </div>
+    </section>
+
+    <!-- Ministries Preview -->
+    <section class="ministries-preview">
+        <div class="container">
+            <h2 class="text-center">Our Ministries</h2>
+            <p class="text-center lead">Discover ways to grow in faith and serve together</p>
+
+            <div class="ministries-grid">
+                <div class="ministry-card">
+                    <h3>Bible Study</h3>
+                    <p><strong>Meeting Times:</strong> Tuesday, 7:00 PM and Saturday, 9:00 PM</p>
+                    <p><strong>Location:</strong> <a href="https://us02web.zoom.us/j/9222352941" target="_blank">Zoom</a></p>
+                </div>
+                <div class="ministry-card">
+                    <h3>Music Ministry</h3>
+                    <p><strong>Practice:</strong> After Sunday Service until 5 PM</p>
+                    <p><strong>Opportunities:</strong> Band, Choir, Event Performances</p>
+                </div>
+                <div class="ministry-card">
+                    <h3>Prayer Ministry</h3>
+                    <p><strong>Meeting Times:</strong> Monday, Wednesday, and Thursday, 9:00 PM to 10:00 PM</p>
+                    <p><strong>Prayer Requests:</strong> Submit Anytime</p>
+                    <p><strong>Location:</strong> <a href="https://us02web.zoom.us/j/9222352941" target="_blank">Zoom</a></p>
+                </div>
+                <div class="ministry-card">
+                    <h3>Youth Ministry</h3>
+                    <p><strong>Meeting Times:</strong> As Needed</p>
+                    <p><strong>Ages:</strong> 14-39</p>
+                </div>
+            </div>
+
+            <div class="text-center" style="margin-top: 40px;">
+                <a href="ministries.html" class="btn btn-secondary">Explore All Ministries</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="cta-section">
+        <div class="container-narrow text-center">
+            <h2>Join Us This Sunday</h2>
+            <p class="lead">Experience the warmth of our community and the power of worship. We can't wait to meet you!</p>
+            <div class="cta-buttons">
+                <a href="contact.html#visit" class="btn btn-primary btn-large">Plan Your Visit</a>
+                <a href="give.html" class="btn btn-outline btn-large">Give Online</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="index.html">
+                        <img src="images/logos/dark-logo.png" alt="Sarasota Gospel Temple" class="footer-logo">
+                    </a>
+                </div>
+
+                <div class="footer-col">
+                    <h3>Sarasota Gospel Temple</h3>
+                    <p>A City of Refuge</p>
+                    <div class="footer-social">
+                        <a href="https://j-edouard-productions.client-gallery.com/gallery/jan-25th-2026-service" target="_blank" aria-label="Gallery">
+                            <img src="images/logos/gallery-2-logo.png" alt="Gallery" style="width: 24px; height: 24px;">
+                        </a>
+                        <a href="https://www.facebook.com/people/Sarasota-Gospel-Temple/61557296390196/" target="_blank" aria-label="Facebook">
+                            <img src="images/logos/facebook-logo.png" alt="Facebook" style="width: 24px; height: 24px;">
+                        </a>
+                        <a href="https://www.instagram.com/sarasotagospeltemple/" target="_blank" aria-label="Instagram">
+                            <img src="images/logos/instagram-logo.png" alt="Instagram" style="width: 24px; height: 24px;">
+                        </a>
+                        <a href="https://www.youtube.com/@sarasotagospeltemple" target="_blank" aria-label="YouTube">
+                            <img src="images/logos/youtube-logo.png" alt="YouTube" style="width: 24px; height: 24px;">
+                        </a>
+                        <a href="https://theeagleandtheblackbird.pixieset.com/folder/qCk631Wge2Hn/" target="_blank" aria-label="Gallery">
+                            <img src="images/logos/gallery-logo.png" alt="Gallery" style="width: 24px; height: 24px;">
+                        </a>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="ministries.html">Ministries</a></li>
+                        <li><a href="events.html">Events</a></li>
+                        <li><a href="give.html">Give</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Contact</h4>
+                    <p>3629 Tallevast Road<br>
+                    Sarasota, FL 34243</p>
+                    <p><strong>Phone:</strong> <a href="tel:941-800-5211">(941) 800-5211</a></p>
+                    <p><strong>Email:</strong> <a href="mailto:sarasotagospel@gmail.com">sarasotagospel@gmail.com</a></p>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 Sarasota Gospel Temple. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="js/main.js"></script>
+</body>
+</html>

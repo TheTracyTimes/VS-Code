@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Application | 2026 International Meeting | Sarasota Gospel Temple</title>
+    <link rel="stylesheet" href="../css/design-system.css">
+    <style>
+        /* Page-specific styles */
+        .event-info {
+            background-color: var(--off-white);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-xl);
+            border-left: 4px solid var(--burnt-orange);
+        }
+
+        .event-info h3 {
+            margin-top: 0;
+            font-size: 20px;
+        }
+
+        .event-info p {
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .event-info strong {
+            color: var(--navy-blue);
+        }
+
+        .availability-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: var(--spacing-sm);
+        }
+
+        .info-box {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: var(--spacing-md);
+            border-radius: var(--radius-sm);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .info-box p {
+            margin: 0;
+            font-size: 14px;
+            color: var(--charcoal);
+        }
+
+        .info-box strong {
+            color: #856404;
+        }
+
+        .conditional-field {
+            display: none;
+        }
+
+        .conditional-field.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="container">
+            <h1>Vendor Application</h1>
+            <p class="subtitle">2026 International Meeting | Marketplace Vendor</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container-narrow" style="padding-top: 48px; padding-bottom: 48px;">
+
+        <!-- Event Information Card -->
+        <div class="event-info">
+            <h3>Vendor Marketplace Details</h3>
+            <p><strong>Event:</strong> 2026 International Meeting</p>
+            <p><strong>Dates:</strong> April 9-11, 2026</p>
+            <p><strong>Location:</strong> 1900 Gandy Blvd N, St. Petersburg, FL 33702</p>
+            <p><strong>Questions?</strong> Call 941-800-5211</p>
+        </div>
+
+        <!-- Vendor Form Card -->
+        <div class="card">
+            <h2 class="section-title">Vendor Application</h2>
+
+            <div class="info-box">
+                <p><strong>Please note:</strong> All vendor applications are subject to approval. You will receive an email within 3-5 business days regarding your application status.</p>
+            </div>
+
+            <form id="vendorForm">
+
+                <!-- Contact Information -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First Name <span class="required">*</span></label>
+                        <input type="text" id="firstName" name="firstName" required>
+                        <span class="helper-text">Contact person</span>
+                        <span class="error-message">Please enter your first name</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lastName">Last Name <span class="required">*</span></label>
+                        <input type="text" id="lastName" name="lastName" required>
+                        <span class="error-message">Please enter your last name</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="businessName">Business Name <span class="required">*</span></label>
+                    <input type="text" id="businessName" name="businessName" required>
+                    <span class="error-message">Please enter your business name</span>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phone">Phone Number <span class="required">*</span></label>
+                        <input type="tel" id="phone" name="phone" placeholder="+1-941-555-1234" autocomplete="tel" required>
+                        <span class="helper-text">Please include your country code (e.g., +1 for USA/Canada)</span>
+                        <span class="error-message">Please enter a valid phone number</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" placeholder="your@email.com" required>
+                        <span class="error-message">Please enter a valid email address</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="website">Website <span class="required">*</span></label>
+                    <input type="text" id="website" name="website" placeholder="https://yourwebsite.com or N/A">
+                    <span class="helper-text">Enter your website URL or "N/A" if you don't have one</span>
+                    <span class="error-message">Please enter a valid URL or "N/A"</span>
+                </div>
+
+                <!-- Church Information -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="pastorName">Name of your Pastor <span class="required">*</span></label>
+                        <input type="text" id="pastorName" name="pastorName" required>
+                        <span class="error-message">Please enter your pastor's name</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="assemblyName">Name of your Assembly <span class="required">*</span></label>
+                        <input type="text" id="assemblyName" name="assemblyName" required>
+                        <span class="error-message">Please enter your assembly name</span>
+                    </div>
+                </div>
+
+                <!-- What are you selling? -->
+                <div class="form-group">
+                    <label>What are you selling? <span class="required">*</span></label>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="sellingGoods" name="selling" value="Goods" onchange="toggleGoodsType(true)" required>
+                            <label for="sellingGoods">Goods</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="sellingServices" name="selling" value="Services" onchange="toggleGoodsType(false)">
+                            <label for="sellingServices">Services</label>
+                        </div>
+                    </div>
+                    <span class="error-message">Please select what you're selling</span>
+                </div>
+
+                <!-- Goods Type (Conditional) -->
+                <div id="goodsTypeField" class="form-group conditional-field">
+                    <label>If goods, what kind? <span class="required">*</span></label>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="goodsPerishable" name="goodsType" value="Perishable">
+                            <label for="goodsPerishable">Perishable</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="goodsNonPerishable" name="goodsType" value="Non-Perishable">
+                            <label for="goodsNonPerishable">Non-Perishable</label>
+                        </div>
+                    </div>
+                    <span class="error-message">Please select goods type</span>
+                </div>
+
+                <!-- Table Staffing -->
+                <div class="form-group">
+                    <label>Will you have someone at the table? <span class="required">*</span></label>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="staffedYes" name="tableStaffed" value="Yes" required>
+                            <label for="staffedYes">Yes - I will have someone at my table</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="staffedNo" name="tableStaffed" value="No">
+                            <label for="staffedNo">No - My table will be unattended</label>
+                        </div>
+                    </div>
+                    <span class="error-message">Please select an option</span>
+                </div>
+
+                <!-- Availability -->
+                <div class="form-group">
+                    <label>Availability <span class="required">*</span></label>
+                    <p class="helper-text">Select all time slots when your vendor booth will be available</p>
+
+                    <div class="availability-grid">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="avail1" name="availability" value="Thursday Morning, April 9th">
+                            <label for="avail1">Thursday Morning, April 9th</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="avail2" name="availability" value="Thursday Afternoon, April 9th">
+                            <label for="avail2">Thursday Afternoon, April 9th</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="avail3" name="availability" value="Friday Morning, April 10th">
+                            <label for="avail3">Friday Morning, April 10th</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="avail4" name="availability" value="Friday Afternoon, April 10th">
+                            <label for="avail4">Friday Afternoon, April 10th</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="avail5" name="availability" value="Saturday Morning, April 11th">
+                            <label for="avail5">Saturday Morning, April 11th</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="avail6" name="availability" value="Saturday Afternoon, April 11th">
+                            <label for="avail6">Saturday Afternoon, April 11th</label>
+                        </div>
+                    </div>
+                    <span class="error-message">Please select at least one time slot</span>
+                </div>
+
+                <!-- Submit Button -->
+                <div style="margin-top: var(--spacing-xl);">
+                    <button type="submit" class="btn btn-primary btn-full-width" id="submitBtn">
+                        Submit Vendor Application
+                    </button>
+                </div>
+
+            </form>
+
+            <!-- Success Message (Hidden by default) -->
+            <div id="successMessage" class="success-message" style="display: none;">
+                <h3>Vendor application submitted!</h3>
+                <p>Thank you for your interest in being a vendor at the 2026 International Meeting.</p>
+                <p>Your application is under review. You'll receive an email at <strong id="confirmEmail"></strong> within 3-5 business days regarding your application status.</p>
+                <p><strong>Business:</strong> <span id="confirmBusiness"></span><br>
+                <strong>Contact:</strong> <span id="confirmName"></span></p>
+                <p style="margin-top: 16px;"><strong>Questions?</strong> Call 941-800-5211</p>
+                <p style="margin-top: 24px;">Blessings,<br>Sarasota Gospel Temple</p>
+                <div style="margin-top: 32px;">
+                    <a href="../index.html" class="btn btn-primary">Go to Home</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-functions-compat.js"></script>
+    <script src="../config/firebase-config.js"></script>
+    <script src="../js/firebase-service.js"></script>
+
+    <!-- EmailJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <!-- Google Sheets API -->
+
+    <!-- Security Utilities -->
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+    <script src="../js/security-utils.js"></script>
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://accounts.google.com/gsi/client"></script>
+    <script src="../config/google-sheets-config.js"></script>
+    <script src="../js/google-sheets-service.js"></script>
+
+    <!-- JavaScript -->
+    <script src="../js/vendor-form.js"></script>
+</body>
+</html>

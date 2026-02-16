@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Learn about Sarasota Gospel Temple - our history, mission, and leadership. A City of Refuge serving Sarasota, FL since 2006.">
+    <title>About Us | Sarasota Gospel Temple</title>
+    <link rel="stylesheet" href="css/design-system.css">
+    <link rel="stylesheet" href="css/pages.css">
+    <style>
+        .page-hero {
+            background: linear-gradient(135deg, var(--navy-blue) 0%, #1a3a6b 100%);
+            color: var(--off-white);
+            padding: var(--spacing-xxl) 0;
+            text-align: center;
+        }
+
+        .page-hero h1 {
+            color: var(--off-white);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .history-section {
+            padding: var(--spacing-xxl) 0;
+            background-color: var(--off-white);
+        }
+
+        .mission-statement {
+            background-color: var(--navy-blue);
+            color: var(--off-white);
+            padding: var(--spacing-xxl);
+            border-radius: var(--radius-lg);
+            text-align: center;
+            margin: var(--spacing-xxl) 0;
+        }
+
+        .mission-statement h2 {
+            color: var(--off-white);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .mission-statement p {
+            font-size: 20px;
+            line-height: 1.8;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .elders-section {
+            padding: var(--spacing-xxl) 0;
+            background-color: var(--beige);
+        }
+
+        .elders-grid {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xl);
+            margin-top: var(--spacing-xl);
+            align-items: center;
+        }
+
+        .elder-row-top {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .elder-row-bottom {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-lg);
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .elder-card {
+            background-color: white;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+        }
+
+        .elder-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .elder-photo {
+            width: 100%;
+            height: 350px;
+            background: linear-gradient(135deg, var(--navy-blue) 0%, var(--dark-gray) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            color: var(--off-white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .elder-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;  /* Show whole picture without cropping */
+            object-position: center;
+        }
+
+        .elder-photo::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background-color: var(--burnt-orange);
+            z-index: 1;
+        }
+
+        .elder-info {
+            padding: var(--spacing-lg);
+            text-align: center;
+        }
+
+        .elder-info h3 {
+            color: var(--navy-blue);
+            margin-bottom: var(--spacing-xs);
+            font-size: 20px;
+        }
+
+        .elder-title {
+            color: var(--burnt-orange);
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .elder-bio {
+            color: var(--dark-gray);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .values-section {
+            padding: var(--spacing-xxl) 0;
+            background-color: var(--off-white);
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-xl);
+        }
+
+        .value-card {
+            text-align: center;
+            padding: var(--spacing-xl);
+        }
+
+        .value-icon {
+            font-size: 48px;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .value-card h3 {
+            color: var(--navy-blue);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .value-card p {
+            color: var(--dark-gray);
+        }
+
+        /* Responsive layout for elder cards */
+        @media (max-width: 968px) {
+            .elder-row-top {
+                max-width: 350px;
+            }
+
+            .elder-row-bottom {
+                grid-template-columns: 1fr;
+                max-width: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="mainNav">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="nav-brand">
+                    <a href="index.html">
+                        <img src="images/logos/light-logo.png" alt="SGT Logo" style="height: 40px; width: auto; margin-right: 12px;">
+                        <h2>SGT</h2>
+                        <span class="brand-text">Sarasota Gospel Temple</span>
+                    </a>
+                </div>
+                <button class="nav-toggle" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html" class="active">About</a></li>
+                    <li><a href="ministries.html">Ministries</a></li>
+                    <li><a href="2026-meeting.html" class="meeting-link">2026 Meeting</a></li>
+                    <li><a href="events.html">Events</a></li>
+                    <li><a href="give.html">Give</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <h1>About Us</h1>
+            <p>A City of Refuge</p>
+        </div>
+    </section>
+
+    <!-- History Section -->
+    <section class="history-section">
+        <div class="container-narrow">
+            <h2 class="text-center">Our History</h2>
+
+            <p>At the onset of the year 1994, the vision of our church was given to our late overseer, Brother Lionel Joseph, who began patiently praying God about the location of our assembly and the elder he would appoint over it. About 12 years later, he drove through towns as suggested by Elder Preval, just to arrive at the city of Sarasota where he appointed Brother Edwige Achile as Pastor over the church on Sunday, October 8th, 2006.</p>
+
+            <p>Despite the humble beginnings, it became very evident over the years that God had a special mission for this group of people. "A city of refuge" as often called, our church has become home to those seeking a family, a shelter for the soul, and a place where the true unconditional love of God can be felt.</p>
+
+            <p>Over the years, God has also made it even more clear to our pastor his mission to accomplish a special work with the youth of our surrounding communities who are in dire need of guidance and support. With a growing population of young people attending regularly, the Elder sees it fit to begin a construction project which would allow our church to house many activities and programs pertinent to the growth and development of our people as well as the community.</p>
+
+            <p>One thing remains certain; with God's help and the support of our community, we will prevail against all odds and obtain all the resources we need to help us build our church compound and become the lighthouse we are called to be.</p>
+
+            <div class="mission-statement">
+                <h2>Our Beliefs</h2>
+                <p>It is our strong conviction that Jesus-Christ is the son of the only living God who came and died for the redemption and salvation of anyone who believes in him. We believe that a five-fold ministry is an instrument that God will use in these latter days as his hand on this earth to restore the Bible-based doctrines, the order, and the operation of God as it once was in the early church. Such order and operation through the power of the Holy Ghost are to bring souls unto perfect obedience to the will of God and unto holiness without which, no one shall see the Lord.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Elders Section -->
+    <section class="elders-section">
+        <div class="container">
+            <h2 class="text-center">Our Elders</h2>
+            <p class="text-center lead">Meet the spiritual leaders guiding our church family</p>
+
+            <div class="elders-grid">
+                <!-- Top Row - Senior Pastor -->
+                <div class="elder-row-top">
+                    <div class="elder-card">
+                        <div class="elder-photo achile-photo">
+                            <img src="images/elders/achile.png" alt="Brother & Sister Edwige Achile" onerror="this.style.display='none'; this.parentElement.innerHTML='👨‍👩';">
+                        </div>
+                        <div class="elder-info">
+                            <h3>Brother & Sister Edwige Achile</h3>
+                            <p class="elder-title">Elder, Senior Pastor</p>
+                            <p class="elder-bio">Born in December 1958, Brother Edwige Achile received his calling to the ministry at a very young age and began receiving his ministerial formation from Elder Joseph Desrivieres in Port-au-Prince, Haiti. Ever abounding in the grace of God, Brother Achile earned the love and honor of his contemporaries as a seasoned teacher, a man of God with the heart of a Shepherd who uses everything he owns for the utility of the Kingdom. Married to one wife, Alta Achile, he lives an exemplary life as a husband, a father, and a Pastor as the bible so clearly requires an elder. As a man of great vision, he works closely with a group of young leaders to transmit the vision to them and reassure the continuity of this colossal work.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Row - Ministers -->
+                <div class="elder-row-bottom">
+                    <!-- Elder 2 -->
+                    <div class="elder-card">
+                        <div class="elder-photo eveillard-photo">
+                            <img src="images/elders/eveillard.jpg" alt="Brother & Sister Patrick Eveillard" onerror="this.style.display='none'; this.parentElement.innerHTML='👨‍👩';">
+                        </div>
+                        <div class="elder-info">
+                            <h3>Brother & Sister Patrick Eveillard</h3>
+                            <p class="elder-title">Elder, Minister</p>
+                        </div>
+                    </div>
+
+                    <!-- Elder 3 -->
+                    <div class="elder-card">
+                        <div class="elder-photo oscar-photo">
+                            <img src="images/elders/oscar.jpg" alt="Brother & Sister Josue Oscar" onerror="this.style.display='none'; this.parentElement.innerHTML='👨‍👩';">
+                        </div>
+                        <div class="elder-info">
+                            <h3>Brother & Sister Josue Oscar</h3>
+                            <p class="elder-title">Elder, Minister</p>
+                        </div>
+                    </div>
+
+                    <!-- Elder 4 -->
+                    <div class="elder-card">
+                        <div class="elder-photo jeune-photo">
+                            <img src="images/elders/jeune.jpg" alt="Brother & Sister Elfils Jeune" onerror="this.style.display='none'; this.parentElement.innerHTML='👨‍👩';">
+                        </div>
+                        <div class="elder-info">
+                            <h3>Brother & Sister Elfils Jeune</h3>
+                            <p class="elder-title">Elder, Minister</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container-narrow text-center">
+            <h2>Join Our Church Family</h2>
+            <p class="lead">Experience authentic worship and genuine fellowship. We'd love to meet you!</p>
+            <div class="cta-buttons">
+                <a href="contact.html#visit" class="btn btn-primary btn-large">Plan Your Visit</a>
+                <a href="contact.html" class="btn btn-outline btn-large">Contact Us</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="index.html">
+                        <img src="images/logos/dark-logo.png" alt="Sarasota Gospel Temple" class="footer-logo">
+                    </a>
+                </div>
+
+                <div class="footer-col">
+                    <h3>Sarasota Gospel Temple</h3>
+                    <p>A City of Refuge</p>
+                    <div class="footer-social">
+                        <a href="https://j-edouard-productions.client-gallery.com/gallery/jan-25th-2026-service" target="_blank" aria-label="Gallery">
+                            <img src="images/logos/gallery-2-logo.png" alt="Gallery" style="width: 24px; height: 24px;">
+                        </a>
+                        <a href="https://www.facebook.com/people/Sarasota-Gospel-Temple/61557296390196/" target="_blank" aria-label="Facebook">
+                            <img src="images/logos/facebook-logo.png" alt="Facebook" style="width: 24px; height: 24px;">
+                        </a>
+                        <a href="https://www.instagram.com/sarasotagospeltemple/" target="_blank" aria-label="Instagram">
+                            <img src="images/logos/instagram-logo.png" alt="Instagram" style="width: 24px; height: 24px;">
+                        </a>
+                        <a href="https://www.youtube.com/@sarasotagospeltemple" target="_blank" aria-label="YouTube">
+                            <img src="images/logos/youtube-logo.png" alt="YouTube" style="width: 24px; height: 24px;">
+                        </a>
+                        <a href="https://theeagleandtheblackbird.pixieset.com/folder/qCk631Wge2Hn/" target="_blank" aria-label="Gallery">
+                            <img src="images/logos/gallery-logo.png" alt="Gallery" style="width: 24px; height: 24px;">
+                        </a>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="ministries.html">Ministries</a></li>
+                        <li><a href="events.html">Events</a></li>
+                        <li><a href="give.html">Give</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Contact</h4>
+                    <p>3629 Tallevast Road<br>
+                    Sarasota, FL 34243</p>
+                    <p><strong>Phone:</strong> <a href="tel:941-800-5211">(941) 800-5211</a></p>
+                    <p><strong>Email:</strong> <a href="mailto:sarasotagospel@gmail.com">sarasotagospel@gmail.com</a></p>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 Sarasota Gospel Temple. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="js/main.js"></script>
+</body>
+</html>

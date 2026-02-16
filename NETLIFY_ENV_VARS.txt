@@ -1,0 +1,47 @@
+=================================================================
+NETLIFY ENVIRONMENT VARIABLES - QUICK REFERENCE
+=================================================================
+
+Copy the values from your .env file and paste into Netlify:
+Site Settings → Environment Variables → Add Variable
+
+-----------------------------------------------------------------
+FIREBASE CONFIGURATION (7 variables)
+-----------------------------------------------------------------
+FIREBASE_API_KEY
+FIREBASE_AUTH_DOMAIN
+FIREBASE_PROJECT_ID
+FIREBASE_STORAGE_BUCKET
+FIREBASE_MESSAGING_SENDER_ID
+FIREBASE_APP_ID
+FIREBASE_MEASUREMENT_ID
+
+-----------------------------------------------------------------
+EMAILJS CONFIGURATION (5 variables)
+-----------------------------------------------------------------
+EMAILJS_SERVICE_ID
+EMAILJS_PUBLIC_KEY
+EMAILJS_TEMPLATE_REGISTRATION=registration_confirmation
+EMAILJS_TEMPLATE_VENDOR=vendor_confirmation
+EMAILJS_TEMPLATE_VOLUNTEER=volunteer_confirmation
+
+-----------------------------------------------------------------
+GOOGLE SHEETS CONFIGURATION (5 variables)
+-----------------------------------------------------------------
+GOOGLE_SHEETS_API_KEY
+GOOGLE_SHEETS_CLIENT_ID
+GOOGLE_SHEETS_REGISTRATIONS_ID=1q7vxkgof14p6OpHehTySIU6c0qNpbencA6E09agYJTg
+GOOGLE_SHEETS_VOLUNTEERS_ID=1T45QcAsY7m5SO8gSQKTvHI_PFFa4qx1x6dwW3iwG0s0
+GOOGLE_SHEETS_VENDORS_ID=1V6G2KN1vvTB5Ng249rg9K6ijbUT7tou_jaE9ygALxeM
+
+=================================================================
+TOTAL: 17 environment variables needed
+=================================================================
+
+NOTE: For template IDs and spreadsheet IDs, use the exact values
+shown above. For other variables, get the values from your .env file.
+
+TO FIND YOUR VALUES:
+$ cat .env | grep FIREBASE_API_KEY
+$ cat .env | grep EMAILJS_SERVICE_ID
+$ cat .env | grep GOOGLE_SHEETS_API_KEY

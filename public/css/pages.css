@@ -1,0 +1,899 @@
+/* ================================================
+   SARASOTA GOSPEL TEMPLE - PAGE STYLES
+   Website pages and components
+   ================================================ */
+
+/* ===== NAVIGATION ===== */
+#mainNav {
+    background-color: var(--navy-blue);
+    box-shadow: var(--shadow-md);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md) 0;
+}
+
+.nav-brand a {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    text-decoration: none;
+    color: var(--off-white);
+}
+
+.nav-brand h2 {
+    font-size: 32px;
+    margin: 0;
+    color: var(--off-white);
+    font-family: 'Playfair Display', serif;
+}
+
+.brand-text {
+    font-size: 14px;
+    color: var(--off-white);
+    opacity: 0.9;
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    gap: var(--spacing-lg);
+    margin: 0;
+    padding: 0;
+}
+
+.nav-menu a {
+    color: var(--off-white);
+    text-decoration: none;
+    font-family: 'Lato', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    transition: color var(--transition-fast);
+    padding: var(--spacing-sm) 0;
+    border-bottom: 2px solid transparent;
+}
+
+.nav-menu a:hover,
+.nav-menu a.active {
+    color: var(--burnt-orange);
+    border-bottom-color: var(--burnt-orange);
+}
+
+.nav-menu a.meeting-link {
+    background-color: var(--burnt-orange);
+    color: white !important;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-sm);
+    border-bottom: none;
+}
+
+.nav-menu a.meeting-link:hover,
+.nav-menu a.meeting-link.active {
+    background-color: var(--burnt-orange-hover);
+    color: white !important;
+}
+
+.nav-toggle {
+    display: none;
+    flex-direction: column;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: var(--spacing-sm);
+}
+
+.nav-toggle span {
+    width: 25px;
+    height: 3px;
+    background-color: var(--off-white);
+    margin: 3px 0;
+    transition: all var(--transition-fast);
+}
+
+/* ===== HERO SECTION ===== */
+.hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1a2f5a 0%, var(--navy-blue) 100%);
+    overflow: hidden;
+}
+
+.hero-animation {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.rain-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.raindrop {
+    position: absolute;
+    width: 2px;
+    height: 20px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.5));
+    animation: fall linear infinite;
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(100vh);
+    }
+}
+
+/* Cloud images animation - BEHIND text */
+.clouds-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.cloud-image {
+    position: absolute;
+    opacity: 0.5;
+    filter: brightness(1.2) drop-shadow(0 0 8px rgba(255, 255, 255, 0.1));
+    width: 300px;
+    height: auto;
+}
+
+.cloud-left-1 {
+    top: 8%;
+    animation: drift-left-1 55s linear infinite;
+}
+
+.cloud-right-1 {
+    top: 18%;
+    animation: drift-right-1 65s linear infinite;
+    animation-delay: -10s;
+}
+
+.cloud-left-2 {
+    top: 25%;
+    animation: drift-left-2 60s linear infinite;
+    animation-delay: -20s;
+}
+
+.cloud-right-2 {
+    top: 12%;
+    animation: drift-right-2 70s linear infinite;
+    animation-delay: -35s;
+}
+
+.cloud-left-3 {
+    top: 5%;
+    animation: drift-left-3 50s linear infinite;
+    animation-delay: -45s;
+}
+
+/* Cloud left-to-right animations */
+@keyframes drift-left-1 {
+    from {
+        transform: translateX(-320px);
+    }
+    to {
+        transform: translateX(calc(100vw + 320px));
+    }
+}
+
+@keyframes drift-left-2 {
+    from {
+        transform: translateX(-320px);
+    }
+    to {
+        transform: translateX(calc(100vw + 320px));
+    }
+}
+
+@keyframes drift-left-3 {
+    from {
+        transform: translateX(-320px);
+    }
+    to {
+        transform: translateX(calc(100vw + 320px));
+    }
+}
+
+/* Cloud right-to-left animations */
+@keyframes drift-right-1 {
+    from {
+        transform: translateX(calc(100vw + 320px));
+    }
+    to {
+        transform: translateX(-320px);
+    }
+}
+
+@keyframes drift-right-2 {
+    from {
+        transform: translateX(calc(100vw + 320px));
+    }
+    to {
+        transform: translateX(-320px);
+    }
+}
+
+/* Lighthouse container - centered both horizontally and vertically, BEHIND text */
+.lighthouse-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 800px;
+    height: 800px;
+    z-index: 3;
+    perspective: 1000px;  /* Enable 3D perspective for child elements */
+}
+
+.lighthouse-image {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: auto;
+    opacity: 0.45;
+    filter: brightness(1.6) contrast(1.3);
+}
+
+/* Cone-shaped lighthouse beam - rotating clockwise on horizontal plane from lantern room */
+.lighthouse-beam-3d {
+    position: absolute;
+    top: calc(50% - 311px);  /* Position so beam tip (at 150px down) aligns with lantern room at (610,250) */
+    left: calc(50% + 39px);  /* Centered on lantern room */
+    width: 1400px;
+    height: 300px;
+    transform-origin: 0 150px 0;  /* Rotate from beam tip (triangle point) in 3D (x, y, z) */
+    transform-style: preserve-3d;  /* Enable 3D rendering */
+    animation: rotate-beam-horizontal 12s linear infinite;
+    pointer-events: none;
+    z-index: 4;
+    clip-path: polygon(0% 50%, 100% 0%, 100% 100%);  /* Sharp pointed cone/triangle shape */
+}
+
+.lighthouse-beam-3d::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+        ellipse at 0% 50%,
+        rgba(255, 253, 208, 0.95) 0%,
+        rgba(255, 253, 208, 0.85) 5%,
+        rgba(255, 253, 208, 0.75) 15%,
+        rgba(255, 253, 208, 0.6) 30%,
+        rgba(255, 253, 208, 0.4) 50%,
+        rgba(255, 253, 208, 0.2) 70%,
+        rgba(255, 253, 208, 0.05) 85%,
+        transparent 100%
+    );
+    filter: blur(8px);
+}
+
+.lighthouse-beam-3d::after {
+    content: '';
+    position: absolute;
+    top: -75px;
+    left: 0;
+    width: 100%;
+    height: 450px;
+    background: radial-gradient(
+        ellipse at 0% center,
+        rgba(255, 253, 208, 0.6) 0%,
+        rgba(255, 253, 208, 0.45) 10%,
+        rgba(255, 253, 208, 0.3) 25%,
+        rgba(255, 253, 208, 0.15) 45%,
+        rgba(255, 253, 208, 0.05) 65%,
+        transparent 85%
+    );
+    filter: blur(50px);
+}
+
+/* Horizontal plane rotation - clockwise around Y-axis from lighthouse center */
+@keyframes rotate-beam-horizontal {
+    0% {
+        transform: rotateY(0deg);
+        opacity: 0.7;
+    }
+    25% {
+        opacity: 0.95;
+    }
+    50% {
+        transform: rotateY(180deg);
+        opacity: 0.7;
+    }
+    75% {
+        opacity: 0.95;
+    }
+    100% {
+        transform: rotateY(360deg);
+        opacity: 0.7;
+    }
+}
+
+/* Text illumination effect */
+.hero-title,
+.hero-subtitle {
+    transition: text-shadow 0.3s ease, color 0.3s ease;
+}
+
+.hero-title.illuminated {
+    color: #fffdf0;
+    text-shadow:
+        0 0 20px rgba(255, 253, 208, 0.8),
+        0 0 40px rgba(255, 253, 208, 0.5),
+        0 0 60px rgba(255, 253, 208, 0.3),
+        2px 2px 4px rgba(0, 0, 0, 0.5);
+    animation: text-glow 0.5s ease-in-out;
+}
+
+.hero-subtitle.illuminated {
+    color: #fffdf0;
+    text-shadow:
+        0 0 15px rgba(255, 253, 208, 0.7),
+        0 0 30px rgba(255, 253, 208, 0.4),
+        0 0 45px rgba(255, 253, 208, 0.2),
+        2px 2px 4px rgba(0, 0, 0, 0.5);
+    animation: text-glow 0.5s ease-in-out;
+}
+
+@keyframes text-glow {
+    0%, 100% {
+        filter: brightness(1);
+    }
+    50% {
+        filter: brightness(1.3);
+    }
+}
+
+.hero-content {
+    position: relative;
+    z-index: 20;
+    text-align: center;
+    color: var(--off-white);
+    max-width: 800px;
+    padding: 0 var(--spacing-lg);
+}
+
+.hero-title {
+    font-size: 64px;
+    color: var(--off-white);
+    margin-bottom: var(--spacing-md);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.hero-subtitle {
+    font-size: 28px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    opacity: 0.9;
+    margin-bottom: var(--spacing-xl);
+}
+
+.hero-buttons {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.scroll-indicator {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    color: var(--off-white);
+    font-size: 24px;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateX(-50%) translateY(0);
+    }
+    40% {
+        transform: translateX(-50%) translateY(-10px);
+    }
+    60% {
+        transform: translateX(-50%) translateY(-5px);
+    }
+}
+
+/* ===== FEATURED MEETING BANNER ===== */
+.featured-meeting {
+    background-color: var(--beige);
+    padding: var(--spacing-xxl) 0;
+}
+
+.meeting-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, var(--navy-blue) 0%, #1a3a6b 100%);
+    padding: var(--spacing-xxl);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    text-decoration: none;
+    color: var(--off-white);
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+}
+
+.meeting-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.05) 50%, transparent 70%);
+    transform: translateX(-100%);
+    transition: transform 0.6s;
+}
+
+.meeting-banner:hover::before {
+    transform: translateX(100%);
+}
+
+.meeting-banner:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+
+.meeting-banner-content {
+    flex: 1;
+}
+
+.meeting-badge {
+    display: inline-block;
+    background-color: var(--burnt-orange);
+    color: white;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: var(--spacing-md);
+}
+
+.meeting-banner h2 {
+    font-size: 48px;
+    color: var(--off-white);
+    margin-bottom: var(--spacing-sm);
+}
+
+.meeting-dates {
+    font-size: 24px;
+    color: var(--burnt-orange);
+    font-weight: 700;
+    margin-bottom: var(--spacing-md);
+}
+
+.meeting-description {
+    font-size: 18px;
+    opacity: 0.9;
+    margin-bottom: var(--spacing-lg);
+    max-width: 600px;
+}
+
+.meeting-actions {
+    display: flex;
+    gap: var(--spacing-lg);
+    align-items: center;
+}
+
+.link-text {
+    color: var(--off-white);
+    opacity: 0.8;
+    font-size: 14px;
+}
+
+.meeting-banner-graphic {
+    font-size: 120px;
+    opacity: 0.2;
+}
+
+/* ===== WELCOME SECTION ===== */
+.welcome-section {
+    padding: var(--spacing-xxl) 0;
+    background-color: var(--off-white);
+}
+
+.welcome-section h2 {
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.lead {
+    font-size: 20px;
+    line-height: 1.8;
+    color: var(--charcoal);
+    margin-bottom: var(--spacing-lg);
+}
+
+/* ===== SERVICE TIMES ===== */
+.service-times {
+    padding: var(--spacing-xxl) 0;
+    background-color: var(--beige);
+}
+
+.times-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-xl);
+}
+
+.time-card {
+    background-color: white;
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-md);
+    text-align: center;
+    box-shadow: var(--shadow-md);
+    transition: transform var(--transition-normal);
+}
+
+.time-card:hover {
+    transform: translateY(-4px);
+}
+
+.day-icon {
+    font-size: 48px;
+    margin-bottom: var(--spacing-md);
+}
+
+.time-card h3 {
+    color: var(--navy-blue);
+    margin-bottom: var(--spacing-sm);
+}
+
+.time-card .time {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--burnt-orange);
+    margin-bottom: var(--spacing-sm);
+}
+
+.time-card .description {
+    color: var(--dark-gray);
+    font-size: 14px;
+}
+
+/* ===== MINISTRIES PREVIEW ===== */
+.ministries-preview {
+    padding: var(--spacing-xxl) 0;
+    background-color: var(--off-white);
+}
+
+.ministries-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-xl);
+}
+
+.ministry-card {
+    background-color: white;
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    text-align: center;
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.ministry-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.ministry-icon {
+    font-size: 64px;
+    margin-bottom: var(--spacing-md);
+}
+
+.ministry-card h3 {
+    color: var(--navy-blue);
+    margin-bottom: var(--spacing-sm);
+}
+
+.ministry-card p {
+    color: var(--dark-gray);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* ===== CTA SECTION ===== */
+.cta-section {
+    padding: var(--spacing-xxl) 0;
+    background-color: var(--navy-blue);
+    color: var(--off-white);
+}
+
+.cta-section h2 {
+    color: var(--off-white);
+    margin-bottom: var(--spacing-md);
+}
+
+.cta-section .lead {
+    color: var(--off-white);
+    opacity: 0.9;
+}
+
+.cta-buttons {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+    margin-top: var(--spacing-xl);
+    flex-wrap: wrap;
+}
+
+/* Make btn-outline buttons visible on dark backgrounds */
+.cta-section .btn-outline,
+.hero .btn-outline {
+    border-color: white !important;
+    color: white !important;
+}
+
+.cta-section .btn-outline:hover,
+.hero .btn-outline:hover {
+    background-color: white;
+    color: var(--navy-blue) !important;
+}
+
+.btn-large {
+    padding: 18px 36px;
+    font-size: 18px;
+}
+
+/* ===== FOOTER ===== */
+.site-footer {
+    background-color: #1a2f5a;
+    color: var(--off-white);
+    padding: var(--spacing-xxl) 0 var(--spacing-lg);
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+}
+
+.footer-logo {
+    width: 100%;
+    max-width: 180px;
+    height: auto;
+    filter: brightness(0) invert(1);
+    transition: opacity var(--transition-fast);
+}
+
+.footer-logo:hover {
+    opacity: 0.8;
+}
+
+.footer-col h3,
+.footer-col h4 {
+    color: var(--off-white);
+    margin-bottom: var(--spacing-md);
+    font-size: 18px;
+}
+
+.footer-col p {
+    opacity: 0.8;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.footer-col ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-col ul li {
+    margin-bottom: var(--spacing-sm);
+}
+
+.footer-col a {
+    color: var(--off-white);
+    text-decoration: none;
+    opacity: 0.8;
+    transition: opacity var(--transition-fast);
+    font-size: 14px;
+}
+
+.footer-col a:hover {
+    opacity: 1;
+    color: var(--burnt-orange);
+}
+
+.footer-social {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-md);
+    font-size: 24px;
+}
+
+.footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.2);
+    padding-top: var(--spacing-lg);
+    text-align: center;
+    opacity: 0.7;
+    font-size: 14px;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+    /* Fix button containers to prevent overflow */
+    .container-narrow,
+    .hero-buttons,
+    .cta-buttons,
+    .featured-meeting .container {
+        width: 100%;
+        max-width: 100%;
+        padding-left: var(--spacing-md);
+        padding-right: var(--spacing-md);
+        box-sizing: border-box;
+    }
+
+    .nav-menu {
+        position: fixed;
+        left: -100%;
+        top: 70px;
+        flex-direction: column;
+        background-color: var(--navy-blue);
+        width: 70%;
+        max-width: 280px;
+        padding: var(--spacing-md);
+        box-shadow: var(--shadow-lg);
+        transition: left var(--transition-normal);
+        gap: var(--spacing-sm);
+        box-sizing: border-box;
+    }
+
+    .nav-menu.active {
+        left: 0;
+    }
+
+    .nav-menu a {
+        font-size: 15px;
+        padding: var(--spacing-sm);
+    }
+
+    .nav-toggle {
+        display: flex;
+    }
+
+    .nav-toggle.active span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .nav-toggle.active span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .nav-toggle.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(7px, -6px);
+    }
+
+    .hero-title {
+        font-size: 40px;
+    }
+
+    .hero-subtitle {
+        font-size: 18px;
+        letter-spacing: 2px;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+        gap: var(--spacing-md);
+    }
+
+    .hero-buttons .btn {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .meeting-banner {
+        flex-direction: column;
+        text-align: center;
+        padding: var(--spacing-xl);
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .meeting-banner h2 {
+        font-size: 32px;
+    }
+
+    .meeting-dates {
+        font-size: 20px;
+    }
+
+    .meeting-banner-graphic {
+        font-size: 80px;
+        margin-top: var(--spacing-lg);
+    }
+
+    .meeting-banner-graphic img {
+        max-width: 150px;
+    }
+
+    .meeting-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .times-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ministries-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cta-buttons {
+        flex-direction: column;
+        width: 100%;
+        padding: 0;
+    }
+
+    .btn-large {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .brand-text {
+        display: none;
+    }
+
+    /* Fix navigation menu overflow */
+    #mainNav {
+        width: 100%;
+        overflow-x: hidden;
+    }
+
+    .nav-wrapper {
+        width: 100%;
+        overflow-x: hidden;
+    }
+
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+
+    .footer-logo {
+        max-width: 150px;
+    }
+}

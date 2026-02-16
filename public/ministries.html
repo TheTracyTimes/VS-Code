@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Discover our ministries at Sarasota Gospel Temple - Youth, Prayer, Bible Study, Music, and Sunday School.">
+    <title>Ministries | Sarasota Gospel Temple</title>
+    <link rel="stylesheet" href="css/design-system.css">
+    <link rel="stylesheet" href="css/pages.css">
+    <style>
+        .ministry-detail {
+            background-color: white;
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            margin-bottom: var(--spacing-xl);
+            border-left: 4px solid var(--burnt-orange);
+        }
+
+        .ministry-detail h3 {
+            color: var(--navy-blue);
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .ministry-detail .icon {
+            font-size: 48px;
+        }
+
+        .ministry-detail p {
+            color: var(--dark-gray);
+            line-height: 1.8;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .ministry-meta {
+            display: flex;
+            gap: var(--spacing-xl);
+            flex-wrap: wrap;
+            margin-top: var(--spacing-lg);
+            padding-top: var(--spacing-lg);
+            border-top: 1px solid var(--off-white);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            color: var(--charcoal);
+            font-size: 14px;
+        }
+
+        .meta-item strong {
+            color: var(--navy-blue);
+        }
+
+        .ministry-with-gallery {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-xl);
+            align-items: start;
+        }
+
+        .ministry-content {
+            flex: 1;
+        }
+
+        .ministry-gallery {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background: var(--off-white);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .gallery-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .gallery-slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .gallery-slide.active {
+            display: block;
+        }
+
+        .gallery-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .gallery-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--navy-blue), var(--dark-gray));
+            color: var(--off-white);
+            font-size: 64px;
+        }
+
+        .gallery-counter {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .gallery-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 16px;
+            cursor: pointer;
+            font-size: 24px;
+            transition: background var(--transition-normal);
+            z-index: 10;
+        }
+
+        .gallery-nav:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .gallery-nav.prev {
+            left: 0;
+        }
+
+        .gallery-nav.next {
+            right: 0;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 968px) {
+            .ministry-with-gallery {
+                grid-template-columns: 1fr;
+            }
+
+            .ministry-gallery {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="mainNav">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="nav-brand">
+                    <a href="index.html">
+                        <img src="images/logos/light-logo.png" alt="SGT Logo" style="height: 40px; width: auto; margin-right: 12px;">
+                        <span class="brand-text">Sarasota Gospel Temple</span>
+                    </a>
+                </div>
+                <button class="nav-toggle" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="ministries.html" class="active">Ministries</a></li>
+                    <li><a href="2026-meeting.html" class="meeting-link">2026 Meeting</a></li>
+                    <li><a href="events.html">Events</a></li>
+                    <li><a href="give.html">Give</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <h1>Our Ministries</h1>
+            <p>Discover ways to grow, serve, and connect</p>
+        </div>
+    </section>
+
+    <!-- Ministries Section -->
+    <section class="history-section">
+        <div class="container-narrow">
+            <h2 class="text-center">Get Involved</h2>
+            <p class="text-center lead">Sarasota Gospel is committed to building a strong, and spiritual assembly. With this aim in mind, our ministries were founded in hopes of supporting our saints to grow as true Christ followers and in doing so, that we may be pillars in the community to reach out and help others. Learn more about each ministry below.</p>
+
+            <!-- Bible Study -->
+            <div class="ministry-detail">
+                <div class="ministry-with-gallery" style="grid-template-columns: 1fr;">
+                    <div class="ministry-content">
+                        <h3>Bible Study</h3>
+                        <p>Sarasota Gospel offers weekly Bible studies to increase your understanding of scripture. Classes are divided by age and level understanding to ensure every saint is sufficiently exposed to the gospel and equipped in the word. Join us every Saturday night for bible study, where we dive into scripture and bible stories, and learn insights on how to apply them to our daily lives.</p>
+                        <div class="ministry-meta">
+                            <div class="meta-item">
+                                <strong>Meeting Times:</strong> Tuesday, 7:00 PM and Saturday, 9:00 PM
+                            </div>
+                            <div class="meta-item">
+                                <strong>Location:</strong> <a href="https://us02web.zoom.us/j/9222352941" target="_blank">Zoom</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Music Ministry -->
+            <div class="ministry-detail">
+                <div class="ministry-with-gallery">
+                    <div class="ministry-content">
+                        <h3>Music Ministry</h3>
+                        <p>Throughout scripture, music is mentioned as an essential part of worship and praise to God. The value and importance that God places on musical expression are clearly evidenced both in the Old and New Testaments. Here at SGT, we strongly support music's use in worship and believe it is a spiritual tool to connect with, and honor God. Our ensemble band and accompanying singers lead each of our services into praise and adoration. Additionally, we offer music classes for all levels and ages to those feeling called to music ministry. During the summer months, special music camps and intensives are also offered.</p>
+                        <div class="ministry-meta">
+                            <div class="meta-item">
+                                <strong>Practice:</strong> After Sunday Service until 5 PM
+                            </div>
+                            <div class="meta-item">
+                                <strong>Opportunities:</strong> Band, Choir, Event Performances
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ministry-gallery">
+                        <div class="gallery-container" id="music-gallery">
+                            <div class="gallery-slide active">
+                                <img src="images/ministries/music/1.JPG" alt="Music Ministry Photo 1" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/music/2.jpg" alt="Music Ministry Photo 2" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/music/3.jpg" alt="Music Ministry Photo 3" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/music/4.jpg" alt="Music Ministry Photo 4" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/music/5.jpg" alt="Music Ministry Photo 5" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/music/6.jpg" alt="Music Ministry Photo 6" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/music/7.jpg" alt="Music Ministry Photo 7" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/music/8.jpg" alt="Music Ministry Photo 8" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/music/9.jpg" alt="Music Ministry Photo 9" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/music/10.jpg" alt="Music Ministry Photo 10" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/music/11.jpg" alt="Music Ministry Photo 11" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/music/12.jpg" alt="Music Ministry Photo 12" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/music/13.jpg" alt="Music Ministry Photo 13" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/music/14.jpg" alt="Music Ministry Photo 14" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/music/15.jpg" alt="Music Ministry Photo 15" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/music/16.jpg" alt="Music Ministry Photo 16" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/music/17.jpg" alt="Music Ministry Photo 17" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/music/18.jpg" alt="Music Ministry Photo 18" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/music/19.jpg" alt="Music Ministry Photo 19" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/music/20.jpg" alt="Music Ministry Photo 20" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/music/21.jpg" alt="Music Ministry Photo 21" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/music/22.jpg" alt="Music Ministry Photo 22" loading="lazy">
+                            </div>
+                        </div>
+                        <button class="gallery-nav prev" onclick="changeSlide('music-gallery', -1)">‹</button>
+                        <button class="gallery-nav next" onclick="changeSlide('music-gallery', 1)">›</button>
+                        <div class="gallery-counter" id="music-counter">1 / 22</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prayer Ministry -->
+            <div class="ministry-detail">
+                <div class="ministry-with-gallery">
+                    <div class="ministry-content">
+                        <h3>Prayer Ministry</h3>
+                        <p>We are a church who believes in the power of prayer. In Ephesians 6, apostle Paul encourages us to pray with all supplication and in the spirit, and this is what we strive to do both individually as saints of God, and collectively as a people of God. Prayer is our means of communication with God and by which we are strengthened in him. We urge all saints to cultivate a strong prayer life. Prayer services are held weekly by region to encourage saints to come together in one mind to pray and seek the Lord.</p>
+                        <div class="ministry-meta">
+                            <div class="meta-item">
+                                <strong>Meeting Times:</strong> Monday, Wednesday, and Thursday, 9:00 PM to 10:00 PM
+                            </div>
+                            <div class="meta-item">
+                                <strong>Prayer Requests:</strong> <a href="https://forms.gle/KtYM9D1byjj63yeK8" target="_blank">Submit Anytime</a>
+                            </div>
+                            <div class="meta-item">
+                                <strong>Location:</strong> <a href="https://us02web.zoom.us/j/9222352941" target="_blank">Zoom</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ministry-gallery">
+                        <div class="gallery-container" id="prayer-gallery">
+                            <div class="gallery-slide active">
+                                <img src="images/ministries/prayer/1.jpg" alt="Prayer Ministry Photo 1" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/prayer/2.jpg" alt="Prayer Ministry Photo 2" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/prayer/3.jpg" alt="Prayer Ministry Photo 3" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/prayer/4.jpg" alt="Prayer Ministry Photo 4" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/prayer/5.jpg" alt="Prayer Ministry Photo 5" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/prayer/6.jpg" alt="Prayer Ministry Photo 6" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/prayer/7.jpg" alt="Prayer Ministry Photo 7" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/prayer/8.jpg" alt="Prayer Ministry Photo 8" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/prayer/9.jpg" alt="Prayer Ministry Photo 9" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/prayer/10.jpg" alt="Prayer Ministry Photo 10" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/prayer/11.jpg" alt="Prayer Ministry Photo 11" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/prayer/12.jpg" alt="Prayer Ministry Photo 12" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/prayer/13.jpg" alt="Prayer Ministry Photo 13" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/prayer/14.jpg" alt="Prayer Ministry Photo 14" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/prayer/15.jpg" alt="Prayer Ministry Photo 15" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/prayer/16.jpg" alt="Prayer Ministry Photo 16" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/prayer/17.jpg" alt="Prayer Ministry Photo 17" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/prayer/18.jpg" alt="Prayer Ministry Photo 18" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/prayer/19.jpg" alt="Prayer Ministry Photo 19" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/prayer/20.jpg" alt="Prayer Ministry Photo 20" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/prayer/21.jpg" alt="Prayer Ministry Photo 21" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/prayer/22.jpg" alt="Prayer Ministry Photo 22" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/prayer/23.jpg" alt="Prayer Ministry Photo 23" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/prayer/24.jpg" alt="Prayer Ministry Photo 24" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/prayer/25.jpg" alt="Prayer Ministry Photo 25" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/prayer/26.jpg" alt="Prayer Ministry Photo 26" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/prayer/27.jpg" alt="Prayer Ministry Photo 27" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/prayer/28.jpg" alt="Prayer Ministry Photo 28" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/prayer/29.jpg" alt="Prayer Ministry Photo 29" loading="lazy">
+                            </div>
+                        </div>
+                        <button class="gallery-nav prev" onclick="changeSlide('prayer-gallery', -1)">‹</button>
+                        <button class="gallery-nav next" onclick="changeSlide('prayer-gallery', 1)">›</button>
+                        <div class="gallery-counter" id="prayer-counter">1 / 29</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Youth Ministry -->
+            <div class="ministry-detail">
+                <div class="ministry-with-gallery">
+                    <div class="ministry-content">
+                        <h3>Youth Ministry</h3>
+                        <p>At Sarasota Gospel Temple, we recognize that the strength of our youth today is indicative of the success of the church of tomorrow. Therefore, at SGT we are committed to building young people that are spiritually-minded, biblically sound, and socially conscious in hopes that they will be strong Christian leaders each within their respective spheres. To support this mission, every last Sunday of the month is <strong>Youth Sunday</strong>, every last Saturday of the month is <strong>Youth Fun Day</strong>, quarterly <strong>Youth Formations</strong>, and <strong>Field Trips</strong>. Alongside this, SGT provides many activities and outreach opportunities specifically tailored to the interests and concerns of our young people.</p>
+                        <div class="ministry-meta">
+                            <div class="meta-item">
+                                <strong>Meeting Times:</strong> As Needed
+                            </div>
+                            <div class="meta-item">
+                                <strong>Ages:</strong> 13-39
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ministry-gallery">
+                        <div class="gallery-container" id="youth-gallery">
+                            <div class="gallery-slide active">
+                                <img src="images/ministries/youth/1.jpg" alt="Youth Ministry Photo 1" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/youth/2.jpg" alt="Youth Ministry Photo 2" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/youth/3.JPG" alt="Youth Ministry Photo 3" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/youth/4.jpg" alt="Youth Ministry Photo 4" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/youth/5.jpg" alt="Youth Ministry Photo 5" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/youth/6.jpg" alt="Youth Ministry Photo 6" loading="lazy">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="images/ministries/youth/7.jpg" alt="Youth Ministry Photo 7" loading="lazy">
+                            </div>
+                        </div>
+                        <button class="gallery-nav prev" onclick="changeSlide('youth-gallery', -1)">‹</button>
+                        <button class="gallery-nav next" onclick="changeSlide('youth-gallery', 1)">›</button>
+                        <div class="gallery-counter" id="youth-counter">1 / 7</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Evangelism Ministry -->
+            <div class="ministry-detail">
+                <div class="ministry-with-gallery" style="grid-template-columns: 1fr;">
+                    <div class="ministry-content">
+                        <h3>Evangelism</h3>
+                        <p><strong>Matthew 28:19-20 (KJV):</strong> "Go ye therefore, and teach all nations, baptizing them in the name of the Father, and of the Son, and of the Holy Ghost: Teaching them to observe all things whatsoever I have commanded you: and, lo, I am with you alway, even unto the end of the world. Amen."</p>
+                        <p><strong>Romans 10:14-15 (KJV):</strong> "How then shall they call on him in whom they have not believed? and how shall they believe in him of whom they have not heard? and how shall they hear without a preacher? And how shall they preach, except they be sent? as it is written, How beautiful are the feet of them that preach the gospel of peace, and bring glad tidings of good things!"</p>
+                        <div class="ministry-meta">
+                            <div class="meta-item">
+                                <strong>Counties:</strong> Pinellas, Hillsborough, Manatee, Sarasota, Hardee, Desoto, Charlotte, Lee
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Men Ministry -->
+            <div class="ministry-detail">
+                <div class="ministry-with-gallery" style="grid-template-columns: 1fr;">
+                    <div class="ministry-content">
+                        <h3>Men</h3>
+                        <p><strong>Titus 2:2 (KJV):</strong> "That the aged men be sober, grave, temperate, sound in faith, in charity, in patience."</p>
+                        <p><strong>Ephesians 5:20-33 (KJV):</strong> "Giving thanks always for all things unto God and the Father in the name of our Lord Jesus Christ; Submitting yourselves one to another in the fear of God. Wives, submit yourselves unto your own husbands, as unto the Lord. For the husband is the head of the wife, even as Christ is the head of the church: and he is the saviour of the body. Therefore as the church is subject unto Christ, so let the wives be to their own husbands in every thing. Husbands, love your wives, even as Christ also loved the church, and gave himself for it; That he might sanctify and cleanse it with the washing of water by the word, That he might present it to himself a glorious church, not having spot, or wrinkle, or any such thing; but that it should be holy and without blemish. So ought men to love their wives as their own bodies. He that loveth his wife loveth himself. For no man ever yet hated his own flesh; but nourisheth and cherisheth it, even as the Lord the church: For we are members of his body, of his flesh, and of his bones. For this cause shall a man leave his father and mother, and shall be joined unto his wife, and they two shall be one flesh. This is a great mystery: but I speak concerning Christ and the church. Nevertheless let every one of you in particular so love his wife even as himself; and the wife see that she reverence her husband."</p>
+                        <div class="ministry-meta">
+                            <div class="meta-item">
+                                <strong>Ages:</strong> All
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Women Ministry -->
+            <div class="ministry-detail">
+                <div class="ministry-with-gallery" style="grid-template-columns: 1fr;">
+                    <div class="ministry-content">
+                        <h3>Women</h3>
+                        <p><strong>Titus 2:3 (KJV):</strong> "The aged women likewise, that they be in behaviour as becometh holiness, not false accusers, not given to much wine, teachers of good things;"</p>
+                        <p><strong>Proverbs 31:10-31 (KJV):</strong> "Who can find a virtuous woman? for her price is far above rubies. The heart of her husband doth safely trust in her, so that he shall have no need of spoil. She will do him good and not evil all the days of her life. She seeketh wool, and flax, and worketh willingly with her hands. She is like the merchants' ships; she bringeth her food from afar. She riseth also while it is yet night, and giveth meat to her household, and a portion to her maidens. She considereth a field, and buyeth it: with the fruit of her hands she planteth a vineyard. She girdeth her loins with strength, and strengtheneth her arms. She perceiveth that her merchandise is good: her candle goeth not out by night. She layeth her hands to the spindle, and her hands hold the distaff. She stretcheth out her hand to the poor; yea, she reacheth forth her hands to the needy. She is not afraid of the snow for her household: for all her household are clothed with scarlet. She maketh herself coverings of tapestry; her clothing is silk and purple. Her husband is known in the gates, when he sitteth among the elders of the land. She maketh fine linen, and selleth it; and delivereth girdles unto the merchant. Strength and honour are her clothing; and she shall rejoice in time to come. She openeth her mouth with wisdom; and in her tongue is the law of kindness. She looketh well to the ways of her household, and eateth not the bread of idleness. Her children arise up, and call her blessed; her husband also, and he praiseth her. Many daughters have done virtuously, but thou excellest them all. Favour is deceitful, and beauty is vain: but a woman that feareth the Lord, she shall be praised. Give her of the fruit of her hands; and let her own works praise her in the gates."</p>
+                        <div class="ministry-meta">
+                            <div class="meta-item">
+                                <strong>Ages:</strong> All
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Children Ministry -->
+            <div class="ministry-detail">
+                <div class="ministry-with-gallery" style="grid-template-columns: 1fr;">
+                    <div class="ministry-content">
+                        <h3>Children</h3>
+                        <p><strong>Psalms 127:3-4 (KJV):</strong> "Lo, children are an heritage of the LORD: And the fruit of the womb is his reward. As arrows are in the hand of a mighty man; So are children of the youth."</p>
+                        <p><strong>Proverbs 22:6 (KJV):</strong> "Train up a child in the way he should go: and when he is old, he will not depart from it."</p>
+                        <p><strong>Matthew 19:14 (KJV):</strong> "But Jesus said, Suffer little children, and forbid them not, to come unto me: for of such is the kingdom of heaven."</p>
+                        <div class="ministry-meta">
+                            <div class="meta-item">
+                                <strong>Ages:</strong> 5 - 12
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container-narrow text-center">
+            <h2>Ready to Get Involved?</h2>
+            <p class="lead">We'd love to help you find the perfect ministry for your gifts and passions!</p>
+            <div class="cta-buttons">
+                <a href="contact.html" class="btn btn-primary btn-large">Contact Us</a>
+                <a href="forms/volunteer.html" class="btn btn-outline btn-large">Volunteer</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="index.html">
+                        <img src="images/logos/dark-logo.png" alt="Sarasota Gospel Temple" class="footer-logo">
+                    </a>
+                </div>
+
+                <div class="footer-col">
+                    <h3>Sarasota Gospel Temple</h3>
+                    <p>A City of Refuge</p>
+                    <div class="footer-social">
+                        <a href="https://j-edouard-productions.client-gallery.com/gallery/jan-25th-2026-service" target="_blank" aria-label="Gallery">
+                            <img src="images/logos/gallery-2-logo.png" alt="Gallery" style="width: 24px; height: 24px;">
+                        </a>
+                        <a href="https://www.facebook.com/people/Sarasota-Gospel-Temple/61557296390196/" target="_blank" aria-label="Facebook">
+                            <img src="images/logos/facebook-logo.png" alt="Facebook" style="width: 24px; height: 24px;">
+                        </a>
+                        <a href="https://www.instagram.com/sarasotagospeltemple/" target="_blank" aria-label="Instagram">
+                            <img src="images/logos/instagram-logo.png" alt="Instagram" style="width: 24px; height: 24px;">
+                        </a>
+                        <a href="https://www.youtube.com/@sarasotagospeltemple" target="_blank" aria-label="YouTube">
+                            <img src="images/logos/youtube-logo.png" alt="YouTube" style="width: 24px; height: 24px;">
+                        </a>
+                        <a href="https://theeagleandtheblackbird.pixieset.com/folder/qCk631Wge2Hn/" target="_blank" aria-label="Gallery">
+                            <img src="images/logos/gallery-logo.png" alt="Gallery" style="width: 24px; height: 24px;">
+                        </a>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="ministries.html">Ministries</a></li>
+                        <li><a href="events.html">Events</a></li>
+                        <li><a href="give.html">Give</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Contact</h4>
+                    <p>3629 Tallevast Road<br>
+                    Sarasota, FL 34243</p>
+                    <p><strong>Phone:</strong> <a href="tel:941-800-5211">(941) 800-5211</a></p>
+                    <p><strong>Email:</strong> <a href="mailto:sarasotagospel@gmail.com">sarasotagospel@gmail.com</a></p>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 Sarasota Gospel Temple. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="js/main.js"></script>
+    <script src="js/gallery.js"></script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+=================================================================
+NETLIFY ENVIRONMENT VARIABLES - EXACT VALUES TO ADD
+=================================================================
+
+Go to Netlify Dashboard → Site Settings → Environment Variables
+Add each of these variables with the EXACT values shown below:
+
+-----------------------------------------------------------------
+FIREBASE CONFIGURATION (7 variables)
+-----------------------------------------------------------------
+FIREBASE_API_KEY
+your_firebase_api_key_here
+
+FIREBASE_AUTH_DOMAIN
+your-project.firebaseapp.com
+
+FIREBASE_PROJECT_ID
+your-project-id
+
+FIREBASE_APP_ID
+1:123456789:web:abcdef123456
+
+FIREBASE_MEASUREMENT_ID
+G-XXXXXXXXXX
+
+FIREBASE_MESSAGING_SENDER_ID
+123456789
+
+FIREBASE_STORAGE_BUCKET
+your-project.firebasestorage.app
+
+-----------------------------------------------------------------
+EMAILJS CONFIGURATION (5 variables)
+-----------------------------------------------------------------
+EMAILJS_SERVICE_ID
+your_service_id
+
+EMAILJS_PUBLIC_KEY
+your_public_key
+
+⚠️ IMPORTANT - Exact value (no 'n' at end due to EmailJS character limit):
+EMAILJS_TEMPLATE_REGISTRATION
+registration_confirmatio
+
+EMAILJS_TEMPLATE_VENDOR
+vendor_confirmation
+
+EMAILJS_TEMPLATE_VOLUNTEER
+volunteer_confirmation
+
+-----------------------------------------------------------------
+GOOGLE SHEETS CONFIGURATION (5 variables)
+-----------------------------------------------------------------
+GOOGLE_SHEETS_API_KEY
+your_google_sheets_api_key_here
+
+GOOGLE_SHEETS_CLIENT_ID
+your-client-id.apps.googleusercontent.com
+
+GOOGLE_SHEETS_REGISTRATIONS_ID
+your_registrations_spreadsheet_id
+
+GOOGLE_SHEETS_VOLUNTEERS_ID
+your_volunteers_spreadsheet_id
+
+GOOGLE_SHEETS_VENDORS_ID
+your_vendors_spreadsheet_id
+
+=================================================================
+TOTAL: 17 environment variables
+=================================================================
+
+IMPORTANT NOTE:
+The registration template ID is "registration_confirmatio" (without the final 'n')
+This is NOT a typo - EmailJS has a character limit for template IDs.
+
+-----------------------------------------------------------------
+HOW TO ADD TO NETLIFY:
+-----------------------------------------------------------------
+1. Go to your Netlify site dashboard
+2. Click "Site settings"
+3. Click "Environment variables" in left sidebar
+4. For each variable above:
+   - Click "Add a variable"
+   - Key: Copy the variable name (e.g., FIREBASE_API_KEY)
+   - Value: Copy the value below it
+   - Scopes: Select all (Production, Deploy previews, Branch deploys)
+   - Click "Create variable"
+
+5. After adding all 17 variables:
+   - Go to "Deploys" tab
+   - Click "Trigger deploy" → "Deploy site"
+   - Wait for build to complete
+
+-----------------------------------------------------------------
+VERIFICATION:
+-----------------------------------------------------------------
+After deploy completes, test your site:
+1. Open browser console (F12)
+2. Go to any form page
+3. Check for: "Firebase initialized successfully"
+4. Check for: "EmailJS initialized"
+5. Submit a test form
+6. Verify email is received
