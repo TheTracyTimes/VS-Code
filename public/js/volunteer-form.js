@@ -23,6 +23,24 @@ function updateCommitteeSelection() {
         medicalNote.style.display = medicalCheckbox.checked ? 'block' : 'none';
     }
 
+    // Toggle Principal Instrument field for Musician
+    const musicianCheckbox = document.getElementById('comm9');
+    const principalInstrumentSection = document.getElementById('principalInstrumentSection');
+    const principalInstrumentInput = document.getElementById('principalInstrument');
+
+    if (musicianCheckbox && principalInstrumentSection && principalInstrumentInput) {
+        if (musicianCheckbox.checked) {
+            principalInstrumentSection.style.display = 'block';
+            principalInstrumentInput.required = true;
+        } else {
+            principalInstrumentSection.style.display = 'none';
+            principalInstrumentInput.required = false;
+            principalInstrumentInput.value = '';
+            principalInstrumentInput.classList.remove('error');
+            principalInstrumentSection.classList.remove('has-error');
+        }
+    }
+
     // Update matrix visibility and content
     updateMatrix();
 }
@@ -151,6 +169,17 @@ function validateForm() {
         isValid = false;
     }
 
+    // Validate principal instrument (if musician is selected)
+    const musicianCheckbox = document.getElementById('comm9');
+    const principalInstrumentInput = document.getElementById('principalInstrument');
+    if (musicianCheckbox && musicianCheckbox.checked && principalInstrumentInput) {
+        if (!principalInstrumentInput.value.trim()) {
+            principalInstrumentInput.classList.add('error');
+            principalInstrumentInput.closest('.form-group').classList.add('has-error');
+            isValid = false;
+        }
+    }
+
     // Validate matrix (if visible, all dropdowns must have selection)
     const matrixSection = document.getElementById('matrixSection');
     if (matrixSection.classList.contains('active')) {
@@ -205,11 +234,20 @@ document.getElementById('volunteerForm').addEventListener('submit', async functi
         lastName: document.getElementById('lastName').value.trim(),
         phone: document.getElementById('phone').value.trim(),
         email: document.getElementById('email').value.trim(),
+        pastorName: document.getElementById('pastorName').value.trim(),
+        assemblyName: document.getElementById('assemblyName').value.trim(),
         committees: selectedCommittees,
         availability: selectedAvailability,
         timestamp: new Date().toISOString(),
         type: 'volunteer'
     };
+
+    // Add principal instrument if musician is selected
+    const musicianCheckbox = document.getElementById('comm9');
+    const principalInstrumentInput = document.getElementById('principalInstrument');
+    if (musicianCheckbox && musicianCheckbox.checked && principalInstrumentInput && principalInstrumentInput.value.trim()) {
+        formData.principalInstrument = principalInstrumentInput.value.trim();
+    }
 
     // If matrix is active, collect committee assignments for each time slot
     const matrixSection = document.getElementById('matrixSection');
@@ -245,7 +283,7 @@ document.getElementById('volunteerForm').addEventListener('submit', async functi
     // Validate and sanitize form data
     if (window.FormValidator) {
         const validation = window.FormValidator.validateFormData(formData, [
-            'firstName', 'lastName', 'phone', 'email'
+            'firstName', 'lastName', 'phone', 'email', 'pastorName', 'assemblyName'
         ]);
 
         if (!validation.valid) {

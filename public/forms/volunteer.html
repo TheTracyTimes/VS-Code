@@ -160,6 +160,20 @@
                     </div>
                 </div>
 
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="pastorName">Name of Pastor <span class="required">*</span></label>
+                        <input type="text" id="pastorName" name="pastorName" required>
+                        <span class="error-message">Please enter your pastor's name</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="assemblyName">Name of Your Assembly <span class="required">*</span></label>
+                        <input type="text" id="assemblyName" name="assemblyName" required>
+                        <span class="error-message">Please enter your assembly name</span>
+                    </div>
+                </div>
+
                 <!-- Committee Selection -->
                 <div class="form-group">
                     <label>Committee Selection <span class="required">*</span></label>
@@ -219,6 +233,14 @@
                         </div>
                     </div>
                     <span class="error-message">Please select at least one committee</span>
+                </div>
+
+                <!-- Principal Instrument (Conditional - shows when Musician is selected) -->
+                <div id="principalInstrumentSection" class="form-group" style="display: none;">
+                    <label for="principalInstrument">Principal Instrument <span class="required">*</span></label>
+                    <input type="text" id="principalInstrument" name="principalInstrument" placeholder="e.g., Piano, Guitar, Drums, Violin">
+                    <span class="helper-text">Please specify your primary instrument</span>
+                    <span class="error-message">Please enter your principal instrument</span>
                 </div>
 
                 <!-- Availability -->
