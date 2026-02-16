@@ -679,67 +679,6 @@
 
         // Start auto-rotation
         setInterval(autoRotateGalleries, 5000);
-
-        // Load photos dynamically (once photos are uploaded)
-        async function loadGalleryPhotos(galleryId, ministryName, photoCount) {
-            const gallery = galleries[galleryId];
-            const container = document.getElementById(galleryId);
-            let loadedCount = 0;
-
-            // Clear placeholder first
-            container.innerHTML = '';
-
-            // Pre-create all slides in numerical order
-            const slides = [];
-            for (let i = 1; i <= photoCount; i++) {
-                const slide = document.createElement('div');
-                slide.className = 'gallery-slide' + (i === 1 ? ' active' : '');
-                slide.setAttribute('data-photo-number', i);
-                container.appendChild(slide);
-                slides.push(slide);
-            }
-
-            // Load photos and populate slides in order
-            for (let i = 1; i <= photoCount; i++) {
-                const slideIndex = i - 1;
-
-                // Try both .jpg and .JPG extensions
-                const tryLoadImage = (extension) => {
-                    const imgPath = `images/ministries/${ministryName}/${i}.${extension}`;
-                    const img = new Image();
-
-                    img.onload = function() {
-                        // Insert image into the correct slide
-                        slides[slideIndex].innerHTML = `<img src="${imgPath}" alt="${ministryName} photo ${i}">`;
-                        gallery.photos[slideIndex] = imgPath;
-                        loadedCount++;
-                    };
-
-                    img.onerror = function() {
-                        // Try uppercase extension if lowercase failed
-                        if (extension === 'jpg') {
-                            tryLoadImage('JPG');
-                        } else {
-                            // If both fail, remove the slide
-                            slides[slideIndex].remove();
-                        }
-                    };
-
-                    img.src = imgPath;
-                };
-
-                // Start with lowercase .jpg
-                tryLoadImage('jpg');
-            }
-        }
-
-        // Initialize galleries when page loads
-        window.addEventListener('DOMContentLoaded', function() {
-            // Try to load photos for each gallery
-            loadGalleryPhotos('music-gallery', 'music', 22);
-            loadGalleryPhotos('prayer-gallery', 'prayer', 29);
-            loadGalleryPhotos('youth-gallery', 'youth', 7);
-        });
     </script>
 </body>
 </html>
