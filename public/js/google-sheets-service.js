@@ -41,9 +41,12 @@ window.GoogleSheetsService = {
 
         try {
             // Ensure user is authenticated (silent if already authenticated)
-            if (!isGoogleAuthenticated()) {
-                console.log('Not authenticated, skipping Google Sheets sync for form submission');
-                return;
+            if (typeof gapi !== 'undefined' && gapi.auth2) {
+                const authInstance = gapi.auth2.getAuthInstance();
+                if (!authInstance || !authInstance.isSignedIn.get()) {
+                    console.log('Not authenticated, skipping Google Sheets sync for form submission');
+                    return;
+                }
             }
 
             // Format data for Google Sheets based on form type
