@@ -142,10 +142,11 @@ async function initializeGapiClient() {
     try {
         await gapi.client.init({
             apiKey: GOOGLE_SHEETS_CONFIG.apiKey,
-            discoveryDocs: GOOGLE_SHEETS_CONFIG.discoveryDocs,
         });
+        // Explicitly load Google Sheets API
+        await gapi.client.load('sheets', 'v4');
         gapiInited = true;
-        console.log('Google API Client initialized');
+        console.log('Google API Client and Sheets API initialized');
     } catch (error) {
         console.error('Error initializing Google API Client:', error);
     }

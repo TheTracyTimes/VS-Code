@@ -612,7 +612,7 @@ function getDateString() {
 
 // ===== GOOGLE SHEETS SYNC =====
 
-async function syncToGoogleSheets(section) {
+async function syncToGoogleSheets(section, btn) {
     if (!window.GoogleSheetsService) {
         alert('Google Sheets integration is not loaded. Please check your configuration.');
         return;
@@ -624,26 +624,32 @@ async function syncToGoogleSheets(section) {
     }
 
     // Show loading state
-    const originalText = event.target.textContent;
-    event.target.disabled = true;
-    event.target.textContent = '⏳ Syncing...';
+    const originalText = btn ? btn.textContent : '';
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Syncing...';
+    }
 
     try {
         // Sync all data for this section
         const count = await window.GoogleSheetsService.syncAllDataToSheets(section);
 
-        alert(`✅ Successfully synced ${count} ${section} to Google Sheets!`);
+        alert(`Successfully synced ${count} ${section} to Google Sheets!`);
 
-        event.target.textContent = '✓ Synced!';
-        setTimeout(() => {
-            event.target.textContent = originalText;
-            event.target.disabled = false;
-        }, 2000);
+        if (btn) {
+            btn.textContent = 'Synced!';
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }, 2000);
+        }
     } catch (error) {
         console.error('Sync error:', error);
-        alert(`Error syncing to Google Sheets: ${error.message || 'Unknown error'}\n\nPlease check:\n1. Firebase Secrets are configured\n2. Spreadsheet IDs are correct\n3. Service account has access to spreadsheets`);
-        event.target.textContent = originalText;
-        event.target.disabled = false;
+        alert(`Error syncing to Google Sheets: ${error.message || 'Unknown error'}\n\nPlease check:\n1. Spreadsheet IDs are correct\n2. You have edit access to the spreadsheets`);
+        if (btn) {
+            btn.textContent = originalText;
+            btn.disabled = false;
+        }
     }
 }
 
@@ -687,7 +693,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (action === 'export') {
                 exportData(section);
             } else if (action === 'sync') {
-                syncToGoogleSheets(section);
+                syncToGoogleSheets(section, this);
             } else if (action === 'refresh') {
                 refreshData(section);
             }

@@ -623,20 +623,17 @@ Submitted: ${new Date().toLocaleString()}
 
             // Send both emails (independently so one failure doesn't block the other)
             if (typeof emailjs !== 'undefined') {
-                console.log('EmailJS sending with:', { serviceId: EMAILJS_SERVICE_ID, templateId: EMAILJS_TEMPLATE_IDS.registration, publicKey: EMAILJS_PUBLIC_KEY });
                 try {
                     await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_IDS.registration, adminTemplateParams, EMAILJS_PUBLIC_KEY);
                     console.log('Registration admin notification email sent');
                 } catch (adminErr) {
                     console.error('Admin email failed:', adminErr);
-                    console.error('Admin email error details:', JSON.stringify(adminErr));
                 }
                 try {
                     await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_IDS.registration, confirmTemplateParams, EMAILJS_PUBLIC_KEY);
                     console.log('Registration confirmation email sent');
                 } catch (confirmErr) {
                     console.error('Confirmation email failed:', confirmErr);
-                    console.error('Confirmation email error details:', JSON.stringify(confirmErr));
                 }
             } else {
                 console.error('EmailJS is not loaded!');
@@ -650,7 +647,6 @@ Submitted: ${new Date().toLocaleString()}
                     console.log('Registration admin notification email sent');
                 } catch (adminErr) {
                     console.error('Admin email failed:', adminErr);
-                    console.error('Admin email error details:', JSON.stringify(adminErr));
                 }
             } else {
                 console.error('EmailJS is not loaded!');

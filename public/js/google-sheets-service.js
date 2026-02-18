@@ -1,13 +1,19 @@
 // ===== GOOGLE SHEETS SERVICE =====
-// Handles syncing form submissions to Google Sheets using client-side API
+// Handles syncing form submissions to Google Sheets using fetch API
+
+const SHEETS_API_BASE = 'https://sheets.googleapis.com/v4/spreadsheets';
+
+// Map section names to actual sheet tab names
+const SHEET_TAB_NAMES = {
+    registrations: 'Registrations',
+    volunteers: 'Volunteers',
+    vendors: 'Vendors',
+    contacts: 'Contacts'
+};
 
 // Helper: check if user has a valid Google OAuth token
 function isGoogleAuthenticated() {
-    try {
-        return gapi.client.getToken() !== null;
-    } catch (e) {
-        return false;
-    }
+    return googleAccessToken !== null;
 }
 
 // Helper: request Google OAuth authentication
@@ -21,44 +27,59 @@ function requestGoogleAuth() {
             if (response.error) {
                 reject(response);
             } else {
+                googleAccessToken = response.access_token;
+                console.log('Google OAuth token set successfully');
                 resolve(response);
             }
         };
-        tokenClient.requestAccessToken({ prompt: '' });
+        tokenClient.requestAccessToken({ prompt: 'consent' });
     });
 }
 
 window.GoogleSheetsService = {
     /**
      * Check if Google Sheets is properly configured
-     * For client-side approach, we need API key, client ID, and initialized gapi
      */
     isGoogleSheetsConfigured() {
-        // Check if Google Sheets config exists
         if (typeof GOOGLE_SHEETS_CONFIG === 'undefined') {
             console.warn('Google Sheets configuration not found');
             return false;
         }
-
-        // Check if API key and client ID are configured
-        if (!GOOGLE_SHEETS_CONFIG.apiKey || !GOOGLE_SHEETS_CONFIG.clientId) {
-            console.warn('Google Sheets API key or Client ID not configured');
+        if (!GOOGLE_SHEETS_CONFIG.clientId) {
+            console.warn('Google Sheets Client ID not configured');
             return false;
         }
-
-        // Check if gapi is loaded
-        if (typeof gapi === 'undefined' || !gapi.client) {
-            console.warn('Google API client not loaded');
+        if (typeof tokenClient === 'undefined' || !tokenClient) {
+            console.warn('Google Identity Services not initialized');
             return false;
         }
-
         return true;
     },
 
     /**
-     * Add a row to the specified Google Sheet via client-side API
-     * @param {string} formType - Type of form (registrations, vendors, volunteers)
-     * @param {object} data - Form data to add
+     * Make an authenticated request to the Google Sheets API
+     */
+    async sheetsRequest(url, method, body) {
+        const headers = {
+            'Authorization': `Bearer ${googleAccessToken}`,
+            'Content-Type': 'application/json'
+        };
+
+        const options = { method, headers };
+        if (body) {
+            options.body = JSON.stringify(body);
+        }
+
+        const response = await fetch(url, options);
+        if (!response.ok) {
+            const error = await response.json();
+            throw { status: response.status, message: error.error?.message || response.statusText };
+        }
+        return response.json();
+    },
+
+    /**
+     * Add a row to the specified Google Sheet
      */
     async addRowToSheet(formType, data) {
         if (!this.isGoogleSheetsConfigured()) {
@@ -67,58 +88,44 @@ window.GoogleSheetsService = {
         }
 
         try {
-            // Ensure user is authenticated (silent if already authenticated)
             if (!isGoogleAuthenticated()) {
                 console.log('Not authenticated, skipping Google Sheets sync for form submission');
                 return;
             }
 
-            // Format data for Google Sheets based on form type
             const row = this.formatDataForSheet(formType, data);
-
-            // Get spreadsheet ID for the form type
             const spreadsheetId = GOOGLE_SHEETS_CONFIG.spreadsheetIds[formType];
             if (!spreadsheetId) {
                 throw new Error(`No spreadsheet ID configured for ${formType}`);
             }
 
-            // Append row to sheet using Google Sheets API
-            const response = await gapi.client.sheets.spreadsheets.values.append({
-                spreadsheetId: spreadsheetId,
-                range: 'Sheet1!A:Z',
-                valueInputOption: 'RAW',
-                insertDataOption: 'INSERT_ROWS',
-                resource: {
-                    values: [row]
-                }
-            });
+            const tabName = SHEET_TAB_NAMES[formType] || 'Sheet1';
+            const url = `${SHEETS_API_BASE}/${spreadsheetId}/values/${tabName}!A:Z:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`;
+            const response = await this.sheetsRequest(url, 'POST', { values: [row] });
 
-            console.log('✅ Successfully synced to Google Sheets:', response.result);
+            console.log('Successfully synced to Google Sheets:', response);
             return response;
         } catch (error) {
-            console.error('❌ Google Sheets sync error:', error);
-            // Don't throw - form was already submitted successfully
+            console.error('Google Sheets sync error:', error);
         }
     },
 
     /**
      * Sync all data for a section to Google Sheets
-     * @param {string} section - Section name (registrations, volunteers, vendors)
-     * @returns {number} - Number of records synced
      */
     async syncAllDataToSheets(section) {
         if (!this.isGoogleSheetsConfigured()) {
-            throw new Error('Google Sheets not configured. Please check API key and Client ID.');
+            throw new Error('Google Sheets not configured. Please check Client ID.');
         }
 
-        // Request OAuth authentication (requires user interaction)
+        // Request OAuth authentication
         try {
             await requestGoogleAuth();
         } catch (error) {
             throw new Error('Failed to authenticate with Google. Please try again.');
         }
 
-        // Get data from global variables based on section
+        // Get data from global variables
         let data;
         switch (section) {
             case 'registrations':
@@ -141,7 +148,6 @@ window.GoogleSheetsService = {
             throw new Error(`No ${section} data to sync`);
         }
 
-        // Get spreadsheet ID for the section
         const spreadsheetId = GOOGLE_SHEETS_CONFIG.spreadsheetIds[section];
         if (!spreadsheetId) {
             throw new Error(`No spreadsheet ID configured for ${section}`);
@@ -150,7 +156,7 @@ window.GoogleSheetsService = {
         // Format all data rows
         const formattedRows = data.map(record => this.formatDataForSheet(section, record));
 
-        // Define headers based on form type
+        // Define headers
         const headers = {
             registrations: [
                 'Timestamp', 'ID', 'First Name', 'Last Name', 'Phone', 'Email',
@@ -174,14 +180,13 @@ window.GoogleSheetsService = {
         };
 
         try {
-            console.log(`🔄 Syncing ${formattedRows.length} ${section} records to Google Sheets...`);
+            console.log(`Syncing ${formattedRows.length} ${section} records to Google Sheets...`);
 
             // Clear existing data
-            console.log('🗑️ Clearing existing data...');
-            await gapi.client.sheets.spreadsheets.values.clear({
-                spreadsheetId: spreadsheetId,
-                range: 'Sheet1!A:Z'
-            });
+            console.log('Clearing existing data...');
+            const tabName = SHEET_TAB_NAMES[section] || 'Sheet1';
+            const clearUrl = `${SHEETS_API_BASE}/${spreadsheetId}/values/${tabName}!A:Z:clear`;
+            await this.sheetsRequest(clearUrl, 'POST', {});
 
             // Prepare data with headers
             const allRows = [
@@ -190,36 +195,24 @@ window.GoogleSheetsService = {
             ];
 
             // Write all data at once
-            console.log(`📝 Writing ${allRows.length} rows (including header)...`);
-            const response = await gapi.client.sheets.spreadsheets.values.update({
-                spreadsheetId: spreadsheetId,
-                range: 'Sheet1!A1',
-                valueInputOption: 'RAW',
-                resource: {
-                    values: allRows
-                }
-            });
+            console.log(`Writing ${allRows.length} rows (including header)...`);
+            const updateUrl = `${SHEETS_API_BASE}/${spreadsheetId}/values/${tabName}!A1?valueInputOption=RAW`;
+            await this.sheetsRequest(updateUrl, 'PUT', { values: allRows });
 
-            console.log(`✅ Successfully synced ${formattedRows.length} records to Google Sheets`);
-            console.log(`📊 Spreadsheet URL: https://docs.google.com/spreadsheets/d/${spreadsheetId}/edit`);
-
+            console.log(`Successfully synced ${formattedRows.length} records to Google Sheets`);
             return formattedRows.length;
         } catch (error) {
-            console.error('❌ Google Sheets bulk sync error:', error);
+            console.error('Google Sheets bulk sync error:', error);
 
-            // Provide more specific error messages based on error status
-            const status = error.status || error.code;
-
+            const status = error.status;
             if (status === 404) {
-                throw new Error(`Spreadsheet not found. Please verify the spreadsheet ID is correct.`);
+                throw new Error('Spreadsheet not found. Please verify the spreadsheet ID is correct.');
             } else if (status === 403) {
-                throw new Error(`Permission denied. Please ensure you have edit access to the spreadsheet.`);
+                throw new Error('Permission denied. Please ensure you have edit access to the spreadsheet.');
             } else if (status === 401) {
-                throw new Error(`Authentication failed. Please sign in again.`);
-            } else if (status === 400) {
-                throw new Error(`Invalid request: ${error.message}`);
+                throw new Error('Authentication failed. Please sign in again.');
             } else if (status === 429) {
-                throw new Error(`Google Sheets API quota exceeded. Please try again later.`);
+                throw new Error('Google Sheets API quota exceeded. Please try again later.');
             } else {
                 throw new Error(error.message || 'Failed to sync to Google Sheets');
             }
@@ -237,74 +230,49 @@ window.GoogleSheetsService = {
         switch (formType) {
             case 'registrations':
                 return [
-                    timestamp,
-                    data.id || '',
-                    data.firstName || '',
-                    data.lastName || '',
-                    data.phone || '',
-                    data.email || '',
-                    data.pastorName || '',
-                    data.assemblyName || '',
+                    timestamp, data.id || '',
+                    data.firstName || '', data.lastName || '',
+                    data.phone || '', data.email || '',
+                    data.pastorName || '', data.assemblyName || '',
                     Array.isArray(data.services) ? data.services.join(', ') : data.services || '',
-                    data.airportTransport || '',
-                    data.localTransport || '',
-                    data.hasChildren || '',
-                    data.numChildren || '',
-                    data.vbsAttendance || '',
-                    data.nurseryAttendance || ''
+                    data.airportTransport || '', data.localTransport || '',
+                    data.hasChildren || '', data.numChildren || '',
+                    data.vbsAttendance || '', data.nurseryAttendance || ''
                 ];
-
             case 'vendors':
                 return [
-                    timestamp,
-                    data.id || '',
-                    data.businessName || '',
-                    data.firstName || '',
-                    data.lastName || '',
-                    data.phone || '',
-                    data.email || '',
-                    data.website || '',
-                    data.pastorName || '',
-                    data.assemblyName || '',
-                    data.selling || '',
-                    data.goodsType || '',
+                    timestamp, data.id || '',
+                    data.businessName || '', data.firstName || '', data.lastName || '',
+                    data.phone || '', data.email || '', data.website || '',
+                    data.pastorName || '', data.assemblyName || '',
+                    data.selling || '', data.goodsType || '',
                     data.tableStaffed || '',
                     Array.isArray(data.availability) ? data.availability.join(', ') : data.availability || '',
-                    data.status || 'pending',
-                    data.approved ? 'Yes' : 'No'
+                    data.status || 'pending', data.approved ? 'Yes' : 'No'
                 ];
-
             case 'volunteers':
                 return [
-                    timestamp,
-                    data.id || '',
-                    data.firstName || '',
-                    data.lastName || '',
-                    data.phone || '',
-                    data.email || '',
+                    timestamp, data.id || '',
+                    data.firstName || '', data.lastName || '',
+                    data.phone || '', data.email || '',
                     Array.isArray(data.committees) ? data.committees.join(', ') : data.committees || '',
                     Array.isArray(data.availability) ? data.availability.join(', ') : data.availability || '',
-                    data.committeeAssignments || ''
+                    data.committeeAssignments && typeof data.committeeAssignments === 'object'
+                        ? Object.entries(data.committeeAssignments).map(([slot, comm]) => `${slot}: ${comm}`).join('; ')
+                        : data.committeeAssignments || ''
                 ];
-
             case 'contacts':
                 return [
-                    timestamp,
-                    data.id || '',
-                    data.name || '',
-                    data.phone || '',
-                    data.email || '',
-                    data.message || ''
+                    timestamp, data.id || '',
+                    data.name || '', data.phone || '',
+                    data.email || '', data.message || ''
                 ];
-
             default:
-                console.warn('Unknown form type:', formType);
                 return [];
         }
     }
 };
 
-// Export for use in other scripts
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { GoogleSheetsService: window.GoogleSheetsService };
 }
