@@ -323,18 +323,23 @@ Please review and approve/deny this application in the admin dashboard.
 
         // Send emails via EmailJS (independently so one failure doesn't block the other)
         if (typeof emailjs !== 'undefined') {
+            console.log('EmailJS sending with:', { serviceId: EMAILJS_SERVICE_ID, templateId: EMAILJS_TEMPLATE_IDS.vendor, publicKey: EMAILJS_PUBLIC_KEY });
             try {
                 await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_IDS.vendor, adminTemplateParams, EMAILJS_PUBLIC_KEY);
                 console.log('Vendor admin notification email sent');
             } catch (adminErr) {
                 console.error('Admin email failed:', adminErr);
+                console.error('Admin email error details:', JSON.stringify(adminErr));
             }
             try {
                 await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_IDS.vendor, confirmTemplateParams, EMAILJS_PUBLIC_KEY);
                 console.log('Vendor confirmation email sent');
             } catch (confirmErr) {
                 console.error('Confirmation email failed:', confirmErr);
+                console.error('Confirmation email error details:', JSON.stringify(confirmErr));
             }
+        } else {
+            console.error('EmailJS is not loaded!');
         }
     } catch (error) {
         console.error('Error sending emails:', error);

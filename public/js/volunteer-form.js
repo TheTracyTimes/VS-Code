@@ -398,17 +398,20 @@ Submitted: ${new Date().toLocaleString()}
 
         // Send emails via EmailJS (independently so one failure doesn't block the other)
         if (typeof emailjs !== 'undefined') {
+            console.log('EmailJS sending with:', { serviceId: EMAILJS_SERVICE_ID, templateId: EMAILJS_TEMPLATE_IDS.volunteer, publicKey: EMAILJS_PUBLIC_KEY });
             try {
                 await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_IDS.volunteer, adminTemplateParams, EMAILJS_PUBLIC_KEY);
                 console.log('Volunteer admin notification email sent');
             } catch (adminErr) {
                 console.error('Admin email failed:', adminErr);
+                console.error('Admin email error details:', JSON.stringify(adminErr));
             }
             try {
                 await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_IDS.volunteer, confirmTemplateParams, EMAILJS_PUBLIC_KEY);
                 console.log('Volunteer confirmation email sent');
             } catch (confirmErr) {
                 console.error('Confirmation email failed:', confirmErr);
+                console.error('Confirmation email error details:', JSON.stringify(confirmErr));
             }
         }
     } catch (error) {
