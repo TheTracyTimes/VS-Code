@@ -37,15 +37,15 @@ const FormValidator = {
         return { valid: true, sanitized: cleaned };
     },
 
-    // Validate name (letters, spaces, hyphens, apostrophes only)
+    // Validate name (letters including international characters, spaces, hyphens, apostrophes, periods)
     validateName(name) {
         if (!name) return { valid: false, message: 'Name is required' };
         const sanitized = this.sanitizeText(name);
-        if (!/^[a-zA-Z\s\-']+$/.test(sanitized)) {
+        if (!/^[\p{L}\s\-'.]+$/u.test(sanitized)) {
             return { valid: false, message: 'Name contains invalid characters' };
         }
-        if (sanitized.length < 2 || sanitized.length > 50) {
-            return { valid: false, message: 'Name must be 2-50 characters' };
+        if (sanitized.length < 2 || sanitized.length > 100) {
+            return { valid: false, message: 'Name must be 2-100 characters' };
         }
         return { valid: true, sanitized };
     },

@@ -250,7 +250,8 @@ document.getElementById('volunteerForm').addEventListener('submit', async functi
         committees: selectedCommittees,
         availability: selectedAvailability,
         timestamp: new Date().toISOString(),
-        type: 'volunteer'
+        type: 'volunteer',
+        status: 'pending'
     };
 
     // Add principal instrument if musician is selected
@@ -395,11 +396,20 @@ Submitted: ${new Date().toLocaleString()}
             committees: data.committees.join(', ')
         };
 
-        // Send emails via EmailJS
+        // Send emails via EmailJS (independently so one failure doesn't block the other)
         if (typeof emailjs !== 'undefined') {
-            await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_IDS.volunteer, adminTemplateParams);
-            await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_IDS.volunteer, confirmTemplateParams);
-            console.log('Volunteer notification emails sent');
+            try {
+                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_IDS.volunteer, adminTemplateParams, EMAILJS_PUBLIC_KEY);
+                console.log('Volunteer admin notification email sent');
+            } catch (adminErr) {
+                console.error('Admin email failed:', adminErr);
+            }
+            try {
+                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_IDS.volunteer, confirmTemplateParams, EMAILJS_PUBLIC_KEY);
+                console.log('Volunteer confirmation email sent');
+            } catch (confirmErr) {
+                console.error('Confirmation email failed:', confirmErr);
+            }
         }
     } catch (error) {
         console.error('Error sending emails:', error);

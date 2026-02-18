@@ -1,6 +1,33 @@
 // ===== GOOGLE SHEETS SERVICE =====
 // Handles syncing form submissions to Google Sheets using client-side API
 
+// Helper: check if user has a valid Google OAuth token
+function isGoogleAuthenticated() {
+    try {
+        return gapi.client.getToken() !== null;
+    } catch (e) {
+        return false;
+    }
+}
+
+// Helper: request Google OAuth authentication
+function requestGoogleAuth() {
+    return new Promise((resolve, reject) => {
+        if (typeof tokenClient === 'undefined' || !tokenClient) {
+            reject(new Error('Google Identity Services not initialized'));
+            return;
+        }
+        tokenClient.callback = (response) => {
+            if (response.error) {
+                reject(response);
+            } else {
+                resolve(response);
+            }
+        };
+        tokenClient.requestAccessToken({ prompt: '' });
+    });
+}
+
 window.GoogleSheetsService = {
     /**
      * Check if Google Sheets is properly configured

@@ -321,11 +321,20 @@ Please review and approve/deny this application in the admin dashboard.
             sellingType: sellingText
         };
 
-        // Send emails via EmailJS
+        // Send emails via EmailJS (independently so one failure doesn't block the other)
         if (typeof emailjs !== 'undefined') {
-            await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_IDS.vendor, adminTemplateParams);
-            await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_IDS.vendor, confirmTemplateParams);
-            console.log('Vendor notification emails sent');
+            try {
+                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_IDS.vendor, adminTemplateParams, EMAILJS_PUBLIC_KEY);
+                console.log('Vendor admin notification email sent');
+            } catch (adminErr) {
+                console.error('Admin email failed:', adminErr);
+            }
+            try {
+                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_IDS.vendor, confirmTemplateParams, EMAILJS_PUBLIC_KEY);
+                console.log('Vendor confirmation email sent');
+            } catch (confirmErr) {
+                console.error('Confirmation email failed:', confirmErr);
+            }
         }
     } catch (error) {
         console.error('Error sending emails:', error);
@@ -348,6 +357,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (typeof emailjs !== 'undefined') {
         initEmailJS();
     }
+
+    // ===== CONDITIONAL FIELD HANDLERS =====
+    document.getElementById('sellingGoods').addEventListener('change', function() { toggleGoodsType(true); });
+    document.getElementById('sellingServices').addEventListener('change', function() { toggleGoodsType(false); });
 
     // Set focus on first input
     document.getElementById('firstName').focus();

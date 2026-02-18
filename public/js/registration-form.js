@@ -1,29 +1,13 @@
 // ===== REGISTRATION FORM - JAVASCRIPT =====
 // Handles form navigation, validation, and Firebase submission
-
-// EmailJS Template IDs
-const EMAILJS_TEMPLATE_IDS = {
-    registration: 'registration_confirmatio',
-    volunteer: 'volunteer_confirmation',
-    vendor: 'vendor_confirmation'
-};
+// NOTE: EMAILJS_TEMPLATE_IDS and submitRegistration are defined in
+// firebase-config.js and firebase-service.js (loaded before this script)
 
 // Current step tracker
 let currentStep = 1;
 
 // Form data object
 let formData = {};
-
-// ===== FIREBASE SUBMISSION =====
-
-async function submitRegistration(data) {
-    if (typeof db === 'undefined') {
-        throw new Error('Firebase is not initialized');
-    }
-    const docRef = await db.collection('registrations').add(data);
-    console.log('Registration saved with ID:', docRef.id);
-    return docRef.id;
-}
 
 // ===== STEP NAVIGATION =====
 
@@ -525,9 +509,10 @@ document.getElementById('registrationForm').addEventListener('submit', async fun
         formData = { ...formData, ...validation.sanitized };
     }
 
-    // Add timestamp
+    // Add timestamp and status (required by Firestore rules)
     formData.timestamp = new Date().toISOString();
     formData.type = 'registration';
+    formData.status = 'pending';
 
     // Show loading state
     const submitBtn = document.getElementById('submitBtn');
@@ -636,17 +621,30 @@ Submitted: ${new Date().toLocaleString()}
                 phone: data.phone || ''
             };
 
-            // Send both emails
+            // Send both emails (independently so one failure doesn't block the other)
             if (typeof emailjs !== 'undefined') {
-                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_IDS.registration, adminTemplateParams);
-                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_IDS.registration, confirmTemplateParams);
-                console.log('Registration notification emails sent');
+                try {
+                    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_IDS.registration, adminTemplateParams, EMAILJS_PUBLIC_KEY);
+                    console.log('Registration admin notification email sent');
+                } catch (adminErr) {
+                    console.error('Admin email failed:', adminErr);
+                }
+                try {
+                    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_IDS.registration, confirmTemplateParams, EMAILJS_PUBLIC_KEY);
+                    console.log('Registration confirmation email sent');
+                } catch (confirmErr) {
+                    console.error('Confirmation email failed:', confirmErr);
+                }
             }
         } else {
             // Send only admin notification if no email provided
             if (typeof emailjs !== 'undefined') {
-                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_IDS.registration, adminTemplateParams);
-                console.log('Registration notification email sent to admin');
+                try {
+                    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_IDS.registration, adminTemplateParams, EMAILJS_PUBLIC_KEY);
+                    console.log('Registration admin notification email sent');
+                } catch (adminErr) {
+                    console.error('Admin email failed:', adminErr);
+                }
             }
         }
     } catch (error) {
@@ -670,6 +668,30 @@ document.addEventListener('DOMContentLoaded', function() {
     if (typeof emailjs !== 'undefined') {
         initEmailJS();
     }
+
+    // ===== NAVIGATION BUTTONS =====
+    document.getElementById('btnToStep2').addEventListener('click', function() { nextStep(2); });
+    document.getElementById('btnToStep3').addEventListener('click', function() { nextStep(3); });
+    document.getElementById('btnBackToStep1').addEventListener('click', function() { previousStep(1); });
+    document.getElementById('btnBackToStep2').addEventListener('click', function() { previousStep(2); });
+
+    // ===== TRANSPORTATION SECTION =====
+    document.getElementById('airportYes').addEventListener('change', function() { toggleAirportFields(true); });
+    document.getElementById('airportNo').addEventListener('change', function() { toggleAirportFields(false); });
+    document.getElementById('travelAloneYes').addEventListener('change', function() { toggleHowManyField(false); });
+    document.getElementById('travelAloneNo').addEventListener('change', function() { toggleHowManyField(true); });
+    document.getElementById('localTransportYes').addEventListener('change', function() { toggleLocalTransport(true); });
+    document.getElementById('localTransportNo').addEventListener('change', function() { toggleLocalTransport(false); });
+
+    // ===== CHILD CARE SECTION =====
+    document.getElementById('childrenYes').addEventListener('change', function() { toggleChildrenFields(true); });
+    document.getElementById('childrenNo').addEventListener('change', function() { toggleChildrenFields(false); });
+    document.getElementById('vbsYes').addEventListener('change', function() { toggleVBSField(true); });
+    document.getElementById('vbsNo').addEventListener('change', function() { toggleVBSField(false); });
+    document.getElementById('nurseryYes').addEventListener('change', function() { toggleNurseryField(true); });
+    document.getElementById('nurseryNo').addEventListener('change', function() { toggleNurseryField(false); });
+    document.getElementById('numVBS').addEventListener('change', generateVBSChildFields);
+    document.getElementById('numNursery').addEventListener('change', generateNurseryChildFields);
 
     // Set focus on first input
     document.getElementById('firstName').focus();

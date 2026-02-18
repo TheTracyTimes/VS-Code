@@ -11,8 +11,7 @@ service cloud.firestore {
     function isValidName(name) {
       return name is string
         && name.size() >= 2
-        && name.size() <= 50
-        && name.matches('^[a-zA-Z\\s\\-\']+$');
+        && name.size() <= 100;
     }
 
     function isValidPhone(phone) {
