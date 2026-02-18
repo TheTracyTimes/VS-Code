@@ -619,7 +619,7 @@ async function syncToGoogleSheets(section) {
     }
 
     if (!window.GoogleSheetsService.isGoogleSheetsConfigured()) {
-        alert('Google Sheets is not configured yet.\n\nPlease configure Firebase Secrets for Google Sheets integration.');
+        alert('Google Sheets API is not ready.\n\nPlease check:\n1. Google Sheets API key and Client ID are set\n2. The page has finished loading\n3. Try refreshing the page');
         return;
     }
 

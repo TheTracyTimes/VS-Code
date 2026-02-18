@@ -131,6 +131,10 @@ let tokenClient;
 
 // Initialize Google API Client
 function initGoogleSheetsAPI() {
+    if (typeof gapi === 'undefined') {
+        console.warn('Google API script not loaded');
+        return;
+    }
     gapi.load('client', initializeGapiClient);
 }
 
@@ -146,6 +150,29 @@ async function initializeGapiClient() {
         console.error('Error initializing Google API Client:', error);
     }
 }
+
+// Initialize Google Identity Services token client for OAuth
+function initGISClient() {
+    if (typeof google === 'undefined' || !google.accounts) {
+        console.warn('Google Identity Services not loaded');
+        return;
+    }
+    tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: GOOGLE_SHEETS_CONFIG.clientId,
+        scope: GOOGLE_SHEETS_CONFIG.scopes,
+        callback: '',
+    });
+    gisInited = true;
+    console.log('Google Identity Services initialized');
+}
+
+// Auto-initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    if (GOOGLE_SHEETS_CONFIG.apiKey && GOOGLE_SHEETS_CONFIG.clientId) {
+        initGoogleSheetsAPI();
+        initGISClient();
+    }
+});
 
 // Export for use in other scripts
 if (typeof module !== 'undefined' && module.exports) {
