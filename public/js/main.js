@@ -10,10 +10,15 @@ function toggleMobileMenu() {
     navToggle.classList.toggle('active');
 }
 
-// Close mobile menu when clicking on a link
+// Attach mobile menu toggle via addEventListener (CSP blocks inline onclick)
 document.addEventListener('DOMContentLoaded', function() {
-    const navLinks = document.querySelectorAll('.nav-menu a');
+    const navToggleBtn = document.querySelector('.nav-toggle');
+    if (navToggleBtn) {
+        navToggleBtn.addEventListener('click', toggleMobileMenu);
+    }
 
+    // Close mobile menu when clicking on a link
+    const navLinks = document.querySelectorAll('.nav-menu a');
     navLinks.forEach(link => {
         link.addEventListener('click', () => {
             const navMenu = document.querySelector('.nav-menu');
@@ -25,6 +30,19 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // Copy to clipboard button (Give page)
+    const copyBtn = document.getElementById('copyZelleBtn');
+    if (copyBtn) {
+        copyBtn.addEventListener('click', function() {
+            const text = this.getAttribute('data-copy');
+            navigator.clipboard.writeText(text).then(() => {
+                const original = this.textContent;
+                this.textContent = 'Copied!';
+                setTimeout(() => { this.textContent = original; }, 2000);
+            });
+        });
+    }
 });
 
 // ===== RAIN ANIMATION =====
@@ -232,33 +250,85 @@ document.addEventListener('DOMContentLoaded', function() {
     const contactForm = document.getElementById('contactForm');
 
     if (contactForm) {
+        // Initialize CSRF protection
+        if (window.CSRFProtection) {
+            window.CSRFProtection.addToForm(contactForm);
+        }
+
         contactForm.addEventListener('submit', async function(e) {
             e.preventDefault();
 
             // Get form data
-            const formData = {
-                name: document.getElementById('contactName').value,
-                email: document.getElementById('contactEmail').value,
-                phone: document.getElementById('contactPhone').value,
-                message: document.getElementById('contactMessage').value,
-                timestamp: new Date().toISOString()
+            let formData = {
+                name: document.getElementById('contactName').value.trim(),
+                email: document.getElementById('contactEmail').value.trim(),
+                phone: document.getElementById('contactPhone').value.trim(),
+                message: document.getElementById('contactMessage').value.trim(),
+                timestamp: new Date().toISOString(),
+                type: 'contact',
+                status: 'pending'
             };
+
+            // Basic validation
+            if (!formData.name || !formData.email || !formData.phone || !formData.message) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+
+            // Check rate limiting
+            if (window.RateLimiter) {
+                const rateLimitCheck = window.RateLimiter.canSubmit('contact');
+                if (!rateLimitCheck.allowed) {
+                    alert(rateLimitCheck.message);
+                    return;
+                }
+            }
+
+            // Validate CSRF token
+            if (window.CSRFProtection) {
+                if (!window.CSRFProtection.validateForm(contactForm)) {
+                    alert('Security validation failed. Please refresh the page and try again.');
+                    return;
+                }
+            }
+
+            // Validate and sanitize form data
+            if (window.FormValidator) {
+                const validation = window.FormValidator.validateFormData(formData, [
+                    'name', 'email', 'phone'
+                ]);
+
+                if (!validation.valid) {
+                    alert('Please fix the following errors:\n' + validation.errors.join('\n'));
+                    return;
+                }
+
+                formData = { ...formData, ...validation.sanitized };
+            }
 
             // Show loading state
             const submitBtn = contactForm.querySelector('button[type="submit"]');
             const originalText = submitBtn.textContent;
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Sending...';
+            submitBtn.innerHTML = '<span class="loading-spinner"></span> Sending...';
 
             try {
                 // Submit to Firebase
                 const docId = await submitContact(formData);
 
+                // Record submission for rate limiting
+                if (window.RateLimiter) {
+                    window.RateLimiter.recordSubmission('contact');
+                }
+
                 // Add document ID to form data for Google Sheets
                 formData.id = docId;
                 formData.createdAt = { toDate: () => new Date() };
 
-                // Sync to Google Sheets (non-blocking - won't prevent form submission)
+                // Send email notification to admin
+                await sendContactEmail(formData);
+
+                // Sync to Google Sheets (non-blocking)
                 if (window.GoogleSheetsService && window.GoogleSheetsService.isGoogleSheetsConfigured()) {
                     window.GoogleSheetsService.addRowToSheet('contacts', formData).catch(err => {
                         console.warn('Google Sheets sync failed (form still submitted successfully)');
@@ -278,5 +348,46 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// ===== CONTACT EMAIL NOTIFICATION =====
+async function sendContactEmail(data) {
+    try {
+        if (typeof emailjs === 'undefined') return;
+
+        const adminTemplateParams = {
+            to_email: 'sarasotagospel@gmail.com',
+            from_name: data.name,
+            reply_to: data.email || 'no-reply@sarasotagospeltemple.org',
+            subject: 'New Contact Form Message - Sarasota Gospel Temple',
+            message: `
+New contact form message received:
+
+Name: ${data.name}
+Phone: ${data.phone}
+Email: ${data.email || 'Not provided'}
+
+Message:
+${data.message}
+
+Submitted: ${new Date().toLocaleString()}
+            `.trim()
+        };
+
+        // Use the registration template for general notifications (or a contact-specific one if it exists)
+        const templateId = (window.EMAILJS_TEMPLATE_IDS && window.EMAILJS_TEMPLATE_IDS.contact) ||
+                          (window.EMAILJS_TEMPLATE_IDS && window.EMAILJS_TEMPLATE_IDS.registration) ||
+                          'registration_confirmatio';
+
+        await emailjs.send(
+            window.EMAILJS_SERVICE_ID || EMAILJS_SERVICE_ID,
+            templateId,
+            adminTemplateParams,
+            window.EMAILJS_PUBLIC_KEY || EMAILJS_PUBLIC_KEY
+        );
+        console.log('Contact notification email sent');
+    } catch (error) {
+        console.error('Contact email failed:', error);
+    }
+}
 
 console.log('Sarasota Gospel Temple website loaded successfully');

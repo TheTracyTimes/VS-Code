@@ -750,7 +750,7 @@
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
     /* Fix button containers to prevent overflow */
     .container-narrow,
     .hero-buttons,
@@ -785,6 +785,14 @@
     .nav-menu a {
         font-size: 15px;
         padding: var(--spacing-sm);
+    }
+
+    .nav-menu a.meeting-link {
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
+        padding: var(--spacing-sm) var(--spacing-md);
+        border-radius: var(--radius-sm);
     }
 
     .nav-toggle {

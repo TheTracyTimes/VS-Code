@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Contact Sarasota Gospel Temple. Visit us at 3629 Tallevast Road, Sarasota, FL 34243 or call (941) 800-5211.">
     <title>Contact Us | Sarasota Gospel Temple</title>
+    <link rel="icon" type="image/png" href="/images/logos/dark-logo.png">
     <link rel="stylesheet" href="css/design-system.css?v=3">
     <link rel="stylesheet" href="css/pages.css?v=3">
     <style>
@@ -113,7 +114,7 @@
                         <span class="brand-text">Sarasota Gospel Temple</span>
                     </a>
                 </div>
-                <button class="nav-toggle" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                <button class="nav-toggle" aria-label="Toggle menu">
                     <span></span>
                     <span></span>
                     <span></span>
@@ -191,8 +192,8 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="contactEmail">Email</label>
-                            <input type="email" id="contactEmail" name="email" placeholder="Optional">
+                            <label for="contactEmail">Email <span class="required">*</span></label>
+                            <input type="email" id="contactEmail" name="email" required>
                         </div>
 
                         <div class="form-group">
@@ -307,11 +308,16 @@
     <script src="../config/firebase-config.js?v=3"></script>
     <script src="js/firebase-service.js?v=3"></script>
 
+    <!-- EmailJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
     <!-- Google Sheets API -->
-    <script src="https://apis.google.com/js/api.js"></script>
     <script src="https://accounts.google.com/gsi/client"></script>
     <script src="../config/google-sheets-config.js?v=3"></script>
     <script src="js/google-sheets-service.js?v=3"></script>
+
+    <!-- Security -->
+    <script src="js/security-utils.js"></script>
 
     <!-- JavaScript -->
     <script src="js/main.js?v=3"></script>

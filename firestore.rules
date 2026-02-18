@@ -83,6 +83,27 @@ service cloud.firestore {
       allow read, update, delete: if request.auth != null;
     }
 
+    // ===== CONTACTS COLLECTION =====
+
+    match /contacts/{document} {
+      allow create: if
+        request.resource.data.name is string &&
+        isValidName(request.resource.data.name) &&
+        request.resource.data.phone is string &&
+        isValidPhone(request.resource.data.phone) &&
+        request.resource.data.message is string &&
+        request.resource.data.message.size() >= 1 &&
+        // Email is optional but must be valid if provided
+        (!('email' in request.resource.data) ||
+          request.resource.data.email == null ||
+          request.resource.data.email == '' ||
+          isValidEmail(request.resource.data.email)) &&
+        request.resource.data.createdAt == request.time &&
+        request.resource.data.status == 'pending';
+
+      allow read, update, delete: if request.auth != null;
+    }
+
     // ===== RATE LIMITS COLLECTION =====
     // Used for server-side rate limiting tracking
 
