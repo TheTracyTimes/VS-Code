@@ -200,10 +200,29 @@
     </section>
 
     <!-- Meeting Dates Downloads -->
+    <style>
+        .meeting-btns {
+            display: flex;
+            gap: var(--spacing-lg);
+        }
+        .meeting-btns a {
+            flex: 1;
+            text-align: center;
+            padding: var(--spacing-lg);
+            font-size: 18px;
+            color: white;
+        }
+        @media (max-width: 600px) {
+            .meeting-btns {
+                flex-direction: column;
+            }
+        }
+    </style>
     <section style="background-color: var(--beige); padding: var(--spacing-lg) 0;">
-        <div class="container" style="display: flex; gap: var(--spacing-lg);">
-            <a href="documents/2026-meeting-dates.pdf" download class="btn btn-primary" style="flex: 1; text-align: center; padding: var(--spacing-lg); font-size: 18px;">2026 Meeting Dates</a>
-            <a href="documents/2027-meeting-dates.pdf" download class="btn btn-secondary" style="flex: 1; text-align: center; padding: var(--spacing-lg); font-size: 18px;">2027 Meeting Dates</a>
+        <div class="container meeting-btns">
+            <a href="documents/2026-meeting-dates.pdf" download class="btn" style="background-color: var(--navy-blue);">2026 Meeting Dates</a>
+            <a href="https://thechurchatmorley.org/directory/index.html" target="_blank" class="btn" style="background-color: var(--burnt-orange);">Church Directory</a>
+            <a href="documents/2027-meeting-dates.pdf" download class="btn" style="background-color: var(--navy-blue);">2027 Meeting Dates</a>
         </div>
     </section>
 

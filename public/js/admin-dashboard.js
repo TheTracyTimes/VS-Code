@@ -8,6 +8,7 @@ let currentSection = 'registrations';
 let registrationsData = [];
 let volunteersData = [];
 let vendorsData = [];
+let contactsData = [];
 
 // ===== AUTHENTICATION =====
 
@@ -52,7 +53,8 @@ async function loadAllData() {
     await Promise.all([
         loadRegistrations(),
         loadVolunteers(),
-        loadVendors()
+        loadVendors(),
+        loadContacts()
     ]);
     updateStatistics();
 }
@@ -103,6 +105,30 @@ async function loadVolunteers() {
         document.getElementById('volunteersTable').style.display = 'block';
     } catch (error) {
         console.error('Error loading volunteers:', error);
+    }
+}
+
+async function loadContacts() {
+    try {
+        document.getElementById('contactsLoading').style.display = 'block';
+        document.getElementById('contactsTable').style.display = 'none';
+        document.getElementById('contactsEmpty').style.display = 'none';
+
+        contactsData = await getAllContacts();
+        window.contactsData = contactsData;
+
+        if (contactsData.length === 0) {
+            document.getElementById('contactsLoading').style.display = 'none';
+            document.getElementById('contactsEmpty').style.display = 'block';
+            return;
+        }
+
+        displayContacts(contactsData);
+
+        document.getElementById('contactsLoading').style.display = 'none';
+        document.getElementById('contactsTable').style.display = 'block';
+    } catch (error) {
+        console.error('Error loading contacts:', error);
     }
 }
 
@@ -342,6 +368,62 @@ function displayVendors(data) {
     });
 }
 
+function displayContacts(data) {
+    const tbody = document.getElementById('contactsTableBody');
+    tbody.innerHTML = '';
+
+    data.forEach(contact => {
+        const row = document.createElement('tr');
+
+        const nameCell = document.createElement('td');
+        nameCell.textContent = contact.name || '—';
+        row.appendChild(nameCell);
+
+        const emailCell = document.createElement('td');
+        emailCell.textContent = contact.email || '—';
+        row.appendChild(emailCell);
+
+        const phoneCell = document.createElement('td');
+        phoneCell.textContent = contact.phone || '—';
+        row.appendChild(phoneCell);
+
+        const messageCell = document.createElement('td');
+        const msg = contact.message || '—';
+        messageCell.textContent = msg.length > 60 ? msg.substring(0, 60) + '…' : msg;
+        row.appendChild(messageCell);
+
+        const dateCell = document.createElement('td');
+        dateCell.textContent = formatDate(contact.createdAt);
+        row.appendChild(dateCell);
+
+        const actionsCell = document.createElement('td');
+        actionsCell.className = 'action-links';
+
+        const viewLink = document.createElement('a');
+        viewLink.href = '#';
+        viewLink.textContent = 'View';
+        viewLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            viewDetails('contact', contact.id);
+        });
+
+        const deleteLink = document.createElement('a');
+        deleteLink.href = '#';
+        deleteLink.textContent = 'Delete';
+        deleteLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            handleDelete('contacts', contact.id);
+        });
+
+        actionsCell.appendChild(viewLink);
+        actionsCell.appendChild(document.createTextNode(' | '));
+        actionsCell.appendChild(deleteLink);
+        row.appendChild(actionsCell);
+
+        tbody.appendChild(row);
+    });
+}
+
 // ===== STATISTICS =====
 
 function updateStatistics() {
@@ -357,6 +439,9 @@ function updateStatistics() {
     // Need airport transport
     const needsTransport = registrationsData.filter(r => r.airportTransport === 'Yes').length;
     document.getElementById('needsTransport').textContent = needsTransport;
+
+    // Total contacts
+    document.getElementById('totalContacts').textContent = contactsData.length;
 }
 
 // ===== SECTION NAVIGATION =====
@@ -403,6 +488,8 @@ async function refreshData(section) {
         await loadVolunteers();
     } else if (section === 'vendors') {
         await loadVendors();
+    } else if (section === 'contacts') {
+        await loadContacts();
     }
     updateStatistics();
 }
@@ -417,6 +504,8 @@ function viewDetails(type, id) {
         data = volunteersData.find(v => v.id === id);
     } else if (type === 'vendor') {
         data = vendorsData.find(v => v.id === id);
+    } else if (type === 'contact') {
+        data = contactsData.find(c => c.id === id);
     }
 
     if (!data) {
@@ -520,6 +609,8 @@ async function handleDelete(collection, docId) {
             await loadVolunteers();
         } else if (collection === 'vendors') {
             await loadVendors();
+        } else if (collection === 'contacts') {
+            await loadContacts();
         }
 
         updateStatistics();
@@ -543,6 +634,9 @@ function exportData(section) {
     } else if (section === 'vendors') {
         data = vendorsData;
         filename = `vendors-${getDateString()}.csv`;
+    } else if (section === 'contacts') {
+        data = contactsData;
+        filename = `contacts-${getDateString()}.csv`;
     }
 
     if (!data || data.length === 0) {

@@ -330,6 +330,7 @@
                     <button class="active" data-section="registrations">Registrations</button>
                     <button data-section="volunteers">Volunteers</button>
                     <button data-section="vendors">Vendors</button>
+                    <button data-section="contacts">Contacts</button>
                 </nav>
             </div>
         </header>
@@ -354,6 +355,10 @@
                 <div class="stat-card">
                     <div class="stat-number" id="needsTransport">0</div>
                     <div class="stat-label">Need Airport Transport</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalContacts">0</div>
+                    <div class="stat-label">Contact Messages</div>
                 </div>
             </div>
 
@@ -490,6 +495,50 @@
                     <div id="vendorsEmpty" class="empty-state" style="display: none;">
                         <h3>No Vendor Applications Yet</h3>
                         <p>Vendor applications will appear here.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTACTS SECTION -->
+            <div id="contacts-section" class="section-content">
+                <div class="action-bar">
+                    <div class="search-box">
+                        <input type="text" id="searchContacts" placeholder="Search contacts..." data-table="contactsTable">
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-secondary" data-action="export" data-section="contacts">📥 Export to Excel</button>
+                        <button class="btn btn-primary" data-action="sync" data-section="contacts">📊 Sync to Google Sheets</button>
+                        <button class="btn btn-outline" data-action="refresh" data-section="contacts">🔄 Refresh</button>
+                    </div>
+                </div>
+
+                <div class="data-table">
+                    <div id="contactsLoading" class="loading">
+                        <div class="loading-spinner-large"></div>
+                        <p>Loading contacts...</p>
+                    </div>
+                    <div id="contactsTable" style="display: none;">
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Message</th>
+                                        <th>Submitted</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="contactsTableBody">
+                                    <!-- Data will be inserted here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="contactsEmpty" class="empty-state" style="display: none;">
+                        <h3>No Contact Messages Yet</h3>
+                        <p>Contact form submissions will appear here.</p>
                     </div>
                 </div>
             </div>

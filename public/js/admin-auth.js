@@ -111,6 +111,29 @@ async function getAllVendors() {
     }
 }
 
+/**
+ * Get all contacts from Firestore
+ * @returns {Promise<Array>}
+ */
+async function getAllContacts() {
+    try {
+        const snapshot = await db.collection('contacts').orderBy('createdAt', 'desc').get();
+        const contacts = [];
+
+        snapshot.forEach(doc => {
+            contacts.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
+
+        return contacts;
+    } catch (error) {
+        console.error('Error fetching contacts:', error);
+        throw error;
+    }
+}
+
 // ===== DATA MODIFICATION FUNCTIONS =====
 
 /**
@@ -166,6 +189,7 @@ window.onAuthStateChanged = onAuthStateChanged;
 window.getAllRegistrations = getAllRegistrations;
 window.getAllVolunteers = getAllVolunteers;
 window.getAllVendors = getAllVendors;
+window.getAllContacts = getAllContacts;
 window.deleteRecord = deleteRecord;
 window.updateVendorStatus = updateVendorStatus;
 
