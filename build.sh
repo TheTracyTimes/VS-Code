@@ -117,7 +117,7 @@ const GOOGLE_SHEETS_CONFIG = {
         registrations: '${GOOGLE_SHEETS_REGISTRATIONS_ID}',
         volunteers: '${GOOGLE_SHEETS_VOLUNTEERS_ID}',
         vendors: '${GOOGLE_SHEETS_VENDORS_ID}',
-        contacts: '${GOOGLE_SHEETS_CONTACTS_ID}'
+        contacts: '${GOOGLE_SHEETS_CONTACTS_ID:-${GOOGLE_SHEETS_REGISTRATIONS_ID}}'
     },
     scopes: 'https://www.googleapis.com/auth/spreadsheets'
 };
