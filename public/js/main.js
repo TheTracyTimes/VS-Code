@@ -354,34 +354,19 @@ async function sendContactEmail(data) {
     try {
         if (typeof emailjs === 'undefined') return;
 
-        const adminTemplateParams = {
-            to_email: 'sarasotagospel@gmail.com',
-            from_name: data.name,
-            reply_to: data.email || 'no-reply@sarasotagospeltemple.org',
-            subject: 'New Contact Form Message - Sarasota Gospel Temple',
-            message: `
-New contact form message received:
-
-Name: ${data.name}
-Phone: ${data.phone}
-Email: ${data.email || 'Not provided'}
-
-Message:
-${data.message}
-
-Submitted: ${new Date().toLocaleString()}
-            `.trim()
+        const templateParams = {
+            to_email: data.email,
+            Name: data.name,
+            reply_to: 'sarasotagospel@gmail.com'
         };
 
-        // Use the registration template for general notifications (or a contact-specific one if it exists)
         const templateId = (window.EMAILJS_TEMPLATE_IDS && window.EMAILJS_TEMPLATE_IDS.contact) ||
-                          (window.EMAILJS_TEMPLATE_IDS && window.EMAILJS_TEMPLATE_IDS.registration) ||
-                          'registration_confirmatio';
+                          'contact_confirmation';
 
         await emailjs.send(
             window.EMAILJS_SERVICE_ID || EMAILJS_SERVICE_ID,
             templateId,
-            adminTemplateParams,
+            templateParams,
             window.EMAILJS_PUBLIC_KEY || EMAILJS_PUBLIC_KEY
         );
         console.log('Contact notification email sent');

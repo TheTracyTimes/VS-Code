@@ -69,7 +69,8 @@ const EMAILJS_PUBLIC_KEY = "${EMAILJS_PUBLIC_KEY}";
 const EMAILJS_TEMPLATE_IDS = {
     registration: '${EMAILJS_TEMPLATE_REGISTRATION:-registration_confirmatio}',
     vendor: '${EMAILJS_TEMPLATE_VENDOR:-vendor_confirmation}',
-    volunteer: '${EMAILJS_TEMPLATE_VOLUNTEER:-volunteer_confirmation}'
+    volunteer: '${EMAILJS_TEMPLATE_VOLUNTEER:-volunteer_confirmation}',
+    contact: '${EMAILJS_TEMPLATE_CONTACT:-contact_confirmation}'
 };
 
 // Initialize EmailJS
@@ -115,42 +116,16 @@ const GOOGLE_SHEETS_CONFIG = {
     spreadsheetIds: {
         registrations: '${GOOGLE_SHEETS_REGISTRATIONS_ID}',
         volunteers: '${GOOGLE_SHEETS_VOLUNTEERS_ID}',
-        vendors: '${GOOGLE_SHEETS_VENDORS_ID}'
+        vendors: '${GOOGLE_SHEETS_VENDORS_ID}',
+        contacts: '${GOOGLE_SHEETS_CONTACTS_ID}'
     },
-
-    // Discovery docs and scopes for Google Sheets API
-    discoveryDocs: ['https://sheets.googleapis.com/\$discovery/rest?version=v4'],
     scopes: 'https://www.googleapis.com/auth/spreadsheets'
 };
 
-// ===== GOOGLE API CLIENT =====
+// ===== GOOGLE IDENTITY SERVICES =====
 
-let gapiInited = false;
-let gisInited = false;
 let tokenClient;
-
-// Initialize Google API Client
-function initGoogleSheetsAPI() {
-    if (typeof gapi === 'undefined') {
-        console.warn('Google API script not loaded');
-        return;
-    }
-    gapi.load('client', initializeGapiClient);
-}
-
-async function initializeGapiClient() {
-    try {
-        await gapi.client.init({
-            apiKey: GOOGLE_SHEETS_CONFIG.apiKey,
-        });
-        // Explicitly load Google Sheets API
-        await gapi.client.load('sheets', 'v4');
-        gapiInited = true;
-        console.log('Google API Client and Sheets API initialized');
-    } catch (error) {
-        console.error('Error initializing Google API Client:', error);
-    }
-}
+let googleAccessToken = null;
 
 // Initialize Google Identity Services token client for OAuth
 function initGISClient() {
@@ -163,14 +138,12 @@ function initGISClient() {
         scope: GOOGLE_SHEETS_CONFIG.scopes,
         callback: '',
     });
-    gisInited = true;
     console.log('Google Identity Services initialized');
 }
 
 // Auto-initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
-    if (GOOGLE_SHEETS_CONFIG.apiKey && GOOGLE_SHEETS_CONFIG.clientId) {
-        initGoogleSheetsAPI();
+    if (GOOGLE_SHEETS_CONFIG.clientId) {
         initGISClient();
     }
 });
