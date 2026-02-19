@@ -153,6 +153,11 @@ window.GoogleSheetsService = {
             throw new Error(`No spreadsheet ID configured for ${section}`);
         }
 
+        const tabName = SHEET_TAB_NAMES[section] || 'Sheet1';
+
+        // Ensure the sheet tab exists, create it if not
+        await this.ensureSheetTabExists(spreadsheetId, tabName);
+
         // Format all data rows
         const formattedRows = data.map(record => this.formatDataForSheet(section, record));
 
@@ -184,7 +189,6 @@ window.GoogleSheetsService = {
 
             // Clear existing data
             console.log('Clearing existing data...');
-            const tabName = SHEET_TAB_NAMES[section] || 'Sheet1';
             const clearUrl = `${SHEETS_API_BASE}/${spreadsheetId}/values/${tabName}!A:Z:clear`;
             await this.sheetsRequest(clearUrl, 'POST', {});
 
@@ -216,6 +220,26 @@ window.GoogleSheetsService = {
             } else {
                 throw new Error(error.message || 'Failed to sync to Google Sheets');
             }
+        }
+    },
+
+    /**
+     * Ensure a sheet tab exists, creating it if it doesn't
+     */
+    async ensureSheetTabExists(spreadsheetId, tabName) {
+        try {
+            const metaUrl = `${SHEETS_API_BASE}/${spreadsheetId}?fields=sheets.properties.title`;
+            const meta = await this.sheetsRequest(metaUrl, 'GET');
+            const exists = meta.sheets && meta.sheets.some(s => s.properties.title === tabName);
+            if (!exists) {
+                const batchUrl = `${SHEETS_API_BASE}/${spreadsheetId}:batchUpdate`;
+                await this.sheetsRequest(batchUrl, 'POST', {
+                    requests: [{ addSheet: { properties: { title: tabName } } }]
+                });
+                console.log(`Created sheet tab: ${tabName}`);
+            }
+        } catch (error) {
+            console.warn('Could not verify/create sheet tab:', error);
         }
     },
 
