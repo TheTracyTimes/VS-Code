@@ -97,10 +97,26 @@ async function submitContact(data) {
     }
 }
 
+// ===== DELETE RECORD =====
+
+async function deleteFirestoreRecord(collection, docId) {
+    try {
+        if (typeof db === 'undefined' || !db) {
+            throw new Error('Firebase is not initialized.');
+        }
+        await db.collection(collection).doc(docId).delete();
+        console.log('Record deleted:', docId);
+    } catch (error) {
+        console.error('Firebase delete error:', error);
+        throw new Error('Failed to delete record: ' + error.message);
+    }
+}
+
 // Export for use in other scripts
 if (typeof window !== 'undefined') {
     window.submitRegistration = submitRegistration;
     window.submitVendor = submitVendor;
     window.submitVolunteer = submitVolunteer;
     window.submitContact = submitContact;
+    window.deleteFirestoreRecord = deleteFirestoreRecord;
 }

@@ -303,6 +303,43 @@
             max-width: 250px;
             margin: 0 auto;
         }
+
+        @media (max-width: 768px) {
+            .meeting-hero {
+                padding: var(--spacing-xl) var(--spacing-md);
+            }
+
+            .meeting-hero h1 {
+                font-size: 32px;
+            }
+
+            .meeting-hero .date {
+                font-size: 22px;
+            }
+
+            .meeting-hero .location {
+                font-size: 16px;
+            }
+
+            .day-header {
+                font-size: 18px;
+                margin: calc(var(--spacing-md) * -1) calc(var(--spacing-md) * -1) var(--spacing-md);
+                padding: var(--spacing-sm) var(--spacing-md);
+            }
+
+            .schedule-day {
+                padding: var(--spacing-md);
+            }
+
+            .schedule-item {
+                flex-direction: column;
+                gap: var(--spacing-xs);
+            }
+
+            .schedule-time {
+                width: auto;
+            }
+        }
     </style>
 </head>
 <body>
@@ -416,6 +453,12 @@
 
             <div class="schedule-day">
                 <div class="day-header">Thursday, April 9th</div>
+                <div class="schedule-item">
+                    <div class="schedule-time">8:00 AM - 10:00 AM</div>
+                    <div class="schedule-event">
+                        <h4>Breakfast</h4>
+                    </div>
+                </div>
                 <div class="schedule-item">
                     <div class="schedule-time">11:00 AM - 3:00 PM</div>
                     <div class="schedule-event">

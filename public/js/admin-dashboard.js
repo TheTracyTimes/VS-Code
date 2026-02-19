@@ -185,7 +185,7 @@ function displayRegistrations(data) {
         deleteLink.textContent = 'Delete';
         deleteLink.addEventListener('click', (e) => {
             e.preventDefault();
-            deleteRecord('registrations', reg.id);
+            handleDelete('registrations', reg.id);
         });
 
         actionsCell.appendChild(viewLink);
@@ -246,7 +246,7 @@ function displayVolunteers(data) {
         deleteLink.textContent = 'Delete';
         deleteLink.addEventListener('click', (e) => {
             e.preventDefault();
-            deleteRecord('volunteers', vol.id);
+            handleDelete('volunteers', vol.id);
         });
 
         actionsCell.appendChild(viewLink);
@@ -332,7 +332,7 @@ function displayVendors(data) {
         deleteLink.textContent = 'Delete';
         deleteLink.addEventListener('click', (e) => {
             e.preventDefault();
-            deleteRecord('vendors', vendor.id);
+            handleDelete('vendors', vendor.id);
         });
 
         actionsCell.appendChild(deleteLink);
@@ -504,13 +504,13 @@ async function approveVendor(vendorId) {
 
 // ===== DELETE RECORD =====
 
-async function deleteRecord(collection, docId) {
+async function handleDelete(collection, docId) {
     if (!confirm('Are you sure you want to delete this record? This cannot be undone.')) {
         return;
     }
 
     try {
-        await window.deleteRecord(collection, docId);
+        await deleteRecord(collection, docId);
         alert('Record deleted successfully');
 
         // Reload appropriate section
