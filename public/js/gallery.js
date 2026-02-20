@@ -160,12 +160,77 @@ function initializeGalleries() {
     console.log('Gallery auto-rotation started (5 second interval)');
 }
 
+// ===== LIGHTBOX =====
+let lightboxGalleryId = null;
+
+function openLightbox(galleryId) {
+    const gallery = galleries[galleryId];
+    const container = document.getElementById(galleryId);
+    if (!container || !gallery) return;
+
+    const slides = container.querySelectorAll('.gallery-slide');
+    const src = slides[gallery.currentSlide].querySelector('img').src;
+    const alt = slides[gallery.currentSlide].querySelector('img').alt;
+
+    lightboxGalleryId = galleryId;
+    document.getElementById('lightboxImg').src = src;
+    document.getElementById('lightboxImg').alt = alt;
+    document.getElementById('lightbox').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('active');
+    document.getElementById('lightboxImg').src = '';
+    lightboxGalleryId = null;
+    document.body.style.overflow = '';
+}
+
+function lightboxNav(direction) {
+    if (!lightboxGalleryId) return;
+    changeSlide(lightboxGalleryId, direction, true);
+
+    const gallery = galleries[lightboxGalleryId];
+    const container = document.getElementById(lightboxGalleryId);
+    const slides = container.querySelectorAll('.gallery-slide');
+    document.getElementById('lightboxImg').src = slides[gallery.currentSlide].querySelector('img').src;
+    document.getElementById('lightboxImg').alt = slides[gallery.currentSlide].querySelector('img').alt;
+}
+
+function attachLightboxListeners() {
+    Object.keys(galleries).forEach(galleryId => {
+        const container = document.getElementById(galleryId);
+        if (!container) return;
+        container.querySelectorAll('.gallery-slide img').forEach(img => {
+            img.addEventListener('click', () => openLightbox(galleryId));
+        });
+    });
+
+    document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+    document.getElementById('lightboxPrev').addEventListener('click', () => lightboxNav(-1));
+    document.getElementById('lightboxNext').addEventListener('click', () => lightboxNav(1));
+
+    document.getElementById('lightbox').addEventListener('click', function(e) {
+        if (e.target === this) closeLightbox();
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (!document.getElementById('lightbox').classList.contains('active')) return;
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowLeft') lightboxNav(-1);
+        if (e.key === 'ArrowRight') lightboxNav(1);
+    });
+}
+
 // Initialize when DOM is loaded
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeGalleries);
+    document.addEventListener('DOMContentLoaded', () => {
+        initializeGalleries();
+        attachLightboxListeners();
+    });
 } else {
-    // DOM is already loaded
     initializeGalleries();
+    attachLightboxListeners();
 }
 
 console.log('Gallery script loaded');
