@@ -737,8 +737,6 @@
 /* Maps picker popup */
 .address-picker {
     cursor: pointer;
-    text-decoration: underline;
-    text-underline-offset: 3px;
     opacity: 0.8;
     transition: opacity var(--transition-fast);
     font-size: 14px;
