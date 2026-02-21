@@ -375,4 +375,45 @@ async function sendContactEmail(data) {
     }
 }
 
+// ===== ADDRESS MAPS PICKER =====
+document.addEventListener('DOMContentLoaded', function() {
+    const address = '3629 Tallevast Road, Sarasota, FL 34243';
+    const encoded = encodeURIComponent(address);
+
+    const popup = document.createElement('div');
+    popup.id = 'mapsPickerPopup';
+    popup.className = 'maps-picker-popup';
+    popup.innerHTML = `
+        <p>Open in Maps</p>
+        <a class="maps-picker-option" href="https://maps.google.com/?q=${encoded}" target="_blank" rel="noopener noreferrer">
+            <img src="https://www.google.com/favicon.ico" width="16" height="16" alt=""> Google Maps
+        </a>
+        <a class="maps-picker-option" href="https://maps.apple.com/?q=${encoded}" target="_blank" rel="noopener noreferrer">
+            <img src="https://www.apple.com/favicon.ico" width="16" height="16" alt=""> Apple Maps
+        </a>
+        <a class="maps-picker-option" href="https://waze.com/ul?q=${encoded}" target="_blank" rel="noopener noreferrer">
+            <img src="https://www.waze.com/favicon.ico" width="16" height="16" alt=""> Waze
+        </a>
+    `;
+    document.body.appendChild(popup);
+
+    document.querySelectorAll('.address-picker').forEach(function(el) {
+        el.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const rect = el.getBoundingClientRect();
+            popup.style.left = rect.left + 'px';
+            popup.style.top = (rect.bottom + window.scrollY + 8) + 'px';
+            popup.classList.toggle('active');
+        });
+    });
+
+    document.addEventListener('click', function() {
+        popup.classList.remove('active');
+    });
+
+    popup.addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+});
+
 console.log('Sarasota Gospel Temple website loaded successfully');
