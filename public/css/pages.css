@@ -735,6 +735,15 @@
 }
 
 /* Maps picker popup */
+.footer-address {
+    display: flex;
+    gap: 4px;
+}
+
+.footer-address strong {
+    white-space: nowrap;
+}
+
 .address-picker {
     cursor: pointer;
     opacity: 0.8;
