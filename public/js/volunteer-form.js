@@ -348,7 +348,7 @@ document.getElementById('volunteerForm').addEventListener('submit', async functi
 
     } catch (error) {
         console.error('Error submitting form:', error.message || 'Unknown error');
-        alert('There was an error submitting your volunteer application. Please try again or contact us at 941-800-5211.');
+        alert('There was an error submitting your volunteer application. Please try again or contact us at 941-487-0045.');
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;
     }

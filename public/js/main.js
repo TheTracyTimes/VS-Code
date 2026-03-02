@@ -340,7 +340,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 contactForm.reset();
             } catch (error) {
                 console.error('Error submitting contact form:', error);
-                alert('There was an error sending your message. Please try calling us at 941-800-5211.');
+                alert('There was an error sending your message. Please try calling us at 941-487-0045.');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = originalText;
