@@ -496,6 +496,30 @@ async function refreshData(section) {
 
 // ===== VIEW DETAILS =====
 
+// Field order matching each form's input sequence
+const FIELD_ORDER = {
+    contact: [
+        'name', 'email', 'phone', 'message', 'createdAt'
+    ],
+    registration: [
+        'firstName', 'lastName', 'phone', 'email', 'pastorName', 'assemblyName',
+        'services', 'airportTransport', 'travelingAlone', 'howManyPeople',
+        'arrivalTime', 'arrivalAirline', 'arrivalAirport', 'arrivalFlight',
+        'departureTime', 'departureAirline', 'departureAirport', 'departureFlight',
+        'localTransport', 'pickupLocation', 'hasChildren',
+        'vbsAttendance', 'vbsChildren', 'nurseryAttendance', 'nurseryChildren', 'createdAt'
+    ],
+    volunteer: [
+        'firstName', 'lastName', 'phone', 'email', 'pastorName', 'assemblyName',
+        'committees', 'principalInstrument', 'availability', 'committeeAssignments', 'createdAt'
+    ],
+    vendor: [
+        'firstName', 'lastName', 'businessName', 'phone', 'email', 'website',
+        'pastorName', 'assemblyName', 'selling', 'goodsType',
+        'tableStaffed', 'availability', 'status', 'approved', 'createdAt'
+    ]
+};
+
 function viewDetails(type, id) {
     let data;
     if (type === 'registration') {
@@ -548,8 +572,15 @@ function viewDetails(type, id) {
     title.style.marginTop = '0';
     contentDiv.appendChild(title);
 
-    for (const [key, value] of Object.entries(data)) {
-        if (key === 'id') continue;
+    // Use defined field order for this form type, then append any extra fields not in the list
+    const orderedKeys = FIELD_ORDER[type] || [];
+    const allKeys = Object.keys(data).filter(k => k !== 'id');
+    const extraKeys = allKeys.filter(k => !orderedKeys.includes(k));
+    const displayKeys = [...orderedKeys, ...extraKeys];
+
+    for (const key of displayKeys) {
+        if (!(key in data)) continue;
+        const value = data[key];
 
         let displayValue = value;
         if (Array.isArray(value)) {
