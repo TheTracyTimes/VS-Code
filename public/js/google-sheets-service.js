@@ -166,6 +166,7 @@ window.GoogleSheetsService = {
             registrations: [
                 'Timestamp', 'ID', 'First Name', 'Last Name', 'Phone', 'Email',
                 'Pastor Name', 'Assembly Name', 'Services', 'Airport Transport',
+                'Arrival Date', 'Departure Date',
                 'Local Transport', 'Has Children', 'Number of Children',
                 'VBS Attendance', 'Nursery Attendance'
             ],
@@ -259,7 +260,9 @@ window.GoogleSheetsService = {
                     data.phone || '', data.email || '',
                     data.pastorName || '', data.assemblyName || '',
                     Array.isArray(data.services) ? data.services.join(', ') : data.services || '',
-                    data.airportTransport || '', data.localTransport || '',
+                    data.airportTransport || '',
+                    data.arrivalDate || '', data.departureDate || '',
+                    data.localTransport || '',
                     data.hasChildren || '', data.numChildren || '',
                     data.vbsAttendance || '', data.nurseryAttendance || ''
                 ];

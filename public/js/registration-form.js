@@ -583,6 +583,8 @@ Assembly: ${data.assemblyName || 'Not provided'}
 Services Attending: ${Array.isArray(data.services) ? data.services.join(', ') : data.services}
 
 Airport Transportation: ${data.airportTransport}
+${data.airportTransport === 'Yes' ? `Arrival Date: ${data.arrivalDate || 'Not provided'}
+Departure Date: ${data.departureDate || 'Not provided'}` : ''}
 Local Transportation: ${data.localTransport}
 
 Children Under 10: ${data.hasChildren}

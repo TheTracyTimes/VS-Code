@@ -504,8 +504,8 @@ const FIELD_ORDER = {
     registration: [
         'firstName', 'lastName', 'phone', 'email', 'pastorName', 'assemblyName',
         'services', 'airportTransport', 'travelingAlone', 'howManyPeople',
-        'arrivalTime', 'arrivalAirline', 'arrivalAirport', 'arrivalFlight',
-        'departureTime', 'departureAirline', 'departureAirport', 'departureFlight',
+        'arrivalDate', 'arrivalTime', 'arrivalAirline', 'arrivalAirport', 'arrivalFlight',
+        'departureDate', 'departureTime', 'departureAirline', 'departureAirport', 'departureFlight',
         'localTransport', 'pickupLocation', 'hasChildren',
         'vbsAttendance', 'vbsChildren', 'nurseryAttendance', 'nurseryChildren', 'createdAt'
     ],
