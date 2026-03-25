@@ -992,6 +992,13 @@ let serviceChartInstance = null;
 let pastorChartInstance   = null;
 let assemblyChartInstance = null;
 
+// Merge decisions: normA -> canonical norm (Yes = same person/assembly)
+const pastorMerges   = {};
+const assemblyMerges = {};
+// Dismissed flag pairs (No = confirmed different)
+const dismissedPastorFlags   = new Set();
+const dismissedAssemblyFlags = new Set();
+
 const CHART_PALETTE = [
     '#28478a','#c45508','#2a6496','#e07020','#1b6ca8',
     '#8b4513','#2e8b57','#8b008b','#b8860b','#4682b4',
@@ -1056,7 +1063,8 @@ function groupAndFlag(items, normFn, similarFn) {
             if (similarFn(keys[i], keys[j])) {
                 flags.push({
                     a: groups[keys[i]].display, countA: groups[keys[i]].count,
-                    b: groups[keys[j]].display, countB: groups[keys[j]].count
+                    b: groups[keys[j]].display, countB: groups[keys[j]].count,
+                    normA: keys[i], normB: keys[j]
                 });
             }
         }
@@ -1064,21 +1072,115 @@ function groupAndFlag(items, normFn, similarFn) {
     return { groups, flags };
 }
 
+function resolveNorm(norm, merges) {
+    const visited = new Set();
+    while (merges[norm] && !visited.has(norm)) {
+        visited.add(norm);
+        norm = merges[norm];
+    }
+    return norm;
+}
+
+function applyMerges(groups, merges) {
+    const result = {};
+    Object.entries(groups).forEach(([norm, info]) => {
+        const canonical = resolveNorm(norm, merges);
+        if (!result[canonical]) {
+            result[canonical] = { display: info.display, count: info.count };
+        } else {
+            result[canonical].count += info.count;
+            if (info.display.length > result[canonical].display.length) {
+                result[canonical].display = info.display;
+            }
+        }
+    });
+    return result;
+}
+
 function renderFlags(containerId, flags, type) {
     const container = document.getElementById(containerId);
     if (!container) return;
     container.innerHTML = '';
-    if (!flags.length) return;
+
+    const dismissed = type === 'pastor' ? dismissedPastorFlags : dismissedAssemblyFlags;
+    const active = flags.filter(f => !dismissed.has(`${f.normA}|||${f.normB}`));
+    if (!active.length) return;
 
     const heading = document.createElement('p');
     heading.className = 'flag-heading';
-    heading.textContent = `⚠ ${flags.length} potential duplicate${flags.length > 1 ? 's' : ''} — please confirm:`;
+    heading.textContent = `⚠ ${active.length} potential duplicate${active.length > 1 ? 's' : ''} — please confirm:`;
     container.appendChild(heading);
 
-    flags.forEach(f => {
+    active.forEach(f => {
         const item = document.createElement('div');
         item.className = 'flag-item';
-        item.textContent = `"${f.a}" (${f.countA}) and "${f.b}" (${f.countB}) — same ${type}?`;
+        item.style.display = 'flex';
+        item.style.alignItems = 'center';
+        item.style.justifyContent = 'space-between';
+        item.style.gap = '8px';
+
+        const text = document.createElement('span');
+        text.textContent = `"${f.a}" (${f.countA}) and "${f.b}" (${f.countB}) — same ${type}?`;
+        text.style.flex = '1';
+        item.appendChild(text);
+
+        const btnWrap = document.createElement('span');
+        btnWrap.style.display = 'flex';
+        btnWrap.style.gap = '6px';
+        btnWrap.style.flexShrink = '0';
+
+        const yesBtn = document.createElement('button');
+        yesBtn.textContent = 'Yes';
+        yesBtn.style.cssText = 'padding:2px 12px;font-size:12px;font-weight:600;background:#28478a;color:white;border:none;border-radius:4px;cursor:pointer;';
+        yesBtn.addEventListener('click', () => {
+            // Replace the row with a name picker so the user chooses the canonical name
+            item.innerHTML = '';
+            item.style.flexDirection = 'column';
+            item.style.alignItems = 'flex-start';
+            item.style.gap = '6px';
+
+            const prompt = document.createElement('span');
+            prompt.style.cssText = 'font-size:12px;font-weight:600;color:#856404;';
+            prompt.textContent = 'Which name should they fall under?';
+            item.appendChild(prompt);
+
+            const btnRow = document.createElement('span');
+            btnRow.style.display = 'flex';
+            btnRow.style.gap = '6px';
+
+            [{ label: f.a, norm: f.normA }, { label: f.b, norm: f.normB }].forEach(option => {
+                const btn = document.createElement('button');
+                btn.textContent = option.label;
+                btn.style.cssText = 'padding:3px 12px;font-size:12px;font-weight:600;background:#28478a;color:white;border:none;border-radius:4px;cursor:pointer;';
+                btn.addEventListener('click', () => {
+                    const canonical = option.norm;
+                    const other = option.norm === f.normA ? f.normB : f.normA;
+                    const merges = type === 'pastor' ? pastorMerges : assemblyMerges;
+                    merges[other] = canonical;
+                    dismissed.add(`${f.normA}|||${f.normB}`);
+                    if (type === 'pastor') renderPastorChart();
+                    else renderAssemblyChart();
+                });
+                btnRow.appendChild(btn);
+            });
+
+            item.appendChild(btnRow);
+        });
+
+        const noBtn = document.createElement('button');
+        noBtn.textContent = 'No';
+        noBtn.style.cssText = 'padding:2px 12px;font-size:12px;font-weight:600;background:white;color:#28478a;border:1px solid #28478a;border-radius:4px;cursor:pointer;';
+        noBtn.addEventListener('click', () => {
+            dismissed.add(`${f.normA}|||${f.normB}`);
+            item.remove();
+            const remaining = container.querySelectorAll('.flag-item').length;
+            if (!remaining) container.innerHTML = '';
+            else heading.textContent = `⚠ ${remaining} potential duplicate${remaining > 1 ? 's' : ''} — please confirm:`;
+        });
+
+        btnWrap.appendChild(yesBtn);
+        btnWrap.appendChild(noBtn);
+        item.appendChild(btnWrap);
         container.appendChild(item);
     });
 }
@@ -1177,7 +1279,8 @@ function renderServiceChart() {
 
 function renderPastorChart() {
     const names = registrationsData.map(r => r.pastorName).filter(Boolean);
-    const { groups, flags } = groupAndFlag(names, normalizePastorName, isSimilarPastorName);
+    const { groups: rawGroups, flags } = groupAndFlag(names, normalizePastorName, isSimilarPastorName);
+    const groups = applyMerges(rawGroups, pastorMerges);
     const sorted = Object.values(groups).sort((a, b) => b.count - a.count);
 
     if (pastorChartInstance) pastorChartInstance.destroy();
@@ -1194,9 +1297,9 @@ function renderPastorChart() {
             onClick(e, elements) {
                 if (!elements.length) return;
                 const label = sorted[elements[0].index].display;
-                const norm  = normalizePastorName(label);
+                const canonical = resolveNorm(normalizePastorName(label), pastorMerges);
                 const matches = registrationsData.filter(r =>
-                    normalizePastorName(r.pastorName) === norm
+                    resolveNorm(normalizePastorName(r.pastorName), pastorMerges) === canonical
                 );
                 showChartDetail('pastorDetail', 'pastorDetailTitle', 'pastorDetailBody',
                     `Pastor: ${label} — ${matches.length} registrant${matches.length !== 1 ? 's' : ''}`,
@@ -1213,7 +1316,8 @@ function renderPastorChart() {
 
 function renderAssemblyChart() {
     const names = registrationsData.map(r => r.assemblyName).filter(Boolean);
-    const { groups, flags } = groupAndFlag(names, normalizeAssemblyName, isSimilarAssemblyName);
+    const { groups: rawGroups, flags } = groupAndFlag(names, normalizeAssemblyName, isSimilarAssemblyName);
+    const groups = applyMerges(rawGroups, assemblyMerges);
     const sorted = Object.values(groups).sort((a, b) => b.count - a.count);
 
     if (assemblyChartInstance) assemblyChartInstance.destroy();
@@ -1230,9 +1334,9 @@ function renderAssemblyChart() {
             onClick(e, elements) {
                 if (!elements.length) return;
                 const label = sorted[elements[0].index].display;
-                const norm  = normalizeAssemblyName(label);
+                const canonical = resolveNorm(normalizeAssemblyName(label), assemblyMerges);
                 const matches = registrationsData.filter(r =>
-                    normalizeAssemblyName(r.assemblyName) === norm
+                    resolveNorm(normalizeAssemblyName(r.assemblyName), assemblyMerges) === canonical
                 );
                 showChartDetail('assemblyDetail', 'assemblyDetailTitle', 'assemblyDetailBody',
                     `Assembly: ${label} — ${matches.length} registrant${matches.length !== 1 ? 's' : ''}`,
