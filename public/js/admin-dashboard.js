@@ -66,6 +66,12 @@ async function loadRegistrations() {
         document.getElementById('registrationsEmpty').style.display = 'none';
 
         registrationsData = await getAllRegistrations();
+        // Deduplicate array fields (e.g. services) corrupted by the back/forward glitch
+        registrationsData.forEach(reg => {
+            if (Array.isArray(reg.services)) {
+                reg.services = [...new Set(reg.services)];
+            }
+        });
         window.registrationsData = registrationsData; // Expose for Google Sheets sync
 
         if (registrationsData.length === 0) {

@@ -410,11 +410,17 @@ function isValidPhone(phone) {
 function saveCurrentSectionData() {
     const section = document.querySelector(`.form-section[data-section="${currentStep}"]`);
 
+    // Track which checkbox groups we've already reset this save call
+    const resetCheckboxNames = new Set();
+
     // Save all input values
     section.querySelectorAll('input, textarea, select').forEach(input => {
         if (input.type === 'checkbox') {
-            if (!formData[input.name]) {
+            // Reset the array the first time we encounter each checkbox name
+            // so navigating back and forward never creates duplicates
+            if (!resetCheckboxNames.has(input.name)) {
                 formData[input.name] = [];
+                resetCheckboxNames.add(input.name);
             }
             if (input.checked) {
                 formData[input.name].push(input.value);
