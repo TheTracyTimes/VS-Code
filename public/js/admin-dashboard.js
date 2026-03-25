@@ -1001,6 +1001,14 @@ const dismissedRegAssembly = new Set();
 const dismissedVolPastor   = new Set();
 const dismissedVolAssembly = new Set();
 
+// Admin merge decisions — stored in Firestore adminSettings, never modifies user submissions
+const savedMerges = {
+    registrationPastor:   {},
+    registrationAssembly: {},
+    volunteerPastor:      {},
+    volunteerAssembly:    {}
+};
+
 const CHART_PALETTE = [
     '#28478a','#c45508','#2a6496','#e07020','#1b6ca8',
     '#8b4513','#2e8b57','#8b008b','#b8860b','#4682b4',
@@ -1081,13 +1089,40 @@ function findFlagsForField(data, fieldGetter, normFn, similarFn) {
     return flags;
 }
 
-async function permanentlyMerge(collection, data, fieldName, normFn, loserNorm, winnerDisplay) {
-    const docsToUpdate = data.filter(r => normFn(r[fieldName] || '') === loserNorm);
-    docsToUpdate.forEach(r => { r[fieldName] = winnerDisplay; });
+// Return the display name after applying saved merges (never modifies original records)
+function getEffectiveName(rawName, merges, normFn) {
+    if (!rawName) return '';
+    const norm = normFn(rawName);
+    return merges[norm] || rawName;
+}
+
+// Load admin merge decisions from Firestore adminSettings
+async function loadMergeDecisions() {
     try {
-        await Promise.all(docsToUpdate.map(r => updateRecord(collection, r.id, { [fieldName]: winnerDisplay })));
+        const doc = await db.collection('adminSettings').doc('merges').get();
+        if (doc.exists) {
+            const data = doc.data();
+            Object.assign(savedMerges.registrationPastor,   data.registrationPastor   || {});
+            Object.assign(savedMerges.registrationAssembly, data.registrationAssembly || {});
+            Object.assign(savedMerges.volunteerPastor,      data.volunteerPastor      || {});
+            Object.assign(savedMerges.volunteerAssembly,    data.volunteerAssembly    || {});
+        }
     } catch (e) {
-        console.error('Error saving merge to Firestore:', e);
+        console.error('Error loading merge decisions:', e);
+    }
+}
+
+// Save a merge decision to Firestore adminSettings (never touches user submission records)
+async function saveMerge(chartType, round, loserNorm, winnerDisplay) {
+    const key = chartType + round.charAt(0).toUpperCase() + round.slice(1); // e.g. 'registrationPastor'
+    savedMerges[key][loserNorm] = winnerDisplay;
+    try {
+        await db.collection('adminSettings').doc('merges').set(
+            { [key]: savedMerges[key] },
+            { merge: true }
+        );
+    } catch (e) {
+        console.error('Error saving merge decision:', e);
         alert('Error saving to database: ' + e.message);
     }
 }
@@ -1132,22 +1167,26 @@ function renderGroupFlags(containerId, chartType) {
     }
 
     // Determine field config for current round
-    let fieldName, normFn, similarFn, dismissed, roundLabel;
+    let fieldGetter, normFn, similarFn, dismissed, roundLabel, mergeSet, round_key;
     if (round === 'pastor') {
-        fieldName  = 'pastorName';
+        mergeSet   = isReg ? savedMerges.registrationPastor   : savedMerges.volunteerPastor;
+        fieldGetter = r => getEffectiveName(r.pastorName, mergeSet, normalizePastorName);
         normFn     = normalizePastorName;
         similarFn  = isSimilarPastorName;
         dismissed  = isReg ? dismissedRegPastor   : dismissedVolPastor;
         roundLabel = 'Round 1 \u2014 Similar Pastor Names';
+        round_key  = 'pastor';
     } else {
-        fieldName  = 'assemblyName';
+        mergeSet   = isReg ? savedMerges.registrationAssembly : savedMerges.volunteerAssembly;
+        fieldGetter = r => getEffectiveName(r.assemblyName, mergeSet, normalizeAssemblyName);
         normFn     = normalizeAssemblyName;
         similarFn  = isSimilarAssemblyName;
         dismissed  = isReg ? dismissedRegAssembly : dismissedVolAssembly;
         roundLabel = 'Round 2 \u2014 Similar Assembly Names';
+        round_key  = 'assembly';
     }
 
-    const flags  = findFlagsForField(data, r => r[fieldName], normFn, similarFn);
+    const flags  = findFlagsForField(data, fieldGetter, normFn, similarFn);
     const active = flags.filter(f => !dismissed.has(`${f.normA}|||${f.normB}`));
 
     // Auto-advance if nothing left in this round
@@ -1209,7 +1248,7 @@ function renderGroupFlags(containerId, chartType) {
                     btn.textContent = 'Saving\u2026';
                     const loserNorm = option.norm === f.normA ? f.normB : f.normA;
                     dismissed.add(`${f.normA}|||${f.normB}`);
-                    await permanentlyMerge(collection, data, fieldName, normFn, loserNorm, option.display);
+                    await saveMerge(chartType, round_key, loserNorm, option.display);
                     rerender();
                 });
                 btnRow.appendChild(btn);
@@ -1231,7 +1270,6 @@ function renderGroupFlags(containerId, chartType) {
         container.appendChild(item);
     });
 }
-
 function showChartDetail(panelId, titleId, bodyId, title, registrants) {
     const panel = document.getElementById(panelId);
     const titleEl = document.getElementById(titleId);
@@ -1370,7 +1408,9 @@ function renderCommitteeChart() {
 function renderRegistrationGroupChart() {
     const groups = {};
     registrationsData.forEach(r => {
-        const lbl = getCombinedLabel(r.pastorName, r.assemblyName);
+        const ep = getEffectiveName(r.pastorName,  savedMerges.registrationPastor,   normalizePastorName);
+        const ea = getEffectiveName(r.assemblyName, savedMerges.registrationAssembly, normalizeAssemblyName);
+        const lbl = getCombinedLabel(ep, ea);
         groups[lbl] = (groups[lbl] || 0) + 1;
     });
     const sorted = Object.entries(groups).sort((a, b) => b[1] - a[1]);
@@ -1389,7 +1429,11 @@ function renderRegistrationGroupChart() {
             onClick(e, elements) {
                 if (!elements.length) return;
                 const lbl = sorted[elements[0].index][0];
-                const matches = registrationsData.filter(r => getCombinedLabel(r.pastorName, r.assemblyName) === lbl);
+                const matches = registrationsData.filter(r => {
+                    const ep = getEffectiveName(r.pastorName,  savedMerges.registrationPastor,   normalizePastorName);
+                    const ea = getEffectiveName(r.assemblyName, savedMerges.registrationAssembly, normalizeAssemblyName);
+                    return getCombinedLabel(ep, ea) === lbl;
+                });
                 showChartDetail('registrationGroupDetail', 'registrationGroupDetailTitle', 'registrationGroupDetailBody',
                     `${lbl} \u2014 ${matches.length} registrant${matches.length !== 1 ? 's' : ''}`, matches);
             },
@@ -1405,7 +1449,9 @@ function renderRegistrationGroupChart() {
 function renderVolunteerGroupChart() {
     const groups = {};
     volunteersData.forEach(v => {
-        const lbl = getCombinedLabel(v.pastorName, v.assemblyName);
+        const ep = getEffectiveName(v.pastorName,  savedMerges.volunteerPastor,   normalizePastorName);
+        const ea = getEffectiveName(v.assemblyName, savedMerges.volunteerAssembly, normalizeAssemblyName);
+        const lbl = getCombinedLabel(ep, ea);
         groups[lbl] = (groups[lbl] || 0) + 1;
     });
     const sorted = Object.entries(groups).sort((a, b) => b[1] - a[1]);
@@ -1424,7 +1470,11 @@ function renderVolunteerGroupChart() {
             onClick(e, elements) {
                 if (!elements.length) return;
                 const lbl = sorted[elements[0].index][0];
-                const matches = volunteersData.filter(v => getCombinedLabel(v.pastorName, v.assemblyName) === lbl);
+                const matches = volunteersData.filter(v => {
+                    const ep = getEffectiveName(v.pastorName,  savedMerges.volunteerPastor,   normalizePastorName);
+                    const ea = getEffectiveName(v.assemblyName, savedMerges.volunteerAssembly, normalizeAssemblyName);
+                    return getCombinedLabel(ep, ea) === lbl;
+                });
                 showChartDetail('volunteerGroupDetail', 'volunteerGroupDetailTitle', 'volunteerGroupDetailBody',
                     `${lbl} \u2014 ${matches.length} volunteer${matches.length !== 1 ? 's' : ''}`, matches);
             },
@@ -1437,7 +1487,8 @@ function renderVolunteerGroupChart() {
     renderGroupFlags('volunteerGroupFlags', 'volunteer');
 }
 
-function renderCharts() {
+async function renderCharts() {
+    await loadMergeDecisions();
     renderServiceChart();
     renderCommitteeChart();
     renderRegistrationGroupChart();
