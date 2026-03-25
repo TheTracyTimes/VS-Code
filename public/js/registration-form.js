@@ -6,6 +6,10 @@
 // Current step tracker
 let currentStep = 1;
 
+// Flatpickr date picker instances (initialized lazily when airport fields are shown)
+let arrivalDatepicker = null;
+let departureDatepicker = null;
+
 // Form data object
 let formData = {};
 
@@ -80,12 +84,23 @@ function toggleAirportFields(show) {
         inputs.forEach(input => {
             input.setAttribute('required', 'required');
         });
+        // Initialize Flatpickr date pickers the first time the fields are shown
+        if (!arrivalDatepicker && typeof flatpickr !== 'undefined') {
+            arrivalDatepicker = flatpickr('#arrivalDate', { dateFormat: 'm/d/Y', allowInput: false });
+            departureDatepicker = flatpickr('#departureDate', { dateFormat: 'm/d/Y', allowInput: false });
+        }
     } else {
         fields.style.display = 'none';
-        // Remove required attribute and set to N/A
+        // Remove required attribute; clear date pickers, set text fields to N/A
         inputs.forEach(input => {
             input.removeAttribute('required');
-            input.value = 'N/A';
+            if (input.id === 'arrivalDate') {
+                if (arrivalDatepicker) arrivalDatepicker.clear();
+            } else if (input.id === 'departureDate') {
+                if (departureDatepicker) departureDatepicker.clear();
+            } else {
+                input.value = 'N/A';
+            }
             // Remove error state
             input.classList.remove('error');
             input.closest('.form-group').classList.remove('has-error');
