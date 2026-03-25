@@ -463,6 +463,47 @@
         @media (max-width: 768px) {
             .charts-row { grid-template-columns: 1fr; }
         }
+
+        /* Chart detail panel */
+        .chart-detail {
+            margin-top: var(--spacing-lg);
+            border-top: 2px solid var(--off-white);
+            padding-top: var(--spacing-md);
+            display: none;
+        }
+        .chart-detail.visible {
+            display: block;
+        }
+        .chart-detail-title {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--navy-blue);
+            margin-bottom: var(--spacing-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .chart-detail table {
+            font-size: 13px;
+        }
+        .chart-detail thead {
+            background-color: var(--navy-blue);
+        }
+        .chart-detail thead th {
+            padding: 8px 12px;
+            font-size: 12px;
+        }
+        .chart-detail tbody td {
+            padding: 7px 12px;
+        }
+        .service-chart-detail {
+            margin-top: var(--spacing-lg);
+            border-top: 2px solid var(--off-white);
+            padding-top: var(--spacing-md);
+            display: none;
+        }
+        .service-chart-detail.visible {
+            display: block;
+        }
     </style>
 
     <!-- Firebase -->
@@ -763,19 +804,46 @@
             <!-- CHARTS SECTION -->
             <div id="charts-section" class="section-content">
                 <div class="chart-card">
-                    <h3>Service Attendance by Session</h3>
+                    <h3>Service Attendance by Session <span style="font-size:13px;font-weight:400;color:var(--dark-gray);">— click a point to see attendees</span></h3>
                     <canvas id="serviceChart" height="90"></canvas>
+                    <div class="service-chart-detail" id="serviceDetail">
+                        <div class="chart-detail-title" id="serviceDetailTitle"></div>
+                        <div class="table-container">
+                            <table>
+                                <thead><tr><th>Name</th><th>Email</th><th>Phone</th></tr></thead>
+                                <tbody id="serviceDetailBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
                 <div class="charts-row">
                     <div class="chart-card">
-                        <h3>Registrations by Pastor</h3>
+                        <h3>Registrations by Pastor <span style="font-size:13px;font-weight:400;color:var(--dark-gray);">— click a slice</span></h3>
                         <canvas id="pastorChart"></canvas>
                         <div id="pastorFlags" class="flag-list"></div>
+                        <div class="chart-detail" id="pastorDetail">
+                            <div class="chart-detail-title" id="pastorDetailTitle"></div>
+                            <div class="table-container">
+                                <table>
+                                    <thead><tr><th>Name</th><th>Email</th><th>Phone</th></tr></thead>
+                                    <tbody id="pastorDetailBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                     <div class="chart-card">
-                        <h3>Registrations by Assembly</h3>
+                        <h3>Registrations by Assembly <span style="font-size:13px;font-weight:400;color:var(--dark-gray);">— click a slice</span></h3>
                         <canvas id="assemblyChart"></canvas>
                         <div id="assemblyFlags" class="flag-list"></div>
+                        <div class="chart-detail" id="assemblyDetail">
+                            <div class="chart-detail-title" id="assemblyDetailTitle"></div>
+                            <div class="table-container">
+                                <table>
+                                    <thead><tr><th>Name</th><th>Email</th><th>Phone</th></tr></thead>
+                                    <tbody id="assemblyDetailBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

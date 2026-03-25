@@ -1083,6 +1083,32 @@ function renderFlags(containerId, flags, type) {
     });
 }
 
+function showChartDetail(panelId, titleId, bodyId, title, registrants) {
+    const panel = document.getElementById(panelId);
+    const titleEl = document.getElementById(titleId);
+    const tbody = document.getElementById(bodyId);
+    if (!panel || !titleEl || !tbody) return;
+
+    titleEl.textContent = title;
+    tbody.innerHTML = '';
+
+    registrants.forEach(r => {
+        const tr = document.createElement('tr');
+        const nameCell = document.createElement('td');
+        nameCell.textContent = `${r.firstName || ''} ${r.lastName || ''}`.trim() || r.name || '—';
+        const emailCell = document.createElement('td');
+        emailCell.textContent = r.email || '—';
+        const phoneCell = document.createElement('td');
+        phoneCell.textContent = r.phone || '—';
+        tr.appendChild(nameCell);
+        tr.appendChild(emailCell);
+        tr.appendChild(phoneCell);
+        tbody.appendChild(tr);
+    });
+
+    panel.classList.add('visible');
+}
+
 function renderServiceChart() {
     const serviceOrder = [
         { key: 'Thursday Morning Service, April 9th',  label: 'Thu Morning' },
@@ -1119,12 +1145,25 @@ function renderServiceChart() {
                 pointBackgroundColor: '#c45508',
                 pointBorderColor: '#c45508',
                 pointRadius: 6,
+                pointHoverRadius: 8,
                 tension: 0.3,
                 fill: true
             }]
         },
         options: {
             responsive: true,
+            onClick(e, elements) {
+                if (!elements.length) return;
+                const idx = elements[0].index;
+                const serviceKey = serviceOrder[idx].key;
+                const serviceLabel = serviceOrder[idx].label;
+                const attendees = registrationsData.filter(r =>
+                    Array.isArray(r.services) && r.services.includes(serviceKey)
+                );
+                showChartDetail('serviceDetail', 'serviceDetailTitle', 'serviceDetailBody',
+                    `${serviceLabel} — ${attendees.length} attendee${attendees.length !== 1 ? 's' : ''}`,
+                    attendees);
+            },
             plugins: {
                 legend: { display: false },
                 tooltip: { mode: 'index', intersect: false }
@@ -1152,6 +1191,17 @@ function renderPastorChart() {
         },
         options: {
             responsive: true,
+            onClick(e, elements) {
+                if (!elements.length) return;
+                const label = sorted[elements[0].index].display;
+                const norm  = normalizePastorName(label);
+                const matches = registrationsData.filter(r =>
+                    normalizePastorName(r.pastorName) === norm
+                );
+                showChartDetail('pastorDetail', 'pastorDetailTitle', 'pastorDetailBody',
+                    `Pastor: ${label} — ${matches.length} registrant${matches.length !== 1 ? 's' : ''}`,
+                    matches);
+            },
             plugins: {
                 legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 }, padding: 8 } },
                 tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw}` } }
@@ -1177,6 +1227,17 @@ function renderAssemblyChart() {
         },
         options: {
             responsive: true,
+            onClick(e, elements) {
+                if (!elements.length) return;
+                const label = sorted[elements[0].index].display;
+                const norm  = normalizeAssemblyName(label);
+                const matches = registrationsData.filter(r =>
+                    normalizeAssemblyName(r.assemblyName) === norm
+                );
+                showChartDetail('assemblyDetail', 'assemblyDetailTitle', 'assemblyDetailBody',
+                    `Assembly: ${label} — ${matches.length} registrant${matches.length !== 1 ? 's' : ''}`,
+                    matches);
+            },
             plugins: {
                 legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 }, padding: 8 } },
                 tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw}` } }
