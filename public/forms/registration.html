@@ -55,8 +55,20 @@
         }
         .flatpickr-input {
             cursor: pointer;
-            width: 100%;
-            box-sizing: border-box;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            padding: 12px 16px !important;
+            font-family: 'Source Serif Pro', Georgia, serif !important;
+            font-size: 16px !important;
+            color: var(--charcoal) !important;
+            background-color: white !important;
+            border: 1px solid var(--dark-gray) !important;
+            border-radius: var(--radius-sm) !important;
+            height: auto !important;
+        }
+        .flatpickr-input:focus {
+            outline: none !important;
+            border-color: var(--navy-blue) !important;
         }
     </style>
     <style>
@@ -267,7 +279,7 @@
 
                         <div class="form-group">
                             <label for="arrivalDate">Arrival Date <span class="required">*</span></label>
-                            <input type="text" id="arrivalDate" name="arrivalDate" placeholder="e.g., 04/09/2026" readonly>
+                            <input type="text" id="arrivalDate" name="arrivalDate" placeholder="e.g., 04/09/2026">
                             <span class="error-message">Please enter your arrival date</span>
                         </div>
 
@@ -303,7 +315,7 @@
 
                         <div class="form-group">
                             <label for="departureDate">Departure Date <span class="required">*</span></label>
-                            <input type="text" id="departureDate" name="departureDate" placeholder="e.g., 04/11/2026" readonly>
+                            <input type="text" id="departureDate" name="departureDate" placeholder="e.g., 04/11/2026">
                             <span class="error-message">Please enter your departure date</span>
                         </div>
 
