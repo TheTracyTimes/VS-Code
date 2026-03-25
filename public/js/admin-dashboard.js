@@ -1426,7 +1426,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const section = this.getAttribute('data-section');
             if (section) {
                 showSection(section);
-                if (section === 'charts') renderCharts();
+                if (section === 'charts') requestAnimationFrame(() => renderCharts());
             }
         });
     });
