@@ -1120,17 +1120,42 @@ function applyMerges(groups, merges) {
     return result;
 }
 
-function renderFlags(containerId, flags, label, merges, dismissed, rerender) {
+function renderFlags(containerId, flags, label, merges, dismissed, rerender, reset) {
     const container = document.getElementById(containerId);
     if (!container) return;
     container.innerHTML = '';
 
     const active = flags.filter(f => !dismissed.has(`${f.normA}|||${f.normB}`));
-    if (!active.length) return;
+    const hasAnyDecision = dismissed.size > 0 || Object.keys(merges).length > 0;
+
+    if (!active.length && !hasAnyDecision) return;
 
     const heading = document.createElement('p');
     heading.className = 'flag-heading';
+
+    if (!active.length && hasAnyDecision) {
+        heading.textContent = '\u2713 All duplicates resolved.';
+        heading.style.cssText = 'background:#d4edda;border-color:#28a745;color:#155724;display:flex;align-items:center;justify-content:space-between;';
+        if (reset) {
+            const resetBtn = document.createElement('button');
+            resetBtn.textContent = 'Reset';
+            resetBtn.style.cssText = 'padding:2px 10px;font-size:12px;background:white;color:#155724;border:1px solid #155724;border-radius:4px;cursor:pointer;margin-left:12px;';
+            resetBtn.addEventListener('click', reset);
+            heading.appendChild(resetBtn);
+        }
+        container.appendChild(heading);
+        return;
+    }
+
     heading.textContent = `\u26A0 ${active.length} potential duplicate${active.length > 1 ? 's' : ''} \u2014 please confirm:`;
+    heading.style.cssText = 'display:flex;align-items:center;justify-content:space-between;';
+    if (reset) {
+        const resetBtn = document.createElement('button');
+        resetBtn.textContent = 'Reset';
+        resetBtn.style.cssText = 'padding:2px 10px;font-size:12px;background:white;color:#856404;border:1px solid #856404;border-radius:4px;cursor:pointer;margin-left:12px;';
+        resetBtn.addEventListener('click', reset);
+        heading.appendChild(resetBtn);
+    }
     container.appendChild(heading);
 
     active.forEach(f => {
@@ -1363,7 +1388,12 @@ function renderRegistrationGroupChart() {
             }
         }
     });
-    renderFlags('registrationGroupFlags', flags, 'group', registrationGroupMerges, dismissedRegistrationGroupFlags, renderRegistrationGroupChart);
+    function resetRegistrationGroupFlags() {
+        for (const k in registrationGroupMerges) delete registrationGroupMerges[k];
+        dismissedRegistrationGroupFlags.clear();
+        renderRegistrationGroupChart();
+    }
+    renderFlags('registrationGroupFlags', flags, 'group', registrationGroupMerges, dismissedRegistrationGroupFlags, renderRegistrationGroupChart, resetRegistrationGroupFlags);
 }
 
 function renderVolunteerGroupChart() {
@@ -1399,7 +1429,12 @@ function renderVolunteerGroupChart() {
             }
         }
     });
-    renderFlags('volunteerGroupFlags', flags, 'group', volunteerGroupMerges, dismissedVolunteerGroupFlags, renderVolunteerGroupChart);
+    function resetVolunteerGroupFlags() {
+        for (const k in volunteerGroupMerges) delete volunteerGroupMerges[k];
+        dismissedVolunteerGroupFlags.clear();
+        renderVolunteerGroupChart();
+    }
+    renderFlags('volunteerGroupFlags', flags, 'group', volunteerGroupMerges, dismissedVolunteerGroupFlags, renderVolunteerGroupChart, resetVolunteerGroupFlags);
 }
 
 function renderCharts() {
