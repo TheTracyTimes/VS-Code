@@ -445,6 +445,9 @@ function updateStatistics() {
 
     const needsChildcare = registrationsData.filter(r => r.hasChildren === 'Yes').length;
     document.getElementById('needsChildcare').textContent = needsChildcare;
+
+    const needsPickup = registrationsData.filter(r => r.localTransport === 'Yes').length;
+    document.getElementById('needsPickup').textContent = needsPickup;
 }
 
 // ===== SECTION NAVIGATION =====
