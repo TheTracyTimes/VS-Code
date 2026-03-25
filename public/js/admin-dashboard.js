@@ -190,9 +190,13 @@ function displayRegistrations(data) {
         pickupCell.textContent = reg.localTransport || '—';
         row.appendChild(pickupCell);
 
-        const childcareCell = document.createElement('td');
-        childcareCell.textContent = reg.hasChildren || '—';
-        row.appendChild(childcareCell);
+        const nurseryCell = document.createElement('td');
+        nurseryCell.textContent = reg.nurseryAttendance || '—';
+        row.appendChild(nurseryCell);
+
+        const vbsCell = document.createElement('td');
+        vbsCell.textContent = reg.vbsAttendance || '—';
+        row.appendChild(vbsCell);
 
         const dateCell = document.createElement('td');
         dateCell.textContent = formatDate(reg.createdAt);
@@ -439,8 +443,11 @@ function updateStatistics() {
     const needsTransport = registrationsData.filter(r => r.airportTransport === 'Yes').length;
     document.getElementById('needsTransport').textContent = needsTransport;
 
-    const needsChildcare = registrationsData.filter(r => r.hasChildren === 'Yes').length;
-    document.getElementById('needsChildcare').textContent = needsChildcare;
+    const needsNursery = registrationsData.filter(r => r.nurseryAttendance === 'Yes').length;
+    document.getElementById('needsNursery').textContent = needsNursery;
+
+    const needsVBS = registrationsData.filter(r => r.vbsAttendance === 'Yes').length;
+    document.getElementById('needsVBS').textContent = needsVBS;
 
     const needsPickup = registrationsData.filter(r => r.localTransport === 'Yes').length;
     document.getElementById('needsPickup').textContent = needsPickup;
