@@ -986,6 +986,212 @@ function sortTable(tableKey, sortKey) {
     }
 }
 
+// ===== CHARTS =====
+
+let serviceChartInstance = null;
+let pastorChartInstance   = null;
+let assemblyChartInstance = null;
+
+const CHART_PALETTE = [
+    '#28478a','#c45508','#2a6496','#e07020','#1b6ca8',
+    '#8b4513','#2e8b57','#8b008b','#b8860b','#4682b4',
+    '#dc143c','#20b2aa','#ff8c00','#6a5acd','#3cb371',
+    '#cd5c5c','#40e0d0','#daa520','#7b68ee','#32cd32'
+];
+
+function getPaletteColors(n) {
+    const colors = [];
+    for (let i = 0; i < n; i++) colors.push(CHART_PALETTE[i % CHART_PALETTE.length]);
+    return colors;
+}
+
+function normalizePastorName(raw) {
+    if (!raw) return '';
+    return raw
+        .replace(/\b(pastor|pasteur)\b\.?/gi, '')
+        .replace(/[.,]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .toLowerCase();
+}
+
+function normalizeAssemblyName(raw) {
+    if (!raw) return '';
+    return raw.replace(/\s+/g, ' ').trim().toLowerCase();
+}
+
+function isSimilarPastorName(a, b) {
+    if (!a || !b || a === b) return false;
+    const wa = a.split(' ').filter(Boolean);
+    const wb = b.split(' ').filter(Boolean);
+    const [shorter, longer] = wa.length <= wb.length ? [wa, wb] : [wb, wa];
+    return shorter.length > 0 && shorter.every(w => longer.includes(w));
+}
+
+function isSimilarAssemblyName(a, b) {
+    if (!a || !b || a === b) return false;
+    const stop = new Set(['church','assembly','of','the','god','first','new','and','de','la','le','les','des','du','en','et']);
+    const sig = str => str.split(' ').filter(w => w.length > 2 && !stop.has(w));
+    const wa = sig(a);
+    const wb = sig(b);
+    if (!wa.length || !wb.length) return false;
+    const [shorter, longer] = wa.length <= wb.length ? [wa, wb] : [wb, wa];
+    return shorter.some(w => longer.includes(w));
+}
+
+function groupAndFlag(items, normFn, similarFn) {
+    const groups = {};
+    items.forEach(item => {
+        if (!item) return;
+        const norm = normFn(item);
+        if (!norm) return;
+        if (!groups[norm]) groups[norm] = { display: item, count: 0 };
+        groups[norm].count++;
+    });
+
+    const keys = Object.keys(groups);
+    const flags = [];
+    for (let i = 0; i < keys.length; i++) {
+        for (let j = i + 1; j < keys.length; j++) {
+            if (similarFn(keys[i], keys[j])) {
+                flags.push({
+                    a: groups[keys[i]].display, countA: groups[keys[i]].count,
+                    b: groups[keys[j]].display, countB: groups[keys[j]].count
+                });
+            }
+        }
+    }
+    return { groups, flags };
+}
+
+function renderFlags(containerId, flags, type) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    container.innerHTML = '';
+    if (!flags.length) return;
+
+    const heading = document.createElement('p');
+    heading.className = 'flag-heading';
+    heading.textContent = `⚠ ${flags.length} potential duplicate${flags.length > 1 ? 's' : ''} — please confirm:`;
+    container.appendChild(heading);
+
+    flags.forEach(f => {
+        const item = document.createElement('div');
+        item.className = 'flag-item';
+        item.textContent = `"${f.a}" (${f.countA}) and "${f.b}" (${f.countB}) — same ${type}?`;
+        container.appendChild(item);
+    });
+}
+
+function renderServiceChart() {
+    const serviceOrder = [
+        { key: 'Thursday Morning Service, April 9th',  label: 'Thu Morning' },
+        { key: 'Thursday Night Service, April 9th',    label: 'Thu Night' },
+        { key: 'Friday Morning Service, April 10th',   label: 'Fri Morning' },
+        { key: 'Friday Night Service, April 10th',     label: 'Fri Night' },
+        { key: 'Saturday Morning Service, April 11th', label: 'Sat Morning' },
+        { key: 'Saturday Youth Night, April 11th',     label: 'Sat Youth Night' }
+    ];
+
+    const counts = {};
+    registrationsData.forEach(reg => {
+        if (Array.isArray(reg.services)) {
+            reg.services.forEach(s => { counts[s] = (counts[s] || 0) + 1; });
+        }
+    });
+
+    const labels = serviceOrder.map(s => s.label);
+    const data   = serviceOrder.map(s => counts[s.key] || 0);
+
+    if (serviceChartInstance) serviceChartInstance.destroy();
+    const ctx = document.getElementById('serviceChart');
+    if (!ctx) return;
+    serviceChartInstance = new Chart(ctx.getContext('2d'), {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [{
+                label: 'Attendees',
+                data,
+                borderColor: '#28478a',
+                backgroundColor: 'rgba(40,71,138,0.08)',
+                borderWidth: 2,
+                pointBackgroundColor: '#c45508',
+                pointBorderColor: '#c45508',
+                pointRadius: 6,
+                tension: 0.3,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: { mode: 'index', intersect: false }
+            },
+            scales: {
+                y: { beginAtZero: true, ticks: { stepSize: 1, precision: 0 } }
+            }
+        }
+    });
+}
+
+function renderPastorChart() {
+    const names = registrationsData.map(r => r.pastorName).filter(Boolean);
+    const { groups, flags } = groupAndFlag(names, normalizePastorName, isSimilarPastorName);
+    const sorted = Object.values(groups).sort((a, b) => b.count - a.count);
+
+    if (pastorChartInstance) pastorChartInstance.destroy();
+    const ctx = document.getElementById('pastorChart');
+    if (!ctx) return;
+    pastorChartInstance = new Chart(ctx.getContext('2d'), {
+        type: 'pie',
+        data: {
+            labels: sorted.map(g => g.display),
+            datasets: [{ data: sorted.map(g => g.count), backgroundColor: getPaletteColors(sorted.length), borderWidth: 1 }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 }, padding: 8 } },
+                tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw}` } }
+            }
+        }
+    });
+    renderFlags('pastorFlags', flags, 'pastor');
+}
+
+function renderAssemblyChart() {
+    const names = registrationsData.map(r => r.assemblyName).filter(Boolean);
+    const { groups, flags } = groupAndFlag(names, normalizeAssemblyName, isSimilarAssemblyName);
+    const sorted = Object.values(groups).sort((a, b) => b.count - a.count);
+
+    if (assemblyChartInstance) assemblyChartInstance.destroy();
+    const ctx = document.getElementById('assemblyChart');
+    if (!ctx) return;
+    assemblyChartInstance = new Chart(ctx.getContext('2d'), {
+        type: 'pie',
+        data: {
+            labels: sorted.map(g => g.display),
+            datasets: [{ data: sorted.map(g => g.count), backgroundColor: getPaletteColors(sorted.length), borderWidth: 1 }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 }, padding: 8 } },
+                tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw}` } }
+            }
+        }
+    });
+    renderFlags('assemblyFlags', flags, 'assembly');
+}
+
+function renderCharts() {
+    renderServiceChart();
+    renderPastorChart();
+    renderAssemblyChart();
+}
+
 // ===== INITIALIZE =====
 
 // Set up event listeners after DOM loads
@@ -1003,6 +1209,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const section = this.getAttribute('data-section');
             if (section) {
                 showSection(section);
+                if (section === 'charts') renderCharts();
             }
         });
     });

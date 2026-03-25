@@ -421,6 +421,48 @@
         thead th[data-sort-key]:hover {
             background-color: rgba(255, 255, 255, 0.1);
         }
+
+        .charts-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+        }
+        .chart-card {
+            background: white;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            padding: var(--spacing-xl);
+        }
+        .chart-card h3 {
+            margin: 0 0 var(--spacing-lg) 0;
+            color: var(--navy-blue);
+            font-size: 18px;
+        }
+        .flag-list {
+            margin-top: var(--spacing-md);
+        }
+        .flag-heading {
+            font-weight: 600;
+            color: #856404;
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 4px;
+            padding: 8px 12px;
+            margin: 0 0 8px 0;
+            font-size: 13px;
+        }
+        .flag-item {
+            font-size: 13px;
+            padding: 6px 12px;
+            background: #fffbf0;
+            border-left: 3px solid #ffc107;
+            margin-bottom: 4px;
+            color: var(--charcoal);
+        }
+        @media (max-width: 768px) {
+            .charts-row { grid-template-columns: 1fr; }
+        }
     </style>
 
     <!-- Firebase -->
@@ -437,6 +479,7 @@
     <!-- Security Utilities -->
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
     <script src="../js/security-utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -478,6 +521,7 @@
                     <button data-section="volunteers">Volunteers</button>
                     <button data-section="vendors">Vendors</button>
                     <button data-section="contacts">Contacts</button>
+                    <button data-section="charts">Charts</button>
                 </nav>
             </div>
         </header>
@@ -712,6 +756,26 @@
                     <div id="contactsEmpty" class="empty-state" style="display: none;">
                         <h3>No Contact Messages Yet</h3>
                         <p>Contact form submissions will appear here.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHARTS SECTION -->
+            <div id="charts-section" class="section-content">
+                <div class="chart-card">
+                    <h3>Service Attendance by Session</h3>
+                    <canvas id="serviceChart" height="90"></canvas>
+                </div>
+                <div class="charts-row">
+                    <div class="chart-card">
+                        <h3>Registrations by Pastor</h3>
+                        <canvas id="pastorChart"></canvas>
+                        <div id="pastorFlags" class="flag-list"></div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Registrations by Assembly</h3>
+                        <canvas id="assemblyChart"></canvas>
+                        <div id="assemblyFlags" class="flag-list"></div>
                     </div>
                 </div>
             </div>
