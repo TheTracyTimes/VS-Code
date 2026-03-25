@@ -1113,14 +1113,25 @@ async function loadMergeDecisions() {
 }
 
 // Save a merge decision to Firestore adminSettings (never touches user submission records)
-async function saveMerge(chartType, round, loserNorm, winnerDisplay) {
+async function saveMerge(chartType, round, loserNorm, loserDisplay, winnerDisplay) {
     const key = chartType + round.charAt(0).toUpperCase() + round.slice(1); // e.g. 'registrationPastor'
     savedMerges[key][loserNorm] = winnerDisplay;
+    const user = auth && auth.currentUser ? auth.currentUser.email : 'admin';
     try {
-        await db.collection('adminSettings').doc('merges').set(
-            { [key]: savedMerges[key] },
-            { merge: true }
-        );
+        await Promise.all([
+            db.collection('adminSettings').doc('merges').set(
+                { [key]: savedMerges[key] },
+                { merge: true }
+            ),
+            db.collection('mergeLog').add({
+                chartType,
+                round,
+                mergedFrom: loserDisplay,
+                mergedInto: winnerDisplay,
+                by: user,
+                at: firebase.firestore.FieldValue.serverTimestamp()
+            })
+        ]);
     } catch (e) {
         console.error('Error saving merge decision:', e);
         alert('Error saving to database: ' + e.message);
@@ -1246,9 +1257,10 @@ function renderGroupFlags(containerId, chartType) {
                 btn.addEventListener('click', async () => {
                     btn.disabled = true;
                     btn.textContent = 'Saving\u2026';
-                    const loserNorm = option.norm === f.normA ? f.normB : f.normA;
+                    const loserNorm    = option.norm === f.normA ? f.normB : f.normA;
+                    const loserDisplay = option.display === f.a ? f.b : f.a;
                     dismissed.add(`${f.normA}|||${f.normB}`);
-                    await saveMerge(chartType, round_key, loserNorm, option.display);
+                    await saveMerge(chartType, round_key, loserNorm, loserDisplay, option.display);
                     rerender();
                 });
                 btnRow.appendChild(btn);
@@ -1270,7 +1282,7 @@ function renderGroupFlags(containerId, chartType) {
         container.appendChild(item);
     });
 }
-function showChartDetail(panelId, titleId, bodyId, title, registrants) {
+function showChartDetail(panelId, titleId, bodyId, title, registrants, getNote) {
     const panel = document.getElementById(panelId);
     const titleEl = document.getElementById(titleId);
     const tbody = document.getElementById(bodyId);
@@ -1281,12 +1293,25 @@ function showChartDetail(panelId, titleId, bodyId, title, registrants) {
 
     registrants.forEach(r => {
         const tr = document.createElement('tr');
+
         const nameCell = document.createElement('td');
-        nameCell.textContent = `${r.firstName || ''} ${r.lastName || ''}`.trim() || r.name || '—';
+        const fullName = `${r.firstName || ''} ${r.lastName || ''}`.trim() || r.name || '\u2014';
+        nameCell.textContent = fullName;
+
+        if (getNote) {
+            const note = getNote(r);
+            if (note) {
+                const sub = document.createElement('div');
+                sub.style.cssText = 'font-size:11px;color:#888;font-style:italic;margin-top:2px;';
+                sub.textContent = note;
+                nameCell.appendChild(sub);
+            }
+        }
+
         const emailCell = document.createElement('td');
-        emailCell.textContent = r.email || '—';
+        emailCell.textContent = r.email || '\u2014';
         const phoneCell = document.createElement('td');
-        phoneCell.textContent = r.phone || '—';
+        phoneCell.textContent = r.phone || '\u2014';
         tr.appendChild(nameCell);
         tr.appendChild(emailCell);
         tr.appendChild(phoneCell);
@@ -1434,8 +1459,16 @@ function renderRegistrationGroupChart() {
                     const ea = getEffectiveName(r.assemblyName, savedMerges.registrationAssembly, normalizeAssemblyName);
                     return getCombinedLabel(ep, ea) === lbl;
                 });
+                const regNote = r => {
+                    const notes = [];
+                    const ep = getEffectiveName(r.pastorName,   savedMerges.registrationPastor,   normalizePastorName);
+                    const ea = getEffectiveName(r.assemblyName, savedMerges.registrationAssembly, normalizeAssemblyName);
+                    if (r.pastorName   && ep !== r.pastorName)   notes.push(`Pastor also known as: \u201c${r.pastorName}\u201d`);
+                    if (r.assemblyName && ea !== r.assemblyName) notes.push(`Assembly also known as: \u201c${r.assemblyName}\u201d`);
+                    return notes.join(' \u2022 ');
+                };
                 showChartDetail('registrationGroupDetail', 'registrationGroupDetailTitle', 'registrationGroupDetailBody',
-                    `${lbl} \u2014 ${matches.length} registrant${matches.length !== 1 ? 's' : ''}`, matches);
+                    `${lbl} \u2014 ${matches.length} registrant${matches.length !== 1 ? 's' : ''}`, matches, regNote);
             },
             plugins: {
                 legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 }, padding: 8 } },
@@ -1475,8 +1508,16 @@ function renderVolunteerGroupChart() {
                     const ea = getEffectiveName(v.assemblyName, savedMerges.volunteerAssembly, normalizeAssemblyName);
                     return getCombinedLabel(ep, ea) === lbl;
                 });
+                const volNote = v => {
+                    const notes = [];
+                    const ep = getEffectiveName(v.pastorName,   savedMerges.volunteerPastor,   normalizePastorName);
+                    const ea = getEffectiveName(v.assemblyName, savedMerges.volunteerAssembly, normalizeAssemblyName);
+                    if (v.pastorName   && ep !== v.pastorName)   notes.push(`Pastor also known as: \u201c${v.pastorName}\u201d`);
+                    if (v.assemblyName && ea !== v.assemblyName) notes.push(`Assembly also known as: \u201c${v.assemblyName}\u201d`);
+                    return notes.join(' \u2022 ');
+                };
                 showChartDetail('volunteerGroupDetail', 'volunteerGroupDetailTitle', 'volunteerGroupDetailBody',
-                    `${lbl} \u2014 ${matches.length} volunteer${matches.length !== 1 ? 's' : ''}`, matches);
+                    `${lbl} \u2014 ${matches.length} volunteer${matches.length !== 1 ? 's' : ''}`, matches, volNote);
             },
             plugins: {
                 legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 }, padding: 8 } },
