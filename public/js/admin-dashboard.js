@@ -190,6 +190,10 @@ function displayRegistrations(data) {
         transportCell.textContent = reg.airportTransport;
         row.appendChild(transportCell);
 
+        const pickupCell = document.createElement('td');
+        pickupCell.textContent = reg.pickupLocation || '—';
+        row.appendChild(pickupCell);
+
         const childcareCell = document.createElement('td');
         childcareCell.textContent = reg.hasChildren || '—';
         row.appendChild(childcareCell);
