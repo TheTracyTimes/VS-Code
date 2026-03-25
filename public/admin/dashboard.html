@@ -803,44 +803,59 @@
 
             <!-- CHARTS SECTION -->
             <div id="charts-section" class="section-content">
-                <div class="chart-card">
-                    <h3>Service Attendance by Session <span style="font-size:13px;font-weight:400;color:var(--dark-gray);">— click a point to see attendees</span></h3>
-                    <canvas id="serviceChart" height="90"></canvas>
-                    <div class="service-chart-detail" id="serviceDetail">
-                        <div class="chart-detail-title" id="serviceDetailTitle"></div>
-                        <div class="table-container">
-                            <table>
-                                <thead><tr><th>Name</th><th>Email</th><th>Phone</th></tr></thead>
-                                <tbody id="serviceDetailBody"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
                 <div class="charts-row">
                     <div class="chart-card">
-                        <h3>Registrations by Pastor <span style="font-size:13px;font-weight:400;color:var(--dark-gray);">— click a slice</span></h3>
-                        <canvas id="pastorChart"></canvas>
-                        <div id="pastorFlags" class="flag-list"></div>
-                        <div class="chart-detail" id="pastorDetail">
-                            <div class="chart-detail-title" id="pastorDetailTitle"></div>
+                        <h3>Service Attendance <span style="font-size:13px;font-weight:400;color:var(--dark-gray);">— click a bar to see attendees</span></h3>
+                        <canvas id="serviceChart" height="160"></canvas>
+                        <div class="service-chart-detail" id="serviceDetail">
+                            <div class="chart-detail-title" id="serviceDetailTitle"></div>
                             <div class="table-container">
                                 <table>
                                     <thead><tr><th>Name</th><th>Email</th><th>Phone</th></tr></thead>
-                                    <tbody id="pastorDetailBody"></tbody>
+                                    <tbody id="serviceDetailBody"></tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
                     <div class="chart-card">
-                        <h3>Registrations by Assembly <span style="font-size:13px;font-weight:400;color:var(--dark-gray);">— click a slice</span></h3>
-                        <canvas id="assemblyChart"></canvas>
-                        <div id="assemblyFlags" class="flag-list"></div>
-                        <div class="chart-detail" id="assemblyDetail">
-                            <div class="chart-detail-title" id="assemblyDetailTitle"></div>
+                        <h3>Volunteer Committee Selections <span style="font-size:13px;font-weight:400;color:var(--dark-gray);">— click a bar to see volunteers</span></h3>
+                        <canvas id="committeeChart" height="160"></canvas>
+                        <div class="service-chart-detail" id="committeeDetail">
+                            <div class="chart-detail-title" id="committeeDetailTitle"></div>
                             <div class="table-container">
                                 <table>
                                     <thead><tr><th>Name</th><th>Email</th><th>Phone</th></tr></thead>
-                                    <tbody id="assemblyDetailBody"></tbody>
+                                    <tbody id="committeeDetailBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="charts-row">
+                    <div class="chart-card">
+                        <h3>Registrations by Pastor &amp; Assembly <span style="font-size:13px;font-weight:400;color:var(--dark-gray);">— click a slice</span></h3>
+                        <canvas id="registrationGroupChart"></canvas>
+                        <div id="registrationGroupFlags" class="flag-list"></div>
+                        <div class="chart-detail" id="registrationGroupDetail">
+                            <div class="chart-detail-title" id="registrationGroupDetailTitle"></div>
+                            <div class="table-container">
+                                <table>
+                                    <thead><tr><th>Name</th><th>Email</th><th>Phone</th></tr></thead>
+                                    <tbody id="registrationGroupDetailBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Volunteers by Pastor &amp; Assembly <span style="font-size:13px;font-weight:400;color:var(--dark-gray);">— click a slice</span></h3>
+                        <canvas id="volunteerGroupChart"></canvas>
+                        <div id="volunteerGroupFlags" class="flag-list"></div>
+                        <div class="chart-detail" id="volunteerGroupDetail">
+                            <div class="chart-detail-title" id="volunteerGroupDetailTitle"></div>
+                            <div class="table-container">
+                                <table>
+                                    <thead><tr><th>Name</th><th>Email</th><th>Phone</th></tr></thead>
+                                    <tbody id="volunteerGroupDetailBody"></tbody>
                                 </table>
                             </div>
                         </div>

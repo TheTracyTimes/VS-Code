@@ -988,16 +988,17 @@ function sortTable(tableKey, sortKey) {
 
 // ===== CHARTS =====
 
-let serviceChartInstance = null;
-let pastorChartInstance   = null;
-let assemblyChartInstance = null;
+let serviceChartInstance           = null;
+let committeeChartInstance         = null;
+let registrationGroupChartInstance = null;
+let volunteerGroupChartInstance    = null;
 
-// Merge decisions: normA -> canonical norm (Yes = same person/assembly)
-const pastorMerges   = {};
-const assemblyMerges = {};
-// Dismissed flag pairs (No = confirmed different)
-const dismissedPastorFlags   = new Set();
-const dismissedAssemblyFlags = new Set();
+// Merge decisions per chart (normA -> canonical norm)
+const registrationGroupMerges = {};
+const volunteerGroupMerges    = {};
+// Dismissed flag pairs per chart
+const dismissedRegistrationGroupFlags = new Set();
+const dismissedVolunteerGroupFlags    = new Set();
 
 const CHART_PALETTE = [
     '#28478a','#c45508','#2a6496','#e07020','#1b6ca8',
@@ -1044,6 +1045,28 @@ function isSimilarAssemblyName(a, b) {
     if (!wa.length || !wb.length) return false;
     const [shorter, longer] = wa.length <= wb.length ? [wa, wb] : [wb, wa];
     return shorter.some(w => longer.includes(w));
+}
+
+function getCombinedLabel(pastorName, assemblyName) {
+    const p = (pastorName || '').replace(/\b(pastor|pasteur)\b\.?/gi, '').replace(/\s+/g, ' ').trim();
+    const a = (assemblyName || '').trim();
+    if (p && a) return `${p} \u2014 ${a}`;
+    return p || a || 'Unknown';
+}
+
+function normalizeCombinedLabel(label) {
+    const sep = ' \u2014 ';
+    const idx = label.indexOf(sep);
+    if (idx !== -1) {
+        return normalizePastorName(label.substring(0, idx)) + '|||' + normalizeAssemblyName(label.substring(idx + sep.length));
+    }
+    return normalizePastorName(label);
+}
+
+function isSimilarCombinedLabel(normA, normB) {
+    const [pA = '', aA = ''] = normA.split('|||');
+    const [pB = '', aB = ''] = normB.split('|||');
+    return isSimilarPastorName(pA, pB) || isSimilarAssemblyName(aA, aB);
 }
 
 function groupAndFlag(items, normFn, similarFn) {
@@ -1097,47 +1120,38 @@ function applyMerges(groups, merges) {
     return result;
 }
 
-function renderFlags(containerId, flags, type) {
+function renderFlags(containerId, flags, label, merges, dismissed, rerender) {
     const container = document.getElementById(containerId);
     if (!container) return;
     container.innerHTML = '';
 
-    const dismissed = type === 'pastor' ? dismissedPastorFlags : dismissedAssemblyFlags;
     const active = flags.filter(f => !dismissed.has(`${f.normA}|||${f.normB}`));
     if (!active.length) return;
 
     const heading = document.createElement('p');
     heading.className = 'flag-heading';
-    heading.textContent = `⚠ ${active.length} potential duplicate${active.length > 1 ? 's' : ''} — please confirm:`;
+    heading.textContent = `\u26A0 ${active.length} potential duplicate${active.length > 1 ? 's' : ''} \u2014 please confirm:`;
     container.appendChild(heading);
 
     active.forEach(f => {
         const item = document.createElement('div');
         item.className = 'flag-item';
-        item.style.display = 'flex';
-        item.style.alignItems = 'center';
-        item.style.justifyContent = 'space-between';
-        item.style.gap = '8px';
+        item.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;';
 
         const text = document.createElement('span');
-        text.textContent = `"${f.a}" (${f.countA}) and "${f.b}" (${f.countB}) — same ${type}?`;
+        text.textContent = `"${f.a}" (${f.countA}) and "${f.b}" (${f.countB}) \u2014 same ${label}?`;
         text.style.flex = '1';
         item.appendChild(text);
 
         const btnWrap = document.createElement('span');
-        btnWrap.style.display = 'flex';
-        btnWrap.style.gap = '6px';
-        btnWrap.style.flexShrink = '0';
+        btnWrap.style.cssText = 'display:flex;gap:6px;flex-shrink:0;';
 
         const yesBtn = document.createElement('button');
         yesBtn.textContent = 'Yes';
         yesBtn.style.cssText = 'padding:2px 12px;font-size:12px;font-weight:600;background:#28478a;color:white;border:none;border-radius:4px;cursor:pointer;';
         yesBtn.addEventListener('click', () => {
-            // Replace the row with a name picker so the user chooses the canonical name
             item.innerHTML = '';
-            item.style.flexDirection = 'column';
-            item.style.alignItems = 'flex-start';
-            item.style.gap = '6px';
+            item.style.cssText = 'display:flex;flex-direction:column;align-items:flex-start;gap:6px;';
 
             const prompt = document.createElement('span');
             prompt.style.cssText = 'font-size:12px;font-weight:600;color:#856404;';
@@ -1145,21 +1159,17 @@ function renderFlags(containerId, flags, type) {
             item.appendChild(prompt);
 
             const btnRow = document.createElement('span');
-            btnRow.style.display = 'flex';
-            btnRow.style.gap = '6px';
+            btnRow.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;';
 
-            [{ label: f.a, norm: f.normA }, { label: f.b, norm: f.normB }].forEach(option => {
+            [{ display: f.a, norm: f.normA }, { display: f.b, norm: f.normB }].forEach(option => {
                 const btn = document.createElement('button');
-                btn.textContent = option.label;
+                btn.textContent = option.display;
                 btn.style.cssText = 'padding:3px 12px;font-size:12px;font-weight:600;background:#28478a;color:white;border:none;border-radius:4px;cursor:pointer;';
                 btn.addEventListener('click', () => {
-                    const canonical = option.norm;
                     const other = option.norm === f.normA ? f.normB : f.normA;
-                    const merges = type === 'pastor' ? pastorMerges : assemblyMerges;
-                    merges[other] = canonical;
+                    merges[other] = option.norm;
                     dismissed.add(`${f.normA}|||${f.normB}`);
-                    if (type === 'pastor') renderPastorChart();
-                    else renderAssemblyChart();
+                    rerender();
                 });
                 btnRow.appendChild(btn);
             });
@@ -1175,7 +1185,7 @@ function renderFlags(containerId, flags, type) {
             item.remove();
             const remaining = container.querySelectorAll('.flag-item').length;
             if (!remaining) container.innerHTML = '';
-            else heading.textContent = `⚠ ${remaining} potential duplicate${remaining > 1 ? 's' : ''} — please confirm:`;
+            else heading.textContent = `\u26A0 ${remaining} potential duplicate${remaining > 1 ? 's' : ''} \u2014 please confirm:`;
         });
 
         btnWrap.appendChild(yesBtn);
@@ -1235,21 +1245,15 @@ function renderServiceChart() {
     const ctx = document.getElementById('serviceChart');
     if (!ctx) return;
     serviceChartInstance = new Chart(ctx.getContext('2d'), {
-        type: 'line',
+        type: 'bar',
         data: {
             labels,
             datasets: [{
                 label: 'Attendees',
                 data,
-                borderColor: '#28478a',
-                backgroundColor: 'rgba(40,71,138,0.08)',
-                borderWidth: 2,
-                pointBackgroundColor: '#c45508',
-                pointBorderColor: '#c45508',
-                pointRadius: 6,
-                pointHoverRadius: 8,
-                tension: 0.3,
-                fill: true
+                backgroundColor: getPaletteColors(labels.length),
+                borderWidth: 0,
+                borderRadius: 4
             }]
         },
         options: {
@@ -1263,7 +1267,7 @@ function renderServiceChart() {
                     Array.isArray(r.services) && r.services.includes(serviceKey)
                 );
                 showChartDetail('serviceDetail', 'serviceDetailTitle', 'serviceDetailBody',
-                    `${serviceLabel} — ${attendees.length} attendee${attendees.length !== 1 ? 's' : ''}`,
+                    `${serviceLabel} \u2014 ${attendees.length} attendee${attendees.length !== 1 ? 's' : ''}`,
                     attendees);
             },
             plugins: {
@@ -1277,53 +1281,65 @@ function renderServiceChart() {
     });
 }
 
-function renderPastorChart() {
-    const names = registrationsData.map(r => r.pastorName).filter(Boolean);
-    const { groups: rawGroups, flags } = groupAndFlag(names, normalizePastorName, isSimilarPastorName);
-    const groups = applyMerges(rawGroups, pastorMerges);
-    const sorted = Object.values(groups).sort((a, b) => b.count - a.count);
+function renderCommitteeChart() {
+    const committeeCounts = {};
+    volunteersData.forEach(v => {
+        const committees = Array.isArray(v.committees) ? v.committees : [];
+        committees.forEach(c => { committeeCounts[c] = (committeeCounts[c] || 0) + 1; });
+    });
 
-    if (pastorChartInstance) pastorChartInstance.destroy();
-    const ctx = document.getElementById('pastorChart');
+    const sorted = Object.entries(committeeCounts).sort((a, b) => b[1] - a[1]);
+    const labels = sorted.map(([k]) => k);
+    const data   = sorted.map(([, v]) => v);
+
+    if (committeeChartInstance) committeeChartInstance.destroy();
+    const ctx = document.getElementById('committeeChart');
     if (!ctx) return;
-    pastorChartInstance = new Chart(ctx.getContext('2d'), {
-        type: 'pie',
+    committeeChartInstance = new Chart(ctx.getContext('2d'), {
+        type: 'bar',
         data: {
-            labels: sorted.map(g => g.display),
-            datasets: [{ data: sorted.map(g => g.count), backgroundColor: getPaletteColors(sorted.length), borderWidth: 1 }]
+            labels,
+            datasets: [{
+                label: 'Volunteers',
+                data,
+                backgroundColor: getPaletteColors(labels.length),
+                borderWidth: 0,
+                borderRadius: 4
+            }]
         },
         options: {
             responsive: true,
             onClick(e, elements) {
                 if (!elements.length) return;
-                const label = sorted[elements[0].index].display;
-                const canonical = resolveNorm(normalizePastorName(label), pastorMerges);
-                const matches = registrationsData.filter(r =>
-                    resolveNorm(normalizePastorName(r.pastorName), pastorMerges) === canonical
+                const committee = labels[elements[0].index];
+                const matches = volunteersData.filter(v =>
+                    Array.isArray(v.committees) && v.committees.includes(committee)
                 );
-                showChartDetail('pastorDetail', 'pastorDetailTitle', 'pastorDetailBody',
-                    `Pastor: ${label} — ${matches.length} registrant${matches.length !== 1 ? 's' : ''}`,
+                showChartDetail('committeeDetail', 'committeeDetailTitle', 'committeeDetailBody',
+                    `${committee} \u2014 ${matches.length} volunteer${matches.length !== 1 ? 's' : ''}`,
                     matches);
             },
             plugins: {
-                legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 }, padding: 8 } },
-                tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw}` } }
+                legend: { display: false },
+                tooltip: { mode: 'index', intersect: false }
+            },
+            scales: {
+                y: { beginAtZero: true, ticks: { stepSize: 1, precision: 0 } }
             }
         }
     });
-    renderFlags('pastorFlags', flags, 'pastor');
 }
 
-function renderAssemblyChart() {
-    const names = registrationsData.map(r => r.assemblyName).filter(Boolean);
-    const { groups: rawGroups, flags } = groupAndFlag(names, normalizeAssemblyName, isSimilarAssemblyName);
-    const groups = applyMerges(rawGroups, assemblyMerges);
+function renderRegistrationGroupChart() {
+    const labels = registrationsData.map(r => getCombinedLabel(r.pastorName, r.assemblyName));
+    const { groups: rawGroups, flags } = groupAndFlag(labels, normalizeCombinedLabel, isSimilarCombinedLabel);
+    const groups = applyMerges(rawGroups, registrationGroupMerges);
     const sorted = Object.values(groups).sort((a, b) => b.count - a.count);
 
-    if (assemblyChartInstance) assemblyChartInstance.destroy();
-    const ctx = document.getElementById('assemblyChart');
+    if (registrationGroupChartInstance) registrationGroupChartInstance.destroy();
+    const ctx = document.getElementById('registrationGroupChart');
     if (!ctx) return;
-    assemblyChartInstance = new Chart(ctx.getContext('2d'), {
+    registrationGroupChartInstance = new Chart(ctx.getContext('2d'), {
         type: 'pie',
         data: {
             labels: sorted.map(g => g.display),
@@ -1333,28 +1349,64 @@ function renderAssemblyChart() {
             responsive: true,
             onClick(e, elements) {
                 if (!elements.length) return;
-                const label = sorted[elements[0].index].display;
-                const canonical = resolveNorm(normalizeAssemblyName(label), assemblyMerges);
+                const lbl = sorted[elements[0].index].display;
+                const canonical = resolveNorm(normalizeCombinedLabel(lbl), registrationGroupMerges);
                 const matches = registrationsData.filter(r =>
-                    resolveNorm(normalizeAssemblyName(r.assemblyName), assemblyMerges) === canonical
+                    resolveNorm(normalizeCombinedLabel(getCombinedLabel(r.pastorName, r.assemblyName)), registrationGroupMerges) === canonical
                 );
-                showChartDetail('assemblyDetail', 'assemblyDetailTitle', 'assemblyDetailBody',
-                    `Assembly: ${label} — ${matches.length} registrant${matches.length !== 1 ? 's' : ''}`,
-                    matches);
+                showChartDetail('registrationGroupDetail', 'registrationGroupDetailTitle', 'registrationGroupDetailBody',
+                    `${lbl} \u2014 ${matches.length} registrant${matches.length !== 1 ? 's' : ''}`, matches);
             },
             plugins: {
                 legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 }, padding: 8 } },
-                tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw}` } }
+                tooltip: { callbacks: { label: c => ` ${c.label}: ${c.raw}` } }
             }
         }
     });
-    renderFlags('assemblyFlags', flags, 'assembly');
+    renderFlags('registrationGroupFlags', flags, 'group', registrationGroupMerges, dismissedRegistrationGroupFlags, renderRegistrationGroupChart);
+}
+
+function renderVolunteerGroupChart() {
+    const labels = volunteersData.map(v => getCombinedLabel(v.pastorName, v.assemblyName));
+    const { groups: rawGroups, flags } = groupAndFlag(labels, normalizeCombinedLabel, isSimilarCombinedLabel);
+    const groups = applyMerges(rawGroups, volunteerGroupMerges);
+    const sorted = Object.values(groups).sort((a, b) => b.count - a.count);
+
+    if (volunteerGroupChartInstance) volunteerGroupChartInstance.destroy();
+    const ctx = document.getElementById('volunteerGroupChart');
+    if (!ctx) return;
+    volunteerGroupChartInstance = new Chart(ctx.getContext('2d'), {
+        type: 'pie',
+        data: {
+            labels: sorted.map(g => g.display),
+            datasets: [{ data: sorted.map(g => g.count), backgroundColor: getPaletteColors(sorted.length), borderWidth: 1 }]
+        },
+        options: {
+            responsive: true,
+            onClick(e, elements) {
+                if (!elements.length) return;
+                const lbl = sorted[elements[0].index].display;
+                const canonical = resolveNorm(normalizeCombinedLabel(lbl), volunteerGroupMerges);
+                const matches = volunteersData.filter(v =>
+                    resolveNorm(normalizeCombinedLabel(getCombinedLabel(v.pastorName, v.assemblyName)), volunteerGroupMerges) === canonical
+                );
+                showChartDetail('volunteerGroupDetail', 'volunteerGroupDetailTitle', 'volunteerGroupDetailBody',
+                    `${lbl} \u2014 ${matches.length} volunteer${matches.length !== 1 ? 's' : ''}`, matches);
+            },
+            plugins: {
+                legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 }, padding: 8 } },
+                tooltip: { callbacks: { label: c => ` ${c.label}: ${c.raw}` } }
+            }
+        }
+    });
+    renderFlags('volunteerGroupFlags', flags, 'group', volunteerGroupMerges, dismissedVolunteerGroupFlags, renderVolunteerGroupChart);
 }
 
 function renderCharts() {
     renderServiceChart();
-    renderPastorChart();
-    renderAssemblyChart();
+    renderCommitteeChart();
+    renderRegistrationGroupChart();
+    renderVolunteerGroupChart();
 }
 
 // ===== INITIALIZE =====
