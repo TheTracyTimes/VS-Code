@@ -178,10 +178,6 @@ function displayRegistrations(data) {
         emailCell.textContent = reg.email || '—';
         row.appendChild(emailCell);
 
-        const pastorCell = document.createElement('td');
-        pastorCell.textContent = reg.pastorName;
-        row.appendChild(pastorCell);
-
         const servicesCell = document.createElement('td');
         servicesCell.textContent = Array.isArray(reg.services) ? reg.services.length + ' services' : '—';
         row.appendChild(servicesCell);
