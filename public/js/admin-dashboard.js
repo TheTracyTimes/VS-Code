@@ -191,7 +191,7 @@ function displayRegistrations(data) {
         row.appendChild(transportCell);
 
         const pickupCell = document.createElement('td');
-        pickupCell.textContent = reg.pickupLocation || '—';
+        pickupCell.textContent = reg.localTransport || '—';
         row.appendChild(pickupCell);
 
         const childcareCell = document.createElement('td');
