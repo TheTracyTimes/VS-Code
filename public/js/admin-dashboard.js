@@ -993,12 +993,13 @@ let committeeChartInstance         = null;
 let registrationGroupChartInstance = null;
 let volunteerGroupChartInstance    = null;
 
-// Merge decisions per chart (normA -> canonical norm)
-const registrationGroupMerges = {};
-const volunteerGroupMerges    = {};
-// Dismissed flag pairs per chart
-const dismissedRegistrationGroupFlags = new Set();
-const dismissedVolunteerGroupFlags    = new Set();
+// Two-round duplicate detection (round 1 = pastor names, round 2 = assembly names)
+let registrationRound = 'pastor'; // 'pastor' | 'assembly' | 'complete'
+let volunteerRound    = 'pastor';
+const dismissedRegPastor   = new Set();
+const dismissedRegAssembly = new Set();
+const dismissedVolPastor   = new Set();
+const dismissedVolAssembly = new Set();
 
 const CHART_PALETTE = [
     '#28478a','#c45508','#2a6496','#e07020','#1b6ca8',
@@ -1054,31 +1055,16 @@ function getCombinedLabel(pastorName, assemblyName) {
     return p || a || 'Unknown';
 }
 
-function normalizeCombinedLabel(label) {
-    const sep = ' \u2014 ';
-    const idx = label.indexOf(sep);
-    if (idx !== -1) {
-        return normalizePastorName(label.substring(0, idx)) + '|||' + normalizeAssemblyName(label.substring(idx + sep.length));
-    }
-    return normalizePastorName(label);
-}
-
-function isSimilarCombinedLabel(normA, normB) {
-    const [pA = '', aA = ''] = normA.split('|||');
-    const [pB = '', aB = ''] = normB.split('|||');
-    return isSimilarPastorName(pA, pB) || isSimilarAssemblyName(aA, aB);
-}
-
-function groupAndFlag(items, normFn, similarFn) {
+function findFlagsForField(data, fieldGetter, normFn, similarFn) {
     const groups = {};
-    items.forEach(item => {
-        if (!item) return;
-        const norm = normFn(item);
+    data.forEach(item => {
+        const raw = fieldGetter(item);
+        if (!raw) return;
+        const norm = normFn(raw);
         if (!norm) return;
-        if (!groups[norm]) groups[norm] = { display: item, count: 0 };
+        if (!groups[norm]) groups[norm] = { display: raw, count: 0 };
         groups[norm].count++;
     });
-
     const keys = Object.keys(groups);
     const flags = [];
     for (let i = 0; i < keys.length; i++) {
@@ -1092,70 +1078,101 @@ function groupAndFlag(items, normFn, similarFn) {
             }
         }
     }
-    return { groups, flags };
+    return flags;
 }
 
-function resolveNorm(norm, merges) {
-    const visited = new Set();
-    while (merges[norm] && !visited.has(norm)) {
-        visited.add(norm);
-        norm = merges[norm];
+async function permanentlyMerge(collection, data, fieldName, normFn, loserNorm, winnerDisplay) {
+    const docsToUpdate = data.filter(r => normFn(r[fieldName] || '') === loserNorm);
+    docsToUpdate.forEach(r => { r[fieldName] = winnerDisplay; });
+    try {
+        await Promise.all(docsToUpdate.map(r => updateRecord(collection, r.id, { [fieldName]: winnerDisplay })));
+    } catch (e) {
+        console.error('Error saving merge to Firestore:', e);
+        alert('Error saving to database: ' + e.message);
     }
-    return norm;
 }
 
-function applyMerges(groups, merges) {
-    const result = {};
-    Object.entries(groups).forEach(([norm, info]) => {
-        const canonical = resolveNorm(norm, merges);
-        if (!result[canonical]) {
-            result[canonical] = { display: info.display, count: info.count };
-        } else {
-            result[canonical].count += info.count;
-            if (info.display.length > result[canonical].display.length) {
-                result[canonical].display = info.display;
-            }
-        }
-    });
-    return result;
-}
-
-function renderFlags(containerId, flags, label, merges, dismissed, rerender, reset) {
+function renderGroupFlags(containerId, chartType) {
     const container = document.getElementById(containerId);
     if (!container) return;
     container.innerHTML = '';
 
-    const active = flags.filter(f => !dismissed.has(`${f.normA}|||${f.normB}`));
-    const hasAnyDecision = dismissed.size > 0 || Object.keys(merges).length > 0;
+    const isReg     = chartType === 'registration';
+    const data       = isReg ? registrationsData : volunteersData;
+    const collection = isReg ? 'registrations'   : 'volunteers';
+    const round      = isReg ? registrationRound  : volunteerRound;
+    const rerender   = isReg ? renderRegistrationGroupChart : renderVolunteerGroupChart;
 
-    if (!active.length && !hasAnyDecision) return;
-
-    const heading = document.createElement('p');
-    heading.className = 'flag-heading';
-
-    if (!active.length && hasAnyDecision) {
-        heading.textContent = '\u2713 All duplicates resolved.';
-        heading.style.cssText = 'background:#d4edda;border-color:#28a745;color:#155724;display:flex;align-items:center;justify-content:space-between;';
-        if (reset) {
-            const resetBtn = document.createElement('button');
-            resetBtn.textContent = 'Reset';
-            resetBtn.style.cssText = 'padding:2px 10px;font-size:12px;background:white;color:#155724;border:1px solid #155724;border-radius:4px;cursor:pointer;margin-left:12px;';
-            resetBtn.addEventListener('click', reset);
-            heading.appendChild(resetBtn);
+    function doReset() {
+        if (isReg) {
+            dismissedRegPastor.clear(); dismissedRegAssembly.clear();
+            registrationRound = 'pastor';
+        } else {
+            dismissedVolPastor.clear(); dismissedVolAssembly.clear();
+            volunteerRound = 'pastor';
         }
+        rerender();
+    }
+
+    // All done
+    if (round === 'complete') {
+        const heading = document.createElement('p');
+        heading.className = 'flag-heading';
+        heading.style.cssText = 'background:#d4edda;border-color:#28a745;color:#155724;display:flex;align-items:center;justify-content:space-between;';
+        const span = document.createElement('span');
+        span.textContent = '\u2713 All duplicates reviewed (pastor names and assembly names).';
+        heading.appendChild(span);
+        const btn = document.createElement('button');
+        btn.textContent = 'Reset';
+        btn.style.cssText = 'padding:2px 10px;font-size:12px;background:white;color:#155724;border:1px solid #155724;border-radius:4px;cursor:pointer;margin-left:12px;';
+        btn.addEventListener('click', doReset);
+        heading.appendChild(btn);
         container.appendChild(heading);
         return;
     }
 
-    heading.textContent = `\u26A0 ${active.length} potential duplicate${active.length > 1 ? 's' : ''} \u2014 please confirm:`;
-    heading.style.cssText = 'display:flex;align-items:center;justify-content:space-between;';
-    if (reset) {
-        const resetBtn = document.createElement('button');
-        resetBtn.textContent = 'Reset';
-        resetBtn.style.cssText = 'padding:2px 10px;font-size:12px;background:white;color:#856404;border:1px solid #856404;border-radius:4px;cursor:pointer;margin-left:12px;';
-        resetBtn.addEventListener('click', reset);
-        heading.appendChild(resetBtn);
+    // Determine field config for current round
+    let fieldName, normFn, similarFn, dismissed, roundLabel;
+    if (round === 'pastor') {
+        fieldName  = 'pastorName';
+        normFn     = normalizePastorName;
+        similarFn  = isSimilarPastorName;
+        dismissed  = isReg ? dismissedRegPastor   : dismissedVolPastor;
+        roundLabel = 'Round 1 \u2014 Similar Pastor Names';
+    } else {
+        fieldName  = 'assemblyName';
+        normFn     = normalizeAssemblyName;
+        similarFn  = isSimilarAssemblyName;
+        dismissed  = isReg ? dismissedRegAssembly : dismissedVolAssembly;
+        roundLabel = 'Round 2 \u2014 Similar Assembly Names';
     }
+
+    const flags  = findFlagsForField(data, r => r[fieldName], normFn, similarFn);
+    const active = flags.filter(f => !dismissed.has(`${f.normA}|||${f.normB}`));
+
+    // Auto-advance if nothing left in this round
+    if (!active.length) {
+        if (round === 'pastor') {
+            if (isReg) registrationRound = 'assembly'; else volunteerRound = 'assembly';
+        } else {
+            if (isReg) registrationRound = 'complete'; else volunteerRound = 'complete';
+        }
+        renderGroupFlags(containerId, chartType);
+        return;
+    }
+
+    // Heading
+    const heading = document.createElement('p');
+    heading.className = 'flag-heading';
+    heading.style.cssText = 'display:flex;align-items:center;justify-content:space-between;';
+    const headingText = document.createElement('span');
+    headingText.textContent = `\u26A0 ${roundLabel}: ${active.length} potential duplicate${active.length !== 1 ? 's' : ''} \u2014 please confirm:`;
+    heading.appendChild(headingText);
+    const resetBtn = document.createElement('button');
+    resetBtn.textContent = 'Reset';
+    resetBtn.style.cssText = 'padding:2px 10px;font-size:12px;background:white;color:#856404;border:1px solid #856404;border-radius:4px;cursor:pointer;margin-left:12px;';
+    resetBtn.addEventListener('click', doReset);
+    heading.appendChild(resetBtn);
     container.appendChild(heading);
 
     active.forEach(f => {
@@ -1164,7 +1181,7 @@ function renderFlags(containerId, flags, label, merges, dismissed, rerender, res
         item.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;';
 
         const text = document.createElement('span');
-        text.textContent = `"${f.a}" (${f.countA}) and "${f.b}" (${f.countB}) \u2014 same ${label}?`;
+        text.textContent = `"${f.a}" (${f.countA}) and "${f.b}" (${f.countB}) \u2014 same?`;
         text.style.flex = '1';
         item.appendChild(text);
 
@@ -1177,28 +1194,26 @@ function renderFlags(containerId, flags, label, merges, dismissed, rerender, res
         yesBtn.addEventListener('click', () => {
             item.innerHTML = '';
             item.style.cssText = 'display:flex;flex-direction:column;align-items:flex-start;gap:6px;';
-
             const prompt = document.createElement('span');
             prompt.style.cssText = 'font-size:12px;font-weight:600;color:#856404;';
             prompt.textContent = 'Which name should they fall under?';
             item.appendChild(prompt);
-
             const btnRow = document.createElement('span');
             btnRow.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;';
-
             [{ display: f.a, norm: f.normA }, { display: f.b, norm: f.normB }].forEach(option => {
                 const btn = document.createElement('button');
                 btn.textContent = option.display;
                 btn.style.cssText = 'padding:3px 12px;font-size:12px;font-weight:600;background:#28478a;color:white;border:none;border-radius:4px;cursor:pointer;';
-                btn.addEventListener('click', () => {
-                    const other = option.norm === f.normA ? f.normB : f.normA;
-                    merges[other] = option.norm;
+                btn.addEventListener('click', async () => {
+                    btn.disabled = true;
+                    btn.textContent = 'Saving\u2026';
+                    const loserNorm = option.norm === f.normA ? f.normB : f.normA;
                     dismissed.add(`${f.normA}|||${f.normB}`);
+                    await permanentlyMerge(collection, data, fieldName, normFn, loserNorm, option.display);
                     rerender();
                 });
                 btnRow.appendChild(btn);
             });
-
             item.appendChild(btnRow);
         });
 
@@ -1207,10 +1222,7 @@ function renderFlags(containerId, flags, label, merges, dismissed, rerender, res
         noBtn.style.cssText = 'padding:2px 12px;font-size:12px;font-weight:600;background:white;color:#28478a;border:1px solid #28478a;border-radius:4px;cursor:pointer;';
         noBtn.addEventListener('click', () => {
             dismissed.add(`${f.normA}|||${f.normB}`);
-            item.remove();
-            const remaining = container.querySelectorAll('.flag-item').length;
-            if (!remaining) container.innerHTML = '';
-            else heading.textContent = `\u26A0 ${remaining} potential duplicate${remaining > 1 ? 's' : ''} \u2014 please confirm:`;
+            rerender();
         });
 
         btnWrap.appendChild(yesBtn);
@@ -1356,10 +1368,12 @@ function renderCommitteeChart() {
 }
 
 function renderRegistrationGroupChart() {
-    const labels = registrationsData.map(r => getCombinedLabel(r.pastorName, r.assemblyName));
-    const { groups: rawGroups, flags } = groupAndFlag(labels, normalizeCombinedLabel, isSimilarCombinedLabel);
-    const groups = applyMerges(rawGroups, registrationGroupMerges);
-    const sorted = Object.values(groups).sort((a, b) => b.count - a.count);
+    const groups = {};
+    registrationsData.forEach(r => {
+        const lbl = getCombinedLabel(r.pastorName, r.assemblyName);
+        groups[lbl] = (groups[lbl] || 0) + 1;
+    });
+    const sorted = Object.entries(groups).sort((a, b) => b[1] - a[1]);
 
     if (registrationGroupChartInstance) registrationGroupChartInstance.destroy();
     const ctx = document.getElementById('registrationGroupChart');
@@ -1367,18 +1381,15 @@ function renderRegistrationGroupChart() {
     registrationGroupChartInstance = new Chart(ctx.getContext('2d'), {
         type: 'pie',
         data: {
-            labels: sorted.map(g => g.display),
-            datasets: [{ data: sorted.map(g => g.count), backgroundColor: getPaletteColors(sorted.length), borderWidth: 1 }]
+            labels: sorted.map(([k]) => k),
+            datasets: [{ data: sorted.map(([, v]) => v), backgroundColor: getPaletteColors(sorted.length), borderWidth: 1 }]
         },
         options: {
             responsive: true,
             onClick(e, elements) {
                 if (!elements.length) return;
-                const lbl = sorted[elements[0].index].display;
-                const canonical = resolveNorm(normalizeCombinedLabel(lbl), registrationGroupMerges);
-                const matches = registrationsData.filter(r =>
-                    resolveNorm(normalizeCombinedLabel(getCombinedLabel(r.pastorName, r.assemblyName)), registrationGroupMerges) === canonical
-                );
+                const lbl = sorted[elements[0].index][0];
+                const matches = registrationsData.filter(r => getCombinedLabel(r.pastorName, r.assemblyName) === lbl);
                 showChartDetail('registrationGroupDetail', 'registrationGroupDetailTitle', 'registrationGroupDetailBody',
                     `${lbl} \u2014 ${matches.length} registrant${matches.length !== 1 ? 's' : ''}`, matches);
             },
@@ -1388,19 +1399,16 @@ function renderRegistrationGroupChart() {
             }
         }
     });
-    function resetRegistrationGroupFlags() {
-        for (const k in registrationGroupMerges) delete registrationGroupMerges[k];
-        dismissedRegistrationGroupFlags.clear();
-        renderRegistrationGroupChart();
-    }
-    renderFlags('registrationGroupFlags', flags, 'group', registrationGroupMerges, dismissedRegistrationGroupFlags, renderRegistrationGroupChart, resetRegistrationGroupFlags);
+    renderGroupFlags('registrationGroupFlags', 'registration');
 }
 
 function renderVolunteerGroupChart() {
-    const labels = volunteersData.map(v => getCombinedLabel(v.pastorName, v.assemblyName));
-    const { groups: rawGroups, flags } = groupAndFlag(labels, normalizeCombinedLabel, isSimilarCombinedLabel);
-    const groups = applyMerges(rawGroups, volunteerGroupMerges);
-    const sorted = Object.values(groups).sort((a, b) => b.count - a.count);
+    const groups = {};
+    volunteersData.forEach(v => {
+        const lbl = getCombinedLabel(v.pastorName, v.assemblyName);
+        groups[lbl] = (groups[lbl] || 0) + 1;
+    });
+    const sorted = Object.entries(groups).sort((a, b) => b[1] - a[1]);
 
     if (volunteerGroupChartInstance) volunteerGroupChartInstance.destroy();
     const ctx = document.getElementById('volunteerGroupChart');
@@ -1408,18 +1416,15 @@ function renderVolunteerGroupChart() {
     volunteerGroupChartInstance = new Chart(ctx.getContext('2d'), {
         type: 'pie',
         data: {
-            labels: sorted.map(g => g.display),
-            datasets: [{ data: sorted.map(g => g.count), backgroundColor: getPaletteColors(sorted.length), borderWidth: 1 }]
+            labels: sorted.map(([k]) => k),
+            datasets: [{ data: sorted.map(([, v]) => v), backgroundColor: getPaletteColors(sorted.length), borderWidth: 1 }]
         },
         options: {
             responsive: true,
             onClick(e, elements) {
                 if (!elements.length) return;
-                const lbl = sorted[elements[0].index].display;
-                const canonical = resolveNorm(normalizeCombinedLabel(lbl), volunteerGroupMerges);
-                const matches = volunteersData.filter(v =>
-                    resolveNorm(normalizeCombinedLabel(getCombinedLabel(v.pastorName, v.assemblyName)), volunteerGroupMerges) === canonical
-                );
+                const lbl = sorted[elements[0].index][0];
+                const matches = volunteersData.filter(v => getCombinedLabel(v.pastorName, v.assemblyName) === lbl);
                 showChartDetail('volunteerGroupDetail', 'volunteerGroupDetailTitle', 'volunteerGroupDetailBody',
                     `${lbl} \u2014 ${matches.length} volunteer${matches.length !== 1 ? 's' : ''}`, matches);
             },
@@ -1429,12 +1434,7 @@ function renderVolunteerGroupChart() {
             }
         }
     });
-    function resetVolunteerGroupFlags() {
-        for (const k in volunteerGroupMerges) delete volunteerGroupMerges[k];
-        dismissedVolunteerGroupFlags.clear();
-        renderVolunteerGroupChart();
-    }
-    renderFlags('volunteerGroupFlags', flags, 'group', volunteerGroupMerges, dismissedVolunteerGroupFlags, renderVolunteerGroupChart, resetVolunteerGroupFlags);
+    renderGroupFlags('volunteerGroupFlags', 'volunteer');
 }
 
 function renderCharts() {
