@@ -190,6 +190,10 @@ function displayRegistrations(data) {
         transportCell.textContent = reg.airportTransport;
         row.appendChild(transportCell);
 
+        const childcareCell = document.createElement('td');
+        childcareCell.textContent = reg.hasChildren || '—';
+        row.appendChild(childcareCell);
+
         const dateCell = document.createElement('td');
         dateCell.textContent = formatDate(reg.createdAt);
         row.appendChild(dateCell);
