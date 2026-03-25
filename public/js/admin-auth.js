@@ -142,6 +142,20 @@ async function getAllContacts() {
  * @param {string} docId - Document ID to delete
  * @returns {Promise<void>}
  */
+async function updateRecord(collection, docId, data) {
+    try {
+        const user = auth.currentUser;
+        if (!user) throw new Error('User not authenticated');
+        await db.collection(collection).doc(docId).update({
+            ...data,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+    } catch (error) {
+        console.error('Error updating record:', error);
+        throw error;
+    }
+}
+
 async function deleteRecord(collection, docId) {
     try {
         // Check if user is authenticated
@@ -190,6 +204,7 @@ window.getAllRegistrations = getAllRegistrations;
 window.getAllVolunteers = getAllVolunteers;
 window.getAllVendors = getAllVendors;
 window.getAllContacts = getAllContacts;
+window.updateRecord = updateRecord;
 window.deleteRecord = deleteRecord;
 window.updateVendorStatus = updateVendorStatus;
 

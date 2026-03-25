@@ -209,20 +209,21 @@ function displayRegistrations(data) {
         const viewLink = document.createElement('a');
         viewLink.href = '#';
         viewLink.textContent = 'View';
-        viewLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            viewDetails('registration', reg.id);
-        });
+        viewLink.addEventListener('click', (e) => { e.preventDefault(); viewDetails('registration', reg.id); });
+
+        const editLink = document.createElement('a');
+        editLink.href = '#';
+        editLink.textContent = 'Edit';
+        editLink.addEventListener('click', (e) => { e.preventDefault(); editRecord('registration', reg.id); });
 
         const deleteLink = document.createElement('a');
         deleteLink.href = '#';
         deleteLink.textContent = 'Delete';
-        deleteLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            handleDelete('registrations', reg.id);
-        });
+        deleteLink.addEventListener('click', (e) => { e.preventDefault(); handleDelete('registrations', reg.id); });
 
         actionsCell.appendChild(viewLink);
+        actionsCell.appendChild(document.createTextNode(' | '));
+        actionsCell.appendChild(editLink);
         actionsCell.appendChild(document.createTextNode(' | '));
         actionsCell.appendChild(deleteLink);
         row.appendChild(actionsCell);
@@ -270,20 +271,21 @@ function displayVolunteers(data) {
         const viewLink = document.createElement('a');
         viewLink.href = '#';
         viewLink.textContent = 'View';
-        viewLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            viewDetails('volunteer', vol.id);
-        });
+        viewLink.addEventListener('click', (e) => { e.preventDefault(); viewDetails('volunteer', vol.id); });
+
+        const editLink = document.createElement('a');
+        editLink.href = '#';
+        editLink.textContent = 'Edit';
+        editLink.addEventListener('click', (e) => { e.preventDefault(); editRecord('volunteer', vol.id); });
 
         const deleteLink = document.createElement('a');
         deleteLink.href = '#';
         deleteLink.textContent = 'Delete';
-        deleteLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            handleDelete('volunteers', vol.id);
-        });
+        deleteLink.addEventListener('click', (e) => { e.preventDefault(); handleDelete('volunteers', vol.id); });
 
         actionsCell.appendChild(viewLink);
+        actionsCell.appendChild(document.createTextNode(' | '));
+        actionsCell.appendChild(editLink);
         actionsCell.appendChild(document.createTextNode(' | '));
         actionsCell.appendChild(deleteLink);
         row.appendChild(actionsCell);
@@ -341,12 +343,16 @@ function displayVendors(data) {
         const viewLink = document.createElement('a');
         viewLink.href = '#';
         viewLink.textContent = 'View';
-        viewLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            viewDetails('vendor', vendor.id);
-        });
+        viewLink.addEventListener('click', (e) => { e.preventDefault(); viewDetails('vendor', vendor.id); });
+
+        const editLink = document.createElement('a');
+        editLink.href = '#';
+        editLink.textContent = 'Edit';
+        editLink.addEventListener('click', (e) => { e.preventDefault(); editRecord('vendor', vendor.id); });
 
         actionsCell.appendChild(viewLink);
+        actionsCell.appendChild(document.createTextNode(' | '));
+        actionsCell.appendChild(editLink);
 
         if (!vendor.approved) {
             actionsCell.appendChild(document.createTextNode(' | '));
@@ -410,20 +416,21 @@ function displayContacts(data) {
         const viewLink = document.createElement('a');
         viewLink.href = '#';
         viewLink.textContent = 'View';
-        viewLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            viewDetails('contact', contact.id);
-        });
+        viewLink.addEventListener('click', (e) => { e.preventDefault(); viewDetails('contact', contact.id); });
+
+        const editLink = document.createElement('a');
+        editLink.href = '#';
+        editLink.textContent = 'Edit';
+        editLink.addEventListener('click', (e) => { e.preventDefault(); editRecord('contact', contact.id); });
 
         const deleteLink = document.createElement('a');
         deleteLink.href = '#';
         deleteLink.textContent = 'Delete';
-        deleteLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            handleDelete('contacts', contact.id);
-        });
+        deleteLink.addEventListener('click', (e) => { e.preventDefault(); handleDelete('contacts', contact.id); });
 
         actionsCell.appendChild(viewLink);
+        actionsCell.appendChild(document.createTextNode(' | '));
+        actionsCell.appendChild(editLink);
         actionsCell.appendChild(document.createTextNode(' | '));
         actionsCell.appendChild(deleteLink);
         row.appendChild(actionsCell);
@@ -795,6 +802,109 @@ async function syncToGoogleSheets(section, btn) {
     }
 }
 
+// ===== EDIT RECORD =====
+
+const EDITABLE_FIELDS = {
+    registration: [
+        'firstName', 'lastName', 'phone', 'email', 'pastorName', 'assemblyName',
+        'services', 'airportTransport', 'travelingAlone', 'howManyPeople',
+        'arrivalDate', 'arrivalTime', 'arrivalAirline', 'arrivalAirport', 'arrivalFlight',
+        'departureDate', 'departureTime', 'departureAirline', 'departureAirport', 'departureFlight',
+        'localTransport', 'pickupLocation', 'hasChildren',
+        'vbsAttendance', 'vbsChildren', 'nurseryAttendance', 'nurseryChildren'
+    ],
+    volunteer: [
+        'firstName', 'lastName', 'phone', 'email', 'pastorName', 'assemblyName',
+        'committees', 'principalInstrument', 'availability'
+    ],
+    vendor: [
+        'firstName', 'lastName', 'businessName', 'phone', 'email', 'website',
+        'pastorName', 'assemblyName', 'selling', 'goodsType', 'tableStaffed', 'availability'
+    ],
+    contact: [
+        'name', 'email', 'phone', 'message'
+    ]
+};
+
+let editContext = { type: null, id: null, collection: null };
+
+function editRecord(type, id) {
+    let data, collection;
+    if (type === 'registration') { data = registrationsData.find(r => r.id === id); collection = 'registrations'; }
+    else if (type === 'volunteer')  { data = volunteersData.find(v => v.id === id);    collection = 'volunteers'; }
+    else if (type === 'vendor')     { data = vendorsData.find(v => v.id === id);       collection = 'vendors'; }
+    else if (type === 'contact')    { data = contactsData.find(c => c.id === id);      collection = 'contacts'; }
+
+    if (!data) { alert('Record not found'); return; }
+
+    editContext = { type, id, collection, data };
+
+    document.getElementById('editModalTitle').textContent =
+        'Edit ' + type.charAt(0).toUpperCase() + type.slice(1);
+
+    const fieldsDiv = document.getElementById('editModalFields');
+    fieldsDiv.innerHTML = '';
+
+    (EDITABLE_FIELDS[type] || []).forEach(key => {
+        const value = data[key];
+        const group = document.createElement('div');
+        group.className = 'form-group';
+
+        const lbl = document.createElement('label');
+        lbl.textContent = key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase());
+        group.appendChild(lbl);
+
+        let input;
+        if (key === 'message' || key === 'pickupLocation') {
+            input = document.createElement('textarea');
+            input.rows = 3;
+        } else {
+            input = document.createElement('input');
+            input.type = 'text';
+        }
+        input.id = `edit_${key}`;
+        input.value = Array.isArray(value) ? value.join(', ') : (value != null ? value : '');
+        group.appendChild(input);
+        fieldsDiv.appendChild(group);
+    });
+
+    document.getElementById('editModal').style.display = 'flex';
+}
+
+async function saveEditRecord() {
+    const { type, id, collection, data } = editContext;
+    if (!type || !id) return;
+
+    const updates = {};
+    (EDITABLE_FIELDS[type] || []).forEach(key => {
+        const input = document.getElementById(`edit_${key}`);
+        if (!input) return;
+        updates[key] = Array.isArray(data[key])
+            ? input.value.split(',').map(s => s.trim()).filter(Boolean)
+            : input.value;
+    });
+
+    const saveBtn = document.getElementById('editModalSave');
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Saving...';
+
+    try {
+        await updateRecord(collection, id, updates);
+        document.getElementById('editModal').style.display = 'none';
+        if (collection === 'registrations') await loadRegistrations();
+        else if (collection === 'volunteers') await loadVolunteers();
+        else if (collection === 'vendors')   await loadVendors();
+        else if (collection === 'contacts')  await loadContacts();
+        updateStatistics();
+    } catch (error) {
+        console.error('Error saving record:', error);
+        alert('Error saving changes. Please try again.');
+    } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save Changes';
+    }
+}
+
 // ===== COLUMN SORTING =====
 
 const sortState = {
@@ -898,6 +1008,20 @@ document.addEventListener('DOMContentLoaded', () => {
             const tableId = this.getAttribute('data-table');
             searchTable(tableId, this.value);
         });
+    });
+
+    // Edit modal buttons
+    document.getElementById('editModalSave').addEventListener('click', saveEditRecord);
+    document.getElementById('editModalCancel').addEventListener('click', () => {
+        document.getElementById('editModal').style.display = 'none';
+    });
+    document.getElementById('editModalClose').addEventListener('click', () => {
+        document.getElementById('editModal').style.display = 'none';
+    });
+    document.getElementById('editModal').addEventListener('click', (e) => {
+        if (e.target === document.getElementById('editModal')) {
+            document.getElementById('editModal').style.display = 'none';
+        }
     });
 
     // Sortable column headers

@@ -275,6 +275,82 @@
             display: block;
         }
 
+        /* Edit Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal {
+            background: white;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            width: 90%;
+            max-width: 620px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-lg) var(--spacing-xl);
+            border-bottom: 2px solid var(--off-white);
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: var(--navy-blue);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--dark-gray);
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: var(--burnt-orange);
+        }
+
+        .modal-body {
+            padding: var(--spacing-xl);
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-body .form-group {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .modal-body label {
+            display: block;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--dark-gray);
+            margin-bottom: 4px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-lg) var(--spacing-xl);
+            border-top: 2px solid var(--off-white);
+        }
+
         /* Needs At-a-Glance Block */
         .needs-block {
             display: flex;
@@ -641,6 +717,21 @@
             </div>
 
         </main>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal-overlay" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="editModalTitle">Edit Record</h3>
+                <button class="modal-close" id="editModalClose">&times;</button>
+            </div>
+            <div class="modal-body" id="editModalFields"></div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="editModalCancel">Cancel</button>
+                <button class="btn btn-primary" id="editModalSave">Save Changes</button>
+            </div>
+        </div>
     </div>
 
     <!-- JavaScript -->
