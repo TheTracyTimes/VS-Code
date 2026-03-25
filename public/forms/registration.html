@@ -8,6 +8,57 @@
     <title>2026 International Meeting - Registration | Sarasota Gospel Temple</title>
     <link rel="icon" type="image/png" href="/images/logos/dark-logo.png">
     <link rel="stylesheet" href="../css/design-system.css">
+    <!-- Flatpickr Calendar Picker -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        /* Flatpickr custom theme to match site colors */
+        .flatpickr-calendar {
+            font-family: inherit;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        .flatpickr-day.selected,
+        .flatpickr-day.selected:hover {
+            background: #28478a;
+            border-color: #28478a;
+        }
+        .flatpickr-day:hover {
+            background: #e8edf7;
+        }
+        .flatpickr-months .flatpickr-month,
+        .flatpickr-weekdays,
+        span.flatpickr-weekday {
+            background: #28478a;
+            color: #fff;
+            fill: #fff;
+        }
+        .flatpickr-current-month .numInputWrapper span.arrowUp:after {
+            border-bottom-color: #fff;
+        }
+        .flatpickr-current-month .numInputWrapper span.arrowDown:after {
+            border-top-color: #fff;
+        }
+        .flatpickr-prev-month svg,
+        .flatpickr-next-month svg {
+            fill: #fff;
+        }
+        .flatpickr-prev-month:hover svg,
+        .flatpickr-next-month:hover svg {
+            fill: #c45508;
+        }
+        .flatpickr-day.today {
+            border-color: #c45508;
+        }
+        .flatpickr-wrapper {
+            width: 100%;
+            display: block;
+        }
+        .flatpickr-input {
+            cursor: pointer;
+            width: 100%;
+            box-sizing: border-box;
+        }
+    </style>
     <style>
         /* Page-specific styles */
         .lighthouse-watermark {
@@ -216,7 +267,7 @@
 
                         <div class="form-group">
                             <label for="arrivalDate">Arrival Date <span class="required">*</span></label>
-                            <input type="date" id="arrivalDate" name="arrivalDate">
+                            <input type="text" id="arrivalDate" name="arrivalDate" placeholder="e.g., 04/09/2026" readonly>
                             <span class="error-message">Please enter your arrival date</span>
                         </div>
 
@@ -252,7 +303,7 @@
 
                         <div class="form-group">
                             <label for="departureDate">Departure Date <span class="required">*</span></label>
-                            <input type="date" id="departureDate" name="departureDate">
+                            <input type="text" id="departureDate" name="departureDate" placeholder="e.g., 04/11/2026" readonly>
                             <span class="error-message">Please enter your departure date</span>
                         </div>
 
@@ -419,6 +470,19 @@
     <script src="https://accounts.google.com/gsi/client"></script>
     <script src="../config/google-sheets-config.js"></script>
     <script src="../js/google-sheets-service.js"></script>
+
+    <!-- Flatpickr Calendar Picker -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        flatpickr("#arrivalDate", {
+            dateFormat: "m/d/Y",
+            allowInput: false
+        });
+        flatpickr("#departureDate", {
+            dateFormat: "m/d/Y",
+            allowInput: false
+        });
+    </script>
 
     <!-- JavaScript -->
     <script src="../js/registration-form.js?v=3"></script>

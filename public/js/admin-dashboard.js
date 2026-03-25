@@ -427,21 +427,16 @@ function displayContacts(data) {
 // ===== STATISTICS =====
 
 function updateStatistics() {
-    // Total registrations
     document.getElementById('totalRegistrations').textContent = registrationsData.length;
-
-    // Total volunteers
     document.getElementById('totalVolunteers').textContent = volunteersData.length;
-
-    // Total vendors
     document.getElementById('totalVendors').textContent = vendorsData.length;
+    document.getElementById('totalContacts').textContent = contactsData.length;
 
-    // Need airport transport
     const needsTransport = registrationsData.filter(r => r.airportTransport === 'Yes').length;
     document.getElementById('needsTransport').textContent = needsTransport;
 
-    // Total contacts
-    document.getElementById('totalContacts').textContent = contactsData.length;
+    const needsChildcare = registrationsData.filter(r => r.hasChildren === 'Yes').length;
+    document.getElementById('needsChildcare').textContent = needsChildcare;
 }
 
 // ===== SECTION NAVIGATION =====
@@ -713,7 +708,6 @@ function formatDate(timestamp) {
     if (!timestamp) return '—';
 
     let date;
-    // Handle Firestore timestamp
     if (timestamp.toDate && typeof timestamp.toDate === 'function') {
         date = timestamp.toDate();
     } else if (timestamp instanceof Date) {
@@ -724,7 +718,16 @@ function formatDate(timestamp) {
         return '—';
     }
 
-    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+    const month  = String(date.getMonth() + 1).padStart(2, '0');
+    const day    = String(date.getDate()).padStart(2, '0');
+    const year   = date.getFullYear();
+    const raw    = date.getHours();
+    const ampm   = raw >= 12 ? 'PM' : 'AM';
+    const hours  = String(raw % 12 || 12).padStart(2, '0');
+    const mins   = String(date.getMinutes()).padStart(2, '0');
+    const secs   = String(date.getSeconds()).padStart(2, '0');
+
+    return `${month}/${day}/${year} ${hours}:${mins}:${secs} ${ampm}`;
 }
 
 function getDateString() {
@@ -778,6 +781,81 @@ async function syncToGoogleSheets(section, btn) {
     }
 }
 
+// ===== COLUMN SORTING =====
+
+const sortState = {
+    registrations: { key: null, dir: 'asc' },
+    volunteers:    { key: null, dir: 'asc' },
+    vendors:       { key: null, dir: 'asc' },
+    contacts:      { key: null, dir: 'asc' }
+};
+
+function getSortValue(item, key) {
+    switch (key) {
+        case 'name':
+            return (`${item.firstName || item.name || ''} ${item.lastName || ''}`).toLowerCase().trim();
+        case 'services':
+            return Array.isArray(item.services) ? item.services.length : 0;
+        case 'committees':
+            return Array.isArray(item.committees) ? item.committees.join(', ').toLowerCase() : String(item.committees || '').toLowerCase();
+        case 'availability':
+            return Array.isArray(item.availability) ? item.availability.length : 0;
+        case 'approved':
+            return item.approved ? 1 : 0;
+        case 'createdAt': {
+            const ts = item.createdAt;
+            if (!ts) return 0;
+            if (ts.toDate) return ts.toDate().getTime();
+            if (ts instanceof Date) return ts.getTime();
+            if (typeof ts === 'string') return new Date(ts).getTime();
+            return 0;
+        }
+        default:
+            return String(item[key] || '').toLowerCase();
+    }
+}
+
+function sortTable(tableKey, sortKey) {
+    const state = sortState[tableKey];
+    if (state.key === sortKey) {
+        state.dir = state.dir === 'asc' ? 'desc' : 'asc';
+    } else {
+        state.key = sortKey;
+        state.dir = 'asc';
+    }
+
+    // Update arrow indicators
+    document.querySelectorAll(`th[data-table="${tableKey}"]`).forEach(th => {
+        th.classList.remove('sort-asc', 'sort-desc');
+        if (th.getAttribute('data-sort-key') === sortKey) {
+            th.classList.add(state.dir === 'asc' ? 'sort-asc' : 'sort-desc');
+        }
+    });
+
+    const dir = state.dir === 'asc' ? 1 : -1;
+    const compare = (a, b) => {
+        const av = getSortValue(a, sortKey);
+        const bv = getSortValue(b, sortKey);
+        if (av < bv) return -1 * dir;
+        if (av > bv) return  1 * dir;
+        return 0;
+    };
+
+    if (tableKey === 'registrations') {
+        registrationsData.sort(compare);
+        displayRegistrations(registrationsData);
+    } else if (tableKey === 'volunteers') {
+        volunteersData.sort(compare);
+        displayVolunteers(volunteersData);
+    } else if (tableKey === 'vendors') {
+        vendorsData.sort(compare);
+        displayVendors(vendorsData);
+    } else if (tableKey === 'contacts') {
+        contactsData.sort(compare);
+        displayContacts(contactsData);
+    }
+}
+
 // ===== INITIALIZE =====
 
 // Set up event listeners after DOM loads
@@ -805,6 +883,13 @@ document.addEventListener('DOMContentLoaded', () => {
         input.addEventListener('keyup', function() {
             const tableId = this.getAttribute('data-table');
             searchTable(tableId, this.value);
+        });
+    });
+
+    // Sortable column headers
+    document.querySelectorAll('th[data-sort-key]').forEach(th => {
+        th.addEventListener('click', function() {
+            sortTable(this.getAttribute('data-table'), this.getAttribute('data-sort-key'));
         });
     });
 

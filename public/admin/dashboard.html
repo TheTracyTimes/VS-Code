@@ -274,6 +274,77 @@
         .section-content.active {
             display: block;
         }
+
+        /* Needs At-a-Glance Block */
+        .needs-block {
+            display: flex;
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .needs-card {
+            flex: 1;
+            background: white;
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            border-left: 4px solid var(--navy-blue);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .needs-icon {
+            font-size: 32px;
+        }
+
+        .needs-number {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--burnt-orange);
+            line-height: 1;
+        }
+
+        .needs-label {
+            font-size: 14px;
+            color: var(--dark-gray);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 768px) {
+            .needs-block {
+                flex-direction: column;
+            }
+        }
+
+        /* Sortable column headers */
+        thead th[data-sort-key] {
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        thead th[data-sort-key]::after {
+            content: ' ⇅';
+            opacity: 0.4;
+            font-size: 11px;
+        }
+
+        thead th[data-sort-key].sort-asc::after {
+            content: ' ↑';
+            opacity: 1;
+        }
+
+        thead th[data-sort-key].sort-desc::after {
+            content: ' ↓';
+            opacity: 1;
+        }
+
+        thead th[data-sort-key]:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
     </style>
 
     <!-- Firebase -->
@@ -338,6 +409,24 @@
         <!-- Main Content -->
         <main class="dashboard-content container">
 
+            <!-- Needs At-a-Glance Block -->
+            <div class="needs-block">
+                <div class="needs-card">
+                    <div class="needs-icon">✈️</div>
+                    <div>
+                        <div class="needs-number" id="needsTransport">0</div>
+                        <div class="needs-label">Need Airport Transport</div>
+                    </div>
+                </div>
+                <div class="needs-card">
+                    <div class="needs-icon">👶</div>
+                    <div>
+                        <div class="needs-number" id="needsChildcare">0</div>
+                        <div class="needs-label">Need Childcare</div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Statistics Cards -->
             <div class="stats-grid">
                 <div class="stat-card">
@@ -351,10 +440,6 @@
                 <div class="stat-card">
                     <div class="stat-number" id="totalVendors">0</div>
                     <div class="stat-label">Vendor Applications</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="needsTransport">0</div>
-                    <div class="stat-label">Need Airport Transport</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-number" id="totalContacts">0</div>
@@ -385,13 +470,13 @@
                             <table>
                                 <thead>
                                     <tr>
-                                        <th>Name</th>
-                                        <th>Phone</th>
-                                        <th>Email</th>
-                                        <th>Pastor</th>
-                                        <th>Services</th>
-                                        <th>Airport Transport</th>
-                                        <th>Submitted</th>
+                                        <th data-sort-key="name" data-table="registrations">Name</th>
+                                        <th data-sort-key="phone" data-table="registrations">Phone</th>
+                                        <th data-sort-key="email" data-table="registrations">Email</th>
+                                        <th data-sort-key="pastorName" data-table="registrations">Pastor</th>
+                                        <th data-sort-key="services" data-table="registrations">Services</th>
+                                        <th data-sort-key="airportTransport" data-table="registrations">Airport Transport</th>
+                                        <th data-sort-key="createdAt" data-table="registrations">Submitted</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -431,12 +516,12 @@
                             <table>
                                 <thead>
                                     <tr>
-                                        <th>Name</th>
-                                        <th>Phone</th>
-                                        <th>Email</th>
-                                        <th>Committees</th>
-                                        <th>Availability</th>
-                                        <th>Submitted</th>
+                                        <th data-sort-key="name" data-table="volunteers">Name</th>
+                                        <th data-sort-key="phone" data-table="volunteers">Phone</th>
+                                        <th data-sort-key="email" data-table="volunteers">Email</th>
+                                        <th data-sort-key="committees" data-table="volunteers">Committees</th>
+                                        <th data-sort-key="availability" data-table="volunteers">Availability</th>
+                                        <th data-sort-key="createdAt" data-table="volunteers">Submitted</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -476,13 +561,13 @@
                             <table>
                                 <thead>
                                     <tr>
-                                        <th>Business Name</th>
-                                        <th>Contact</th>
-                                        <th>Phone</th>
-                                        <th>Email</th>
-                                        <th>Selling</th>
-                                        <th>Status</th>
-                                        <th>Submitted</th>
+                                        <th data-sort-key="businessName" data-table="vendors">Business Name</th>
+                                        <th data-sort-key="name" data-table="vendors">Contact</th>
+                                        <th data-sort-key="phone" data-table="vendors">Phone</th>
+                                        <th data-sort-key="email" data-table="vendors">Email</th>
+                                        <th data-sort-key="selling" data-table="vendors">Selling</th>
+                                        <th data-sort-key="approved" data-table="vendors">Status</th>
+                                        <th data-sort-key="createdAt" data-table="vendors">Submitted</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -522,11 +607,11 @@
                             <table>
                                 <thead>
                                     <tr>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                        <th>Phone</th>
-                                        <th>Message</th>
-                                        <th>Submitted</th>
+                                        <th data-sort-key="name" data-table="contacts">Name</th>
+                                        <th data-sort-key="email" data-table="contacts">Email</th>
+                                        <th data-sort-key="phone" data-table="contacts">Phone</th>
+                                        <th data-sort-key="message" data-table="contacts">Message</th>
+                                        <th data-sort-key="createdAt" data-table="contacts">Submitted</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
