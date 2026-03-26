@@ -1025,7 +1025,7 @@ function getPaletteColors(n) {
 function normalizePastorName(raw) {
     if (!raw) return '';
     return raw
-        .replace(/\b(pastor|pasteur|past|pst|bro|brother|rev|reverend|elder|eld|deacon|min|minister)\b\.?/gi, '')
+        .replace(/\b(pastor|pasteur|past|pas|pst|bro|brother|rev|reverend|elder|eld|deacon|min|minister)\b\.?/gi, '')
         .replace(/[.,]/g, '')
         .replace(/\s+/g, ' ')
         .trim()
