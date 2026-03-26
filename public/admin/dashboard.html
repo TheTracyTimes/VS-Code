@@ -242,7 +242,7 @@
         /* Responsive */
         @media (max-width: 768px) {
             .stats-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 1fr;
             }
 
             .action-bar {
@@ -265,6 +265,49 @@
             thead th, tbody td {
                 padding: var(--spacing-sm);
             }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            /* Stack title and logout button */
+            .dashboard-header .container > div:first-child {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .logout-btn {
+                margin-left: 0;
+                font-size: 13px;
+                padding: 6px 12px;
+            }
+            .dashboard-header h1 {
+                font-size: 22px;
+            }
+            .dashboard-header p {
+                font-size: 13px;
+            }
+
+            /* Scrollable nav — prevents overflow hiding the Charts tab */
+            .dashboard-nav {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                padding-bottom: 6px;
+                flex-wrap: nowrap;
+                margin-right: calc(-1 * var(--spacing-md));
+                padding-right: var(--spacing-md);
+            }
+            .dashboard-nav button {
+                flex-shrink: 0;
+                font-size: 12px;
+                padding: 6px 10px;
+                white-space: nowrap;
+            }
+
+            .stat-number { font-size: 36px; }
+            .needs-number { font-size: 36px; }
         }
 
         .section-content {
@@ -843,10 +886,40 @@
 
             <!-- CHARTS SECTION -->
             <div id="charts-section" class="section-content">
-                <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:var(--spacing-md);">
+                <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:var(--spacing-md);flex-wrap:wrap;">
                     <button class="btn btn-outline" id="clearDismissals" style="font-size:13px;color:var(--danger,#c0392b);border-color:var(--danger,#c0392b);">&#10005; Clear Dismissals</button>
                     <button class="btn btn-outline" id="restartDuplicateReview" style="font-size:13px;">&#8635; Check for More Duplicates</button>
                 </div>
+
+                <!-- Manual Merge Panel -->
+                <details id="manualMergePanel" style="margin-bottom:var(--spacing-lg);">
+                    <summary style="cursor:pointer;font-weight:600;color:var(--navy-blue);font-size:14px;padding:4px 0;list-style:none;display:flex;align-items:center;gap:6px;">
+                        <span id="manualMergeArrow" style="display:inline-block;transition:transform 0.2s;">&#9654;</span> Manual Merge
+                    </summary>
+                    <div style="background:white;border-radius:var(--radius-md);padding:var(--spacing-lg);box-shadow:var(--shadow-md);margin-top:8px;">
+                        <p style="font-size:13px;color:var(--dark-gray);margin:0 0 var(--spacing-md);">Manually merge a name variant the algorithm didn't detect. Type the duplicate name and the canonical name it should merge into.</p>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--spacing-md);margin-bottom:var(--spacing-md);">
+                            <div>
+                                <label style="display:block;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--dark-gray);margin-bottom:4px;">Duplicate name (merge FROM)</label>
+                                <input type="text" id="manualMergeFrom" placeholder="e.g. Exavier et Rosage" style="width:100%;box-sizing:border-box;">
+                            </div>
+                            <div>
+                                <label style="display:block;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--dark-gray);margin-bottom:4px;">Canonical name (merge INTO)</label>
+                                <input type="text" id="manualMergeInto" placeholder="e.g. Exavier Noël Rosage Beauzil" style="width:100%;box-sizing:border-box;">
+                            </div>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:var(--spacing-md);flex-wrap:wrap;">
+                            <select id="manualMergeType" style="flex:1;min-width:200px;">
+                                <option value="volunteerPastor">Volunteers — Pastor Name</option>
+                                <option value="volunteerAssembly">Volunteers — Assembly Name</option>
+                                <option value="registrationPastor">Registrations — Pastor Name</option>
+                                <option value="registrationAssembly">Registrations — Assembly Name</option>
+                            </select>
+                            <button class="btn btn-primary" id="manualMergeBtn">Merge</button>
+                        </div>
+                        <div id="manualMergeStatus" style="font-size:13px;margin-top:8px;min-height:20px;"></div>
+                    </div>
+                </details>
                 <div class="charts-row">
                     <div class="chart-card">
                         <h3>Service Attendance <span style="font-size:13px;font-weight:400;color:var(--dark-gray);">— click a bar to see attendees</span></h3>

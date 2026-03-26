@@ -1777,6 +1777,57 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Manual merge panel — rotate arrow on open/close
+    const manualMergePanel = document.getElementById('manualMergePanel');
+    const manualMergeArrow = document.getElementById('manualMergeArrow');
+    if (manualMergePanel && manualMergeArrow) {
+        manualMergePanel.addEventListener('toggle', () => {
+            manualMergeArrow.style.transform = manualMergePanel.open ? 'rotate(90deg)' : '';
+        });
+    }
+
+    // Manual merge submit
+    const manualMergeBtn = document.getElementById('manualMergeBtn');
+    if (manualMergeBtn) {
+        manualMergeBtn.addEventListener('click', async () => {
+            const fromVal  = (document.getElementById('manualMergeFrom').value  || '').trim();
+            const intoVal  = (document.getElementById('manualMergeInto').value  || '').trim();
+            const typeKey  = document.getElementById('manualMergeType').value;   // e.g. 'volunteerPastor'
+            const status   = document.getElementById('manualMergeStatus');
+
+            if (!fromVal || !intoVal) { status.textContent = '⚠ Please fill in both name fields.'; status.style.color = '#856404'; return; }
+            if (fromVal.toLowerCase() === intoVal.toLowerCase()) { status.textContent = '⚠ From and Into names are identical.'; status.style.color = '#856404'; return; }
+
+            // Derive chartType ('volunteer'|'registration') and round ('pastor'|'assembly')
+            const isPastor   = typeKey.endsWith('Pastor');
+            const chartType  = typeKey.startsWith('volunteer') ? 'volunteer' : 'registration';
+            const round      = isPastor ? 'pastor' : 'assembly';
+            const normFn     = isPastor ? normalizePastorName : normalizeAssemblyName;
+            const loserNorm  = normFn(fromVal);
+
+            if (!loserNorm) { status.textContent = '⚠ The "from" name is empty after normalization.'; status.style.color = '#856404'; return; }
+
+            manualMergeBtn.disabled = true;
+            manualMergeBtn.textContent = 'Saving…';
+            status.textContent = '';
+            try {
+                await saveMerge(chartType, round, loserNorm, fromVal, intoVal);
+                status.textContent = `✓ Merged "${fromVal}" → "${intoVal}"`;
+                status.style.color = '#155724';
+                document.getElementById('manualMergeFrom').value = '';
+                document.getElementById('manualMergeInto').value = '';
+                // Re-render charts so the merge is reflected immediately
+                renderRegistrationGroupChart();
+                renderVolunteerGroupChart();
+            } catch (e) {
+                status.textContent = '✗ Save failed: ' + e.message;
+                status.style.color = '#721c24';
+            }
+            manualMergeBtn.disabled = false;
+            manualMergeBtn.textContent = 'Merge';
+        });
+    }
+
     // Navigation buttons
     const navButtons = document.querySelectorAll('.dashboard-nav button');
     navButtons.forEach(btn => {
