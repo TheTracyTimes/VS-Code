@@ -1033,6 +1033,7 @@ function getPaletteColors(n) {
 function normalizePastorName(raw) {
     if (!raw) return '';
     return raw
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')   // é→e, è→e, à→a, etc.
         .replace(/\b(pastor|pasteur|past|pas|pst|bro|brother|rev|reverend|elder|eld|deacon|min|minister)\b\.?/gi, '')
         .replace(/[.,]/g, '')
         .replace(/\s+/g, ' ')
@@ -1060,6 +1061,7 @@ function normalizeAssemblyName(raw) {
     // Minimal normalization: lowercase and clean punctuation only
     // (do NOT strip church title words here — abbreviations like GOTK use them)
     return raw
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')   // é→e, è→e, à→a, etc.
         .replace(/[.,#&()']/g, '')
         .replace(/\s+/g, ' ')
         .trim()
