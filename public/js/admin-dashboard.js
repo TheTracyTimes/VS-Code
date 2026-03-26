@@ -1660,13 +1660,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // Restart duplicate review
     const restartBtn = document.getElementById('restartDuplicateReview');
     if (restartBtn) {
-        restartBtn.addEventListener('click', () => {
-            // Keep confirmed merges AND dismissed pairs — just reset round progress
-            // so detection re-runs and finds any new pairs that emerged from merges
+        restartBtn.addEventListener('click', async () => {
+            restartBtn.disabled = true;
+            restartBtn.textContent = 'Loading…';
+            // Reload merges from Firestore so any merges confirmed this session
+            // (or by another admin on another device) are included before re-scanning
+            await loadMergeDecisions();
+            // Keep dismissed pairs — just reset round progress to re-scan for new pairs
             registrationRound = 'pastor';
             volunteerRound    = 'pastor';
             renderRegistrationGroupChart();
             renderVolunteerGroupChart();
+            restartBtn.disabled = false;
+            restartBtn.textContent = '\u21BB Check for More Duplicates';
         });
     }
 
