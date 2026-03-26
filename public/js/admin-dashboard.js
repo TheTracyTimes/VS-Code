@@ -1491,14 +1491,30 @@ function renderCommitteeChart() {
 }
 
 function renderRegistrationGroupChart() {
-    const groups = {};
+    // Group by normalized key so case-only variants (e.g. "new" vs "New") collapse into one slice
+    const groups = {}; // normKey → { display, count }
     registrationsData.forEach(r => {
         const ep = getEffectiveName(r.pastorName,  savedMerges.registrationPastor,   normalizePastorName);
         const ea = getEffectiveName(r.assemblyName, savedMerges.registrationAssembly, normalizeAssemblyName);
-        const lbl = getCombinedLabel(ep, ea);
-        groups[lbl] = (groups[lbl] || 0) + 1;
+        const normKey = getCombinedLabel(normalizePastorName(ep), normalizeAssemblyName(ea));
+        if (!groups[normKey]) groups[normKey] = { display: getCombinedLabel(ep, ea), count: 0 };
+        groups[normKey].count++;
     });
-    const sorted = Object.entries(groups).sort((a, b) => b[1] - a[1]);
+    const sorted = Object.entries(groups).sort((a, b) => b[1].count - a[1].count);
+
+    const regFilter = normKey => registrationsData.filter(r => {
+        const ep = getEffectiveName(r.pastorName,  savedMerges.registrationPastor,   normalizePastorName);
+        const ea = getEffectiveName(r.assemblyName, savedMerges.registrationAssembly, normalizeAssemblyName);
+        return getCombinedLabel(normalizePastorName(ep), normalizeAssemblyName(ea)) === normKey;
+    });
+    const regNote = r => {
+        const notes = [];
+        const ep = getEffectiveName(r.pastorName,   savedMerges.registrationPastor,   normalizePastorName);
+        const ea = getEffectiveName(r.assemblyName, savedMerges.registrationAssembly, normalizeAssemblyName);
+        if (r.pastorName   && ep !== r.pastorName)   notes.push(`Pastor also known as: \u201c${r.pastorName}\u201d`);
+        if (r.assemblyName && ea !== r.assemblyName) notes.push(`Assembly also known as: \u201c${r.assemblyName}\u201d`);
+        return notes.join(' \u2022 ');
+    };
 
     if (registrationGroupChartInstance) registrationGroupChartInstance.destroy();
     const ctx = document.getElementById('registrationGroupChart');
@@ -1506,29 +1522,17 @@ function renderRegistrationGroupChart() {
     registrationGroupChartInstance = new Chart(ctx.getContext('2d'), {
         type: 'pie',
         data: {
-            labels: sorted.map(([k]) => k),
-            datasets: [{ data: sorted.map(([, v]) => v), backgroundColor: getPaletteColors(sorted.length), borderWidth: 1 }]
+            labels: sorted.map(([, {display}]) => display),
+            datasets: [{ data: sorted.map(([, {count}]) => count), backgroundColor: getPaletteColors(sorted.length), borderWidth: 1 }]
         },
         options: {
             responsive: true,
             onClick(e, elements) {
                 if (!elements.length) return;
-                const lbl = sorted[elements[0].index][0];
-                const matches = registrationsData.filter(r => {
-                    const ep = getEffectiveName(r.pastorName,  savedMerges.registrationPastor,   normalizePastorName);
-                    const ea = getEffectiveName(r.assemblyName, savedMerges.registrationAssembly, normalizeAssemblyName);
-                    return getCombinedLabel(ep, ea) === lbl;
-                });
-                const regNote = r => {
-                    const notes = [];
-                    const ep = getEffectiveName(r.pastorName,   savedMerges.registrationPastor,   normalizePastorName);
-                    const ea = getEffectiveName(r.assemblyName, savedMerges.registrationAssembly, normalizeAssemblyName);
-                    if (r.pastorName   && ep !== r.pastorName)   notes.push(`Pastor also known as: \u201c${r.pastorName}\u201d`);
-                    if (r.assemblyName && ea !== r.assemblyName) notes.push(`Assembly also known as: \u201c${r.assemblyName}\u201d`);
-                    return notes.join(' \u2022 ');
-                };
+                const [normKey, {display}] = sorted[elements[0].index];
+                const matches = regFilter(normKey);
                 showChartDetail('registrationGroupDetail', 'registrationGroupDetailTitle', 'registrationGroupDetailBody',
-                    `${lbl} \u2014 ${matches.length} registrant${matches.length !== 1 ? 's' : ''}`, matches, regNote);
+                    `${display} \u2014 ${matches.length} registrant${matches.length !== 1 ? 's' : ''}`, matches, regNote);
             },
             plugins: {
                 legend: { display: false },
@@ -1537,35 +1541,40 @@ function renderRegistrationGroupChart() {
         }
     });
     const regColors = getPaletteColors(sorted.length);
-    renderScrollLegend('registrationGroupLegend', sorted, regColors, (lbl) => {
-        const matches = registrationsData.filter(r => {
-            const ep = getEffectiveName(r.pastorName,  savedMerges.registrationPastor,   normalizePastorName);
-            const ea = getEffectiveName(r.assemblyName, savedMerges.registrationAssembly, normalizeAssemblyName);
-            return getCombinedLabel(ep, ea) === lbl;
-        });
-        const regNote = r => {
-            const notes = [];
-            const ep = getEffectiveName(r.pastorName,   savedMerges.registrationPastor,   normalizePastorName);
-            const ea = getEffectiveName(r.assemblyName, savedMerges.registrationAssembly, normalizeAssemblyName);
-            if (r.pastorName   && ep !== r.pastorName)   notes.push(`Pastor also known as: \u201c${r.pastorName}\u201d`);
-            if (r.assemblyName && ea !== r.assemblyName) notes.push(`Assembly also known as: \u201c${r.assemblyName}\u201d`);
-            return notes.join(' \u2022 ');
-        };
+    renderScrollLegend('registrationGroupLegend', sorted.map(([, {display, count}]) => [display, count]), regColors, (_, idx) => {
+        const [normKey, {display}] = sorted[idx];
+        const matches = regFilter(normKey);
         showChartDetail('registrationGroupDetail', 'registrationGroupDetailTitle', 'registrationGroupDetailBody',
-            `${lbl} \u2014 ${matches.length} registrant${matches.length !== 1 ? 's' : ''}`, matches, regNote);
+            `${display} \u2014 ${matches.length} registrant${matches.length !== 1 ? 's' : ''}`, matches, regNote);
     });
     renderGroupFlags('registrationGroupFlags', 'registration');
 }
 
 function renderVolunteerGroupChart() {
-    const groups = {};
+    // Group by normalized key so case-only variants collapse into one slice
+    const groups = {}; // normKey → { display, count }
     volunteersData.forEach(v => {
         const ep = getEffectiveName(v.pastorName,  savedMerges.volunteerPastor,   normalizePastorName);
         const ea = getEffectiveName(v.assemblyName, savedMerges.volunteerAssembly, normalizeAssemblyName);
-        const lbl = getCombinedLabel(ep, ea);
-        groups[lbl] = (groups[lbl] || 0) + 1;
+        const normKey = getCombinedLabel(normalizePastorName(ep), normalizeAssemblyName(ea));
+        if (!groups[normKey]) groups[normKey] = { display: getCombinedLabel(ep, ea), count: 0 };
+        groups[normKey].count++;
     });
-    const sorted = Object.entries(groups).sort((a, b) => b[1] - a[1]);
+    const sorted = Object.entries(groups).sort((a, b) => b[1].count - a[1].count);
+
+    const volFilter = normKey => volunteersData.filter(v => {
+        const ep = getEffectiveName(v.pastorName,  savedMerges.volunteerPastor,   normalizePastorName);
+        const ea = getEffectiveName(v.assemblyName, savedMerges.volunteerAssembly, normalizeAssemblyName);
+        return getCombinedLabel(normalizePastorName(ep), normalizeAssemblyName(ea)) === normKey;
+    });
+    const volNote = v => {
+        const notes = [];
+        const ep = getEffectiveName(v.pastorName,   savedMerges.volunteerPastor,   normalizePastorName);
+        const ea = getEffectiveName(v.assemblyName, savedMerges.volunteerAssembly, normalizeAssemblyName);
+        if (v.pastorName   && ep !== v.pastorName)   notes.push(`Pastor also known as: \u201c${v.pastorName}\u201d`);
+        if (v.assemblyName && ea !== v.assemblyName) notes.push(`Assembly also known as: \u201c${v.assemblyName}\u201d`);
+        return notes.join(' \u2022 ');
+    };
 
     if (volunteerGroupChartInstance) volunteerGroupChartInstance.destroy();
     const ctx = document.getElementById('volunteerGroupChart');
@@ -1573,29 +1582,17 @@ function renderVolunteerGroupChart() {
     volunteerGroupChartInstance = new Chart(ctx.getContext('2d'), {
         type: 'pie',
         data: {
-            labels: sorted.map(([k]) => k),
-            datasets: [{ data: sorted.map(([, v]) => v), backgroundColor: getPaletteColors(sorted.length), borderWidth: 1 }]
+            labels: sorted.map(([, {display}]) => display),
+            datasets: [{ data: sorted.map(([, {count}]) => count), backgroundColor: getPaletteColors(sorted.length), borderWidth: 1 }]
         },
         options: {
             responsive: true,
             onClick(e, elements) {
                 if (!elements.length) return;
-                const lbl = sorted[elements[0].index][0];
-                const matches = volunteersData.filter(v => {
-                    const ep = getEffectiveName(v.pastorName,  savedMerges.volunteerPastor,   normalizePastorName);
-                    const ea = getEffectiveName(v.assemblyName, savedMerges.volunteerAssembly, normalizeAssemblyName);
-                    return getCombinedLabel(ep, ea) === lbl;
-                });
-                const volNote = v => {
-                    const notes = [];
-                    const ep = getEffectiveName(v.pastorName,   savedMerges.volunteerPastor,   normalizePastorName);
-                    const ea = getEffectiveName(v.assemblyName, savedMerges.volunteerAssembly, normalizeAssemblyName);
-                    if (v.pastorName   && ep !== v.pastorName)   notes.push(`Pastor also known as: \u201c${v.pastorName}\u201d`);
-                    if (v.assemblyName && ea !== v.assemblyName) notes.push(`Assembly also known as: \u201c${v.assemblyName}\u201d`);
-                    return notes.join(' \u2022 ');
-                };
+                const [normKey, {display}] = sorted[elements[0].index];
+                const matches = volFilter(normKey);
                 showChartDetail('volunteerGroupDetail', 'volunteerGroupDetailTitle', 'volunteerGroupDetailBody',
-                    `${lbl} \u2014 ${matches.length} volunteer${matches.length !== 1 ? 's' : ''}`, matches, volNote);
+                    `${display} \u2014 ${matches.length} volunteer${matches.length !== 1 ? 's' : ''}`, matches, volNote);
             },
             plugins: {
                 legend: { display: false },
@@ -1604,22 +1601,11 @@ function renderVolunteerGroupChart() {
         }
     });
     const volColors = getPaletteColors(sorted.length);
-    renderScrollLegend('volunteerGroupLegend', sorted, volColors, (lbl) => {
-        const matches = volunteersData.filter(v => {
-            const ep = getEffectiveName(v.pastorName,  savedMerges.volunteerPastor,   normalizePastorName);
-            const ea = getEffectiveName(v.assemblyName, savedMerges.volunteerAssembly, normalizeAssemblyName);
-            return getCombinedLabel(ep, ea) === lbl;
-        });
-        const volNote = v => {
-            const notes = [];
-            const ep = getEffectiveName(v.pastorName,   savedMerges.volunteerPastor,   normalizePastorName);
-            const ea = getEffectiveName(v.assemblyName, savedMerges.volunteerAssembly, normalizeAssemblyName);
-            if (v.pastorName   && ep !== v.pastorName)   notes.push(`Pastor also known as: \u201c${v.pastorName}\u201d`);
-            if (v.assemblyName && ea !== v.assemblyName) notes.push(`Assembly also known as: \u201c${v.assemblyName}\u201d`);
-            return notes.join(' \u2022 ');
-        };
+    renderScrollLegend('volunteerGroupLegend', sorted.map(([, {display, count}]) => [display, count]), volColors, (_, idx) => {
+        const [normKey, {display}] = sorted[idx];
+        const matches = volFilter(normKey);
         showChartDetail('volunteerGroupDetail', 'volunteerGroupDetailTitle', 'volunteerGroupDetailBody',
-            `${lbl} \u2014 ${matches.length} volunteer${matches.length !== 1 ? 's' : ''}`, matches, volNote);
+            `${display} \u2014 ${matches.length} volunteer${matches.length !== 1 ? 's' : ''}`, matches, volNote);
     });
     renderGroupFlags('volunteerGroupFlags', 'volunteer');
 }
