@@ -105,17 +105,9 @@ service cloud.firestore {
     }
 
     // ===== ADMIN SETTINGS COLLECTION =====
-    // Stores admin-only data like duplicate merge decisions
-    // Merge decisions are stored here instead of modifying user submissions
+    // Reserved for future admin-only configuration
 
     match /adminSettings/{document} {
-      allow read, write: if request.auth != null;
-    }
-
-    // ===== MERGE LOG COLLECTION =====
-    // Audit trail of all duplicate merge decisions (who merged what, when)
-
-    match /mergeLog/{document} {
       allow read, write: if request.auth != null;
     }
 
