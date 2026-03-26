@@ -1075,6 +1075,13 @@ function isSimilarPastorName(a, b) {
             if (dist > 0 && dist <= maxDist) return true;
         }
     }
+    // Nickname/prefix match: a word is the start of a longer word (e.g. "Theo" → "Theodate")
+    for (const sw of shorter) {
+        if (sw.length < 4) continue;
+        for (const lw of longer) {
+            if (lw.length > sw.length && lw.startsWith(sw)) return true;
+        }
+    }
     return false;
 }
 
