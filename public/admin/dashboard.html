@@ -928,11 +928,13 @@
                         <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--spacing-md);margin-bottom:var(--spacing-md);">
                             <div>
                                 <label style="display:block;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--dark-gray);margin-bottom:4px;">Duplicate name (merge FROM)</label>
-                                <input type="text" id="manualMergeFrom" placeholder="e.g. Exavier et Rosage" style="width:100%;box-sizing:border-box;">
+                                <input type="text" id="manualMergeFrom" list="manualMergeFromList" placeholder="e.g. Exavier et Rosage" style="width:100%;box-sizing:border-box;" autocomplete="off">
+                                <datalist id="manualMergeFromList"></datalist>
                             </div>
                             <div>
                                 <label style="display:block;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--dark-gray);margin-bottom:4px;">Canonical name (merge INTO)</label>
-                                <input type="text" id="manualMergeInto" placeholder="e.g. Exavier Noël Rosage Beauzil" style="width:100%;box-sizing:border-box;">
+                                <input type="text" id="manualMergeInto" list="manualMergeIntoList" placeholder="e.g. Exavier Noël Rosage Beauzil" style="width:100%;box-sizing:border-box;" autocomplete="off">
+                                <datalist id="manualMergeIntoList"></datalist>
                             </div>
                         </div>
                         <div style="display:flex;align-items:center;gap:var(--spacing-md);flex-wrap:wrap;">

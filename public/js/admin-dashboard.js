@@ -1236,27 +1236,23 @@ async function saveDismissal(chartType, round, pairKey) {
 // Save a merge decision to adminSettings (never touches registrations/volunteers/vendors records)
 async function saveMerge(chartType, round, loserNorm, loserDisplay, winnerDisplay) {
     const key = chartType + round.charAt(0).toUpperCase() + round.slice(1); // e.g. 'registrationPastor'
-    savedMerges[key][loserNorm] = winnerDisplay;
+    savedMerges[key][loserNorm] = winnerDisplay; // always apply in-memory immediately
     const user = auth && auth.currentUser ? auth.currentUser.email : 'admin';
-    try {
-        await Promise.all([
-            db.collection('adminSettings').doc('merges').set(
-                { [key]: savedMerges[key] },
-                { merge: true }
-            ),
-            db.collection('mergeLog').add({
-                chartType,
-                round,
-                mergedFrom: loserDisplay,
-                mergedInto: winnerDisplay,
-                by: user,
-                at: firebase.firestore.FieldValue.serverTimestamp()
-            })
-        ]);
-    } catch (e) {
-        console.error('Error saving merge decision:', e);
-        alert('Error saving to database: ' + e.message);
-    }
+    // Let Firestore errors propagate to the caller
+    await Promise.all([
+        db.collection('adminSettings').doc('merges').set(
+            { [key]: savedMerges[key] },
+            { merge: true }
+        ),
+        db.collection('mergeLog').add({
+            chartType,
+            round,
+            mergedFrom: loserDisplay,
+            mergedInto: winnerDisplay,
+            by: user,
+            at: firebase.firestore.FieldValue.serverTimestamp()
+        })
+    ]);
 }
 
 function renderGroupFlags(containerId, chartType) {
@@ -1382,10 +1378,17 @@ function renderGroupFlags(containerId, chartType) {
                     const loserDisplay = option.display === f.a ? f.b : f.a;
                     const pk = pairKey(f.normA, f.normB);
                     dismissed.add(pk);
-                    await Promise.all([
-                        saveMerge(chartType, round_key, loserNorm, loserDisplay, option.display),
-                        saveDismissal(chartType, round_key, pk)
-                    ]);
+                    try {
+                        await Promise.all([
+                            saveMerge(chartType, round_key, loserNorm, loserDisplay, option.display),
+                            saveDismissal(chartType, round_key, pk)
+                        ]);
+                    } catch (e) {
+                        console.error('Error saving merge/dismissal:', e);
+                        btn.textContent = 'Save failed \u2014 retry';
+                        btn.disabled = false;
+                        return;
+                    }
                     rerender();
                 });
                 btnRow.appendChild(btn);
@@ -1786,6 +1789,36 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Populate datalist suggestions when merge type changes
+    function updateMergeDatalist() {
+        const typeKey  = document.getElementById('manualMergeType').value;
+        const isPastor = typeKey.endsWith('Pastor');
+        const data     = typeKey.startsWith('volunteer') ? volunteersData : registrationsData;
+        const getField = isPastor ? (r => r.pastorName) : (r => r.assemblyName);
+        const seen     = new Set();
+        const names    = [];
+        data.forEach(item => {
+            const v = getField(item);
+            if (v && !seen.has(v)) { seen.add(v); names.push(v); }
+        });
+        names.sort();
+        ['manualMergeFromList', 'manualMergeIntoList'].forEach(id => {
+            const dl = document.getElementById(id);
+            if (!dl) return;
+            dl.innerHTML = '';
+            names.forEach(n => {
+                const opt = document.createElement('option');
+                opt.value = n;
+                dl.appendChild(opt);
+            });
+        });
+    }
+    const mergeTypeSelect = document.getElementById('manualMergeType');
+    if (mergeTypeSelect) {
+        mergeTypeSelect.addEventListener('change', updateMergeDatalist);
+        updateMergeDatalist(); // populate on load
+    }
+
     // Manual merge submit
     const manualMergeBtn = document.getElementById('manualMergeBtn');
     if (manualMergeBtn) {
@@ -1823,22 +1856,26 @@ document.addEventListener('DOMContentLoaded', () => {
             manualMergeBtn.disabled = true;
             manualMergeBtn.textContent = 'Saving…';
             status.textContent = '';
+            let saveOk = true;
             try {
                 await saveMerge(chartType, round, loserNorm, fromVal, intoVal);
+            } catch (e) {
+                saveOk = false;
+                console.error('Merge Firestore save failed:', e);
+                status.textContent = `⚠ Database save failed (${e.message}). Merge applied this session only — will be lost on refresh. Check Firestore permissions.`;
+                status.style.color = '#721c24';
+            }
+            if (saveOk) {
                 status.textContent = `✓ Merged "${fromVal}" → "${intoVal}" (${matchCount} record${matchCount !== 1 ? 's' : ''} updated)`;
                 status.style.color = '#155724';
                 document.getElementById('manualMergeFrom').value = '';
                 document.getElementById('manualMergeInto').value = '';
-                // Reset both rounds so duplicate flags re-scan after every manual merge
-                registrationRound = 'pastor';
-                volunteerRound    = 'pastor';
-                // Re-render charts independently so an error in one doesn't block the other
-                try { renderRegistrationGroupChart(); } catch (e) { console.error('Registration chart render error:', e); }
-                try { renderVolunteerGroupChart(); }    catch (e) { console.error('Volunteer chart render error:', e); }
-            } catch (e) {
-                status.textContent = '✗ Save failed: ' + e.message;
-                status.style.color = '#721c24';
             }
+            // Always re-render both charts — in-memory merge is applied even if Firestore save failed
+            registrationRound = 'pastor';
+            volunteerRound    = 'pastor';
+            try { renderRegistrationGroupChart(); } catch (e) { console.error('Registration chart render error:', e); }
+            try { renderVolunteerGroupChart(); }    catch (e) { console.error('Volunteer chart render error:', e); }
             manualMergeBtn.disabled = false;
             manualMergeBtn.textContent = 'Merge';
         });
