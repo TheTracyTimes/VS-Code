@@ -1034,9 +1034,10 @@ function normalizePastorName(raw) {
 
 function normalizeAssemblyName(raw) {
     if (!raw) return '';
+    // Minimal normalization: lowercase and clean punctuation only
+    // (do NOT strip church title words here — abbreviations like GOTK use them)
     return raw
-        .replace(/\b(assembly|gospel|temple|body|christ|church|of|the|god|first|new|and)\b\.?/gi, '')
-        .replace(/[.,#&()]/g, '')
+        .replace(/[.,#&()']/g, '')
         .replace(/\s+/g, ' ')
         .trim()
         .toLowerCase();
@@ -1050,29 +1051,34 @@ function isSimilarPastorName(a, b) {
     return shorter.length > 0 && shorter.every(w => longer.includes(w));
 }
 
-// Check if one name could be an abbreviation of the other
-// e.g. "SGT" matches "Sarasota Gospel Temple" (initials match)
-function isAbbreviationOf(abbr, full) {
-    if (abbr.length < 2 || abbr.length > 6) return false;
-    const words = full.split(' ').filter(Boolean);
-    if (words.length < abbr.length) return false;
-    const initials = words.map(w => w[0]).join('');
-    return initials.startsWith(abbr) || initials === abbr;
-}
-
 function isSimilarAssemblyName(a, b) {
     if (!a || !b || a === b) return false;
-    const stop = new Set(['church','assembly','gospel','temple','body','christ','of','the','god','first','new','and','de','la','le','les','des','du','en','et']);
+
+    // Abbreviation check: one entry is 2–6 lowercase letters that match the
+    // first-letter initials of the other entry's words.
+    // e.g. "gotk" matches "gospel of the kingdom" → g·o·t·k
+    //      "cfga" matches "christian family gospel assembly" → c·f·g·a
+    const checkAbbrev = (short, full) => {
+        if (short.length < 2 || short.length > 6) return false;
+        if (!/^[a-z]+$/.test(short)) return false;
+        const words = full.split(' ').filter(Boolean);
+        if (words.length < short.length) return false;
+        const initials = words.map(w => w[0]).join('');
+        return initials === short || initials.startsWith(short);
+    };
+
+    if (checkAbbrev(a, b) || checkAbbrev(b, a)) return true;
+
+    // Significant-word overlap check (strip common church title words for comparison only)
+    const stop = new Set([
+        'assembly','gospel','temple','body','christ','church',
+        'of','the','god','first','new','and','de','la','le','les',
+        'des','du','en','et','christian','family'
+    ]);
     const sig = str => str.split(' ').filter(w => w.length > 1 && !stop.has(w));
     const wa = sig(a);
     const wb = sig(b);
     if (!wa.length || !wb.length) return false;
-    // Check abbreviation match (one side is all-caps short token)
-    const rawA = wa.join('');
-    const rawB = wb.join('');
-    if (/^[A-Z]{2,5}$/.test(rawA) && isAbbreviationOf(rawA, wb.join(' '))) return true;
-    if (/^[A-Z]{2,5}$/.test(rawB) && isAbbreviationOf(rawB, wa.join(' '))) return true;
-    // Check word overlap
     const [shorter, longer] = wa.length <= wb.length ? [wa, wb] : [wb, wa];
     return shorter.some(w => longer.includes(w));
 }
