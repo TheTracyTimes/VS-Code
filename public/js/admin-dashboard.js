@@ -1196,7 +1196,7 @@ function renderGroupFlags(containerId, chartType) {
         span.textContent = '\u2713 All duplicates reviewed (pastor names and assembly names).';
         heading.appendChild(span);
         const btn = document.createElement('button');
-        btn.textContent = 'Reset';
+        btn.textContent = 'Check Again';
         btn.style.cssText = 'padding:2px 10px;font-size:12px;background:white;color:#155724;border:1px solid #155724;border-radius:4px;cursor:pointer;margin-left:12px;';
         btn.addEventListener('click', doReset);
         heading.appendChild(btn);
@@ -1641,25 +1641,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Restart duplicate review
     const restartBtn = document.getElementById('restartDuplicateReview');
     if (restartBtn) {
-        restartBtn.addEventListener('click', async () => {
-            if (!confirm('This will clear all saved merges and restart duplicate detection from the beginning. Continue?')) return;
-            restartBtn.disabled = true;
-            restartBtn.textContent = 'Restarting\u2026';
-            try {
-                await db.collection('adminSettings').doc('merges').delete();
-            } catch (e) {
-                // doc may not exist yet — that's fine
-            }
-            // Reset in-memory state
-            Object.keys(savedMerges).forEach(k => { savedMerges[k] = {}; });
+        restartBtn.addEventListener('click', () => {
+            // Keep all confirmed merges — just clear dismissed pairs and re-run detection
             dismissedRegPastor.clear();   dismissedRegAssembly.clear();
             dismissedVolPastor.clear();   dismissedVolAssembly.clear();
             registrationRound = 'pastor';
             volunteerRound    = 'pastor';
             renderRegistrationGroupChart();
             renderVolunteerGroupChart();
-            restartBtn.disabled = false;
-            restartBtn.textContent = '\u21BB Restart Duplicate Review';
         });
     }
 
