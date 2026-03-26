@@ -1096,12 +1096,12 @@ function getEffectiveName(rawName, merges, normFn) {
     return merges[norm] || rawName;
 }
 
-// Load admin merge decisions from localStorage (stored separately from Firestore user data)
-function loadMergeDecisions() {
+// Load admin merge decisions from Firestore adminSettings (separate collection, never touches user submissions)
+async function loadMergeDecisions() {
     try {
-        const stored = localStorage.getItem('sgt_merges');
-        if (stored) {
-            const data = JSON.parse(stored);
+        const doc = await db.collection('adminSettings').doc('merges').get();
+        if (doc.exists) {
+            const data = doc.data();
             Object.assign(savedMerges.registrationPastor,   data.registrationPastor   || {});
             Object.assign(savedMerges.registrationAssembly, data.registrationAssembly || {});
             Object.assign(savedMerges.volunteerPastor,      data.volunteerPastor      || {});
@@ -1112,32 +1112,29 @@ function loadMergeDecisions() {
     }
 }
 
-// Save a merge decision to localStorage (never touches Firestore user submission records)
-function saveMerge(chartType, round, loserNorm, loserDisplay, winnerDisplay) {
+// Save a merge decision to adminSettings (never touches registrations/volunteers/vendors records)
+async function saveMerge(chartType, round, loserNorm, loserDisplay, winnerDisplay) {
     const key = chartType + round.charAt(0).toUpperCase() + round.slice(1); // e.g. 'registrationPastor'
     savedMerges[key][loserNorm] = winnerDisplay;
     const user = auth && auth.currentUser ? auth.currentUser.email : 'admin';
-
     try {
-        localStorage.setItem('sgt_merges', JSON.stringify({
-            registrationPastor:   savedMerges.registrationPastor,
-            registrationAssembly: savedMerges.registrationAssembly,
-            volunteerPastor:      savedMerges.volunteerPastor,
-            volunteerAssembly:    savedMerges.volunteerAssembly
-        }));
+        await Promise.all([
+            db.collection('adminSettings').doc('merges').set(
+                { [key]: savedMerges[key] },
+                { merge: true }
+            ),
+            db.collection('mergeLog').add({
+                chartType,
+                round,
+                mergedFrom: loserDisplay,
+                mergedInto: winnerDisplay,
+                by: user,
+                at: firebase.firestore.FieldValue.serverTimestamp()
+            })
+        ]);
     } catch (e) {
-        console.error('Error saving merge decisions:', e);
-        alert('Error saving merge decisions: ' + e.message);
-        return;
-    }
-
-    // Append to audit log in localStorage
-    try {
-        const log = JSON.parse(localStorage.getItem('sgt_mergeLog') || '[]');
-        log.push({ chartType, round, mergedFrom: loserDisplay, mergedInto: winnerDisplay, by: user, at: new Date().toISOString() });
-        localStorage.setItem('sgt_mergeLog', JSON.stringify(log));
-    } catch (e) {
-        console.error('Error saving merge log:', e);
+        console.error('Error saving merge decision:', e);
+        alert('Error saving to database: ' + e.message);
     }
 }
 
@@ -1257,13 +1254,13 @@ function renderGroupFlags(containerId, chartType) {
                 const btn = document.createElement('button');
                 btn.textContent = option.display;
                 btn.style.cssText = 'padding:3px 12px;font-size:12px;font-weight:600;background:#28478a;color:white;border:none;border-radius:4px;cursor:pointer;';
-                btn.addEventListener('click', () => {
+                btn.addEventListener('click', async () => {
                     btn.disabled = true;
                     btn.textContent = 'Saving\u2026';
                     const loserNorm    = option.norm === f.normA ? f.normB : f.normA;
                     const loserDisplay = option.display === f.a ? f.b : f.a;
                     dismissed.add(`${f.normA}|||${f.normB}`);
-                    saveMerge(chartType, round_key, loserNorm, loserDisplay, option.display);
+                    await saveMerge(chartType, round_key, loserNorm, loserDisplay, option.display);
                     rerender();
                 });
                 btnRow.appendChild(btn);
@@ -1531,8 +1528,8 @@ function renderVolunteerGroupChart() {
     renderGroupFlags('volunteerGroupFlags', 'volunteer');
 }
 
-function renderCharts() {
-    loadMergeDecisions();
+async function renderCharts() {
+    await loadMergeDecisions();
     renderServiceChart();
     renderCommitteeChart();
     renderRegistrationGroupChart();
