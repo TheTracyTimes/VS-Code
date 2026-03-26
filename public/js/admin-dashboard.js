@@ -1807,21 +1807,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!loserNorm) { status.textContent = '⚠ The "from" name is empty after normalization.'; status.style.color = '#856404'; return; }
 
+            // Check how many records actually match the FROM name before saving
+            const sourceData = chartType === 'volunteer' ? volunteersData : registrationsData;
+            const matchCount = sourceData.filter(item => {
+                const rawVal = isPastor ? item.pastorName : item.assemblyName;
+                return rawVal && normFn(rawVal) === loserNorm;
+            }).length;
+
+            if (matchCount === 0) {
+                status.textContent = `⚠ No ${chartType} records found with that ${isPastor ? 'pastor' : 'assembly'} name. Check the spelling matches exactly what appears in the chart legend.`;
+                status.style.color = '#856404';
+                return;
+            }
+
             manualMergeBtn.disabled = true;
             manualMergeBtn.textContent = 'Saving…';
             status.textContent = '';
             try {
                 await saveMerge(chartType, round, loserNorm, fromVal, intoVal);
-                status.textContent = `✓ Merged "${fromVal}" → "${intoVal}"`;
+                status.textContent = `✓ Merged "${fromVal}" → "${intoVal}" (${matchCount} record${matchCount !== 1 ? 's' : ''} updated)`;
                 status.style.color = '#155724';
                 document.getElementById('manualMergeFrom').value = '';
                 document.getElementById('manualMergeInto').value = '';
                 // Reset both rounds so duplicate flags re-scan after every manual merge
                 registrationRound = 'pastor';
                 volunteerRound    = 'pastor';
-                // Re-render both charts so the merge is reflected immediately
-                renderRegistrationGroupChart();
-                renderVolunteerGroupChart();
+                // Re-render charts independently so an error in one doesn't block the other
+                try { renderRegistrationGroupChart(); } catch (e) { console.error('Registration chart render error:', e); }
+                try { renderVolunteerGroupChart(); }    catch (e) { console.error('Volunteer chart render error:', e); }
             } catch (e) {
                 status.textContent = '✗ Save failed: ' + e.message;
                 status.style.color = '#721c24';
