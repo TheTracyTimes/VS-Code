@@ -1448,6 +1448,12 @@ function showChartDetail(panelId, titleId, bodyId, title, registrants, getNote) 
     panel.classList.add('visible');
 }
 
+// Explicit chart instance declarations (prevents implicit-global issues)
+let serviceChartInstance            = null;
+let committeeChartInstance          = null;
+let registrationGroupChartInstance  = null;
+let volunteerGroupChartInstance     = null;
+
 function renderServiceChart() {
     const serviceOrder = [
         { key: 'Thursday Morning Service, April 9th',  label: 'Thu Morning' },
@@ -1816,7 +1822,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 status.style.color = '#155724';
                 document.getElementById('manualMergeFrom').value = '';
                 document.getElementById('manualMergeInto').value = '';
-                // Re-render charts so the merge is reflected immediately
+                // Reset both rounds so duplicate flags re-scan after every manual merge
+                registrationRound = 'pastor';
+                volunteerRound    = 'pastor';
+                // Re-render both charts so the merge is reflected immediately
                 renderRegistrationGroupChart();
                 renderVolunteerGroupChart();
             } catch (e) {
