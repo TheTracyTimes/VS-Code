@@ -1709,6 +1709,39 @@ function renderScrollLegend(legendId, sorted, colors, onClickFn) {
     });
 }
 
+function populateMergeDropdowns() {
+    const typeEl = document.getElementById('manualMergeChartType');
+    if (!typeEl) return;
+    const chartType      = typeEl.value;
+    const data           = chartType === 'volunteer' ? volunteersData : registrationsData;
+    const pastorMerges   = chartType === 'volunteer' ? savedMerges.volunteerPastor   : savedMerges.registrationPastor;
+    const assemblyMerges = chartType === 'volunteer' ? savedMerges.volunteerAssembly : savedMerges.registrationAssembly;
+
+    const groups = {};
+    data.forEach(item => {
+        const ep = getEffectiveName(item.pastorName,  pastorMerges,   normalizePastorName);
+        const ea = getEffectiveName(item.assemblyName, assemblyMerges, normalizeAssemblyName);
+        const nk = getCombinedLabel(normalizePastorName(ep), normalizeAssemblyName(ea));
+        if (!groups[nk]) groups[nk] = { display: getCombinedLabel(ep, ea), count: 0 };
+        groups[nk].count++;
+    });
+    const sorted = Object.entries(groups).sort((a, b) => b[1].count - a[1].count);
+
+    ['manualMergeFrom', 'manualMergeInto'].forEach(id => {
+        const sel = document.getElementById(id);
+        if (!sel) return;
+        const prev = sel.value;
+        sel.innerHTML = '<option value="">— Select —</option>';
+        sorted.forEach(([nk, { display, count }]) => {
+            const opt = document.createElement('option');
+            opt.value = nk;
+            opt.textContent = `${display} (${count})`;
+            sel.appendChild(opt);
+        });
+        if (prev && sel.querySelector(`option[value="${CSS.escape(prev)}"]`)) sel.value = prev;
+    });
+}
+
 async function renderCharts() {
     await loadMergeDecisions();
     renderServiceChart();
@@ -1790,39 +1823,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Populate FROM/INTO dropdowns with current chart groups
-    function populateMergeDropdowns() {
-        const typeEl = document.getElementById('manualMergeChartType');
-        if (!typeEl) return;
-        const chartType = typeEl.value;
-        const data           = chartType === 'volunteer' ? volunteersData : registrationsData;
-        const pastorMerges   = chartType === 'volunteer' ? savedMerges.volunteerPastor   : savedMerges.registrationPastor;
-        const assemblyMerges = chartType === 'volunteer' ? savedMerges.volunteerAssembly : savedMerges.registrationAssembly;
-
-        const groups = {};
-        data.forEach(item => {
-            const ep = getEffectiveName(item.pastorName,  pastorMerges,   normalizePastorName);
-            const ea = getEffectiveName(item.assemblyName, assemblyMerges, normalizeAssemblyName);
-            const nk = getCombinedLabel(normalizePastorName(ep), normalizeAssemblyName(ea));
-            if (!groups[nk]) groups[nk] = { display: getCombinedLabel(ep, ea), count: 0 };
-            groups[nk].count++;
-        });
-        const sorted = Object.entries(groups).sort((a, b) => b[1].count - a[1].count);
-
-        ['manualMergeFrom', 'manualMergeInto'].forEach(id => {
-            const sel = document.getElementById(id);
-            if (!sel) return;
-            const prev = sel.value;
-            sel.innerHTML = '<option value="">— Select —</option>';
-            sorted.forEach(([nk, { display, count }]) => {
-                const opt = document.createElement('option');
-                opt.value = nk;
-                opt.textContent = `${display} (${count})`;
-                sel.appendChild(opt);
-            });
-            if (prev && sel.querySelector(`option[value="${CSS.escape(prev)}"]`)) sel.value = prev;
-        });
-    }
 
     const mergeChartTypeEl = document.getElementById('manualMergeChartType');
     if (mergeChartTypeEl) {
