@@ -1498,13 +1498,30 @@ function renderRegistrationGroupChart() {
                     `${lbl} \u2014 ${matches.length} registrant${matches.length !== 1 ? 's' : ''}`, matches, regNote);
             },
             plugins: {
-                legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 }, padding: 8 } },
+                legend: { display: false },
                 tooltip: { callbacks: { label: c => ` ${c.label}: ${c.raw}` } }
             }
         }
     });
+    const regColors = getPaletteColors(sorted.length);
+    renderScrollLegend('registrationGroupLegend', sorted, regColors, (lbl) => {
+        const matches = registrationsData.filter(r => {
+            const ep = getEffectiveName(r.pastorName,  savedMerges.registrationPastor,   normalizePastorName);
+            const ea = getEffectiveName(r.assemblyName, savedMerges.registrationAssembly, normalizeAssemblyName);
+            return getCombinedLabel(ep, ea) === lbl;
+        });
+        const regNote = r => {
+            const notes = [];
+            const ep = getEffectiveName(r.pastorName,   savedMerges.registrationPastor,   normalizePastorName);
+            const ea = getEffectiveName(r.assemblyName, savedMerges.registrationAssembly, normalizeAssemblyName);
+            if (r.pastorName   && ep !== r.pastorName)   notes.push(`Pastor also known as: \u201c${r.pastorName}\u201d`);
+            if (r.assemblyName && ea !== r.assemblyName) notes.push(`Assembly also known as: \u201c${r.assemblyName}\u201d`);
+            return notes.join(' \u2022 ');
+        };
+        showChartDetail('registrationGroupDetail', 'registrationGroupDetailTitle', 'registrationGroupDetailBody',
+            `${lbl} \u2014 ${matches.length} registrant${matches.length !== 1 ? 's' : ''}`, matches, regNote);
+    });
     renderGroupFlags('registrationGroupFlags', 'registration');
-    renderRegistrationGroupList();
 }
 
 function renderVolunteerGroupChart() {
@@ -1548,91 +1565,59 @@ function renderVolunteerGroupChart() {
                     `${lbl} \u2014 ${matches.length} volunteer${matches.length !== 1 ? 's' : ''}`, matches, volNote);
             },
             plugins: {
-                legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 }, padding: 8 } },
+                legend: { display: false },
                 tooltip: { callbacks: { label: c => ` ${c.label}: ${c.raw}` } }
             }
         }
     });
-    renderGroupFlags('volunteerGroupFlags', 'volunteer');
-    renderVolunteerGroupList();
-}
-
-function renderGroupList(tbodyId, data, mergesP, mergesA, detailPanelId, detailTitleId, detailBodyId, notesFn) {
-    const tbody = document.getElementById(tbodyId);
-    if (!tbody) return;
-    tbody.innerHTML = '';
-
-    const groups = {};
-    data.forEach(r => {
-        const ep = getEffectiveName(r.pastorName,   mergesP, normalizePastorName);
-        const ea = getEffectiveName(r.assemblyName, mergesA, normalizeAssemblyName);
-        const lbl = getCombinedLabel(ep, ea);
-        if (!groups[lbl]) groups[lbl] = { pastor: ep, assembly: ea, label: lbl, members: [] };
-        groups[lbl].members.push(r);
-    });
-
-    const sorted = Object.values(groups).sort((a, b) => b.members.length - a.members.length);
-
-    sorted.forEach(g => {
-        const tr = document.createElement('tr');
-
-        const pastorCell = document.createElement('td');
-        pastorCell.textContent = g.pastor
-            ? g.pastor.replace(/\b(pastor|pasteur)\b\.?/gi, '').trim()
-            : '\u2014';
-        tr.appendChild(pastorCell);
-
-        const assemblyCell = document.createElement('td');
-        assemblyCell.textContent = g.assembly || '\u2014';
-        tr.appendChild(assemblyCell);
-
-        const countCell = document.createElement('td');
-        countCell.className = 'count-cell';
-        countCell.textContent = g.members.length;
-        tr.appendChild(countCell);
-
-        tr.addEventListener('click', () => {
-            showChartDetail(detailPanelId, detailTitleId, detailBodyId,
-                `${g.label} \u2014 ${g.members.length} record${g.members.length !== 1 ? 's' : ''}`,
-                g.members, notesFn);
+    const volColors = getPaletteColors(sorted.length);
+    renderScrollLegend('volunteerGroupLegend', sorted, volColors, (lbl) => {
+        const matches = volunteersData.filter(v => {
+            const ep = getEffectiveName(v.pastorName,  savedMerges.volunteerPastor,   normalizePastorName);
+            const ea = getEffectiveName(v.assemblyName, savedMerges.volunteerAssembly, normalizeAssemblyName);
+            return getCombinedLabel(ep, ea) === lbl;
         });
-
-        tbody.appendChild(tr);
+        const volNote = v => {
+            const notes = [];
+            const ep = getEffectiveName(v.pastorName,   savedMerges.volunteerPastor,   normalizePastorName);
+            const ea = getEffectiveName(v.assemblyName, savedMerges.volunteerAssembly, normalizeAssemblyName);
+            if (v.pastorName   && ep !== v.pastorName)   notes.push(`Pastor also known as: \u201c${v.pastorName}\u201d`);
+            if (v.assemblyName && ea !== v.assemblyName) notes.push(`Assembly also known as: \u201c${v.assemblyName}\u201d`);
+            return notes.join(' \u2022 ');
+        };
+        showChartDetail('volunteerGroupDetail', 'volunteerGroupDetailTitle', 'volunteerGroupDetailBody',
+            `${lbl} \u2014 ${matches.length} volunteer${matches.length !== 1 ? 's' : ''}`, matches, volNote);
     });
+    renderGroupFlags('volunteerGroupFlags', 'volunteer');
 }
 
-function renderRegistrationGroupList() {
-    const regNote = r => {
-        const notes = [];
-        const ep = getEffectiveName(r.pastorName,   savedMerges.registrationPastor,   normalizePastorName);
-        const ea = getEffectiveName(r.assemblyName, savedMerges.registrationAssembly, normalizeAssemblyName);
-        if (r.pastorName   && ep !== r.pastorName)   notes.push(`Pastor also known as: \u201c${r.pastorName}\u201d`);
-        if (r.assemblyName && ea !== r.assemblyName) notes.push(`Assembly also known as: \u201c${r.assemblyName}\u201d`);
-        return notes.join(' \u2022 ');
-    };
-    renderGroupList(
-        'registrationGroupListBody', registrationsData,
-        savedMerges.registrationPastor, savedMerges.registrationAssembly,
-        'registrationGroupDetail', 'registrationGroupDetailTitle', 'registrationGroupDetailBody',
-        regNote
-    );
-}
+function renderScrollLegend(legendId, sorted, colors, onClickFn) {
+    const container = document.getElementById(legendId);
+    if (!container) return;
+    container.innerHTML = '';
+    sorted.forEach(([lbl, count], idx) => {
+        const item = document.createElement('div');
+        item.className = 'legend-item';
 
-function renderVolunteerGroupList() {
-    const volNote = v => {
-        const notes = [];
-        const ep = getEffectiveName(v.pastorName,   savedMerges.volunteerPastor,   normalizePastorName);
-        const ea = getEffectiveName(v.assemblyName, savedMerges.volunteerAssembly, normalizeAssemblyName);
-        if (v.pastorName   && ep !== v.pastorName)   notes.push(`Pastor also known as: \u201c${v.pastorName}\u201d`);
-        if (v.assemblyName && ea !== v.assemblyName) notes.push(`Assembly also known as: \u201c${v.assemblyName}\u201d`);
-        return notes.join(' \u2022 ');
-    };
-    renderGroupList(
-        'volunteerGroupListBody', volunteersData,
-        savedMerges.volunteerPastor, savedMerges.volunteerAssembly,
-        'volunteerGroupDetail', 'volunteerGroupDetailTitle', 'volunteerGroupDetailBody',
-        volNote
-    );
+        const swatch = document.createElement('span');
+        swatch.className = 'legend-swatch';
+        swatch.style.backgroundColor = colors[idx % colors.length];
+
+        const label = document.createElement('span');
+        label.className = 'legend-label';
+        label.textContent = lbl;
+        label.title = lbl;
+
+        const countEl = document.createElement('span');
+        countEl.className = 'legend-count';
+        countEl.textContent = count;
+
+        item.appendChild(swatch);
+        item.appendChild(label);
+        item.appendChild(countEl);
+        item.addEventListener('click', () => onClickFn(lbl, idx));
+        container.appendChild(item);
+    });
 }
 
 async function renderCharts() {
@@ -1641,8 +1626,6 @@ async function renderCharts() {
     renderCommitteeChart();
     renderRegistrationGroupChart();
     renderVolunteerGroupChart();
-    renderRegistrationGroupList();
-    renderVolunteerGroupList();
 }
 
 // ===== INITIALIZE =====

@@ -505,46 +505,44 @@
             display: block;
         }
 
-        /* Scrollable group lists */
-        .group-list-container {
-            max-height: 420px;
+        /* Scrollable pie chart legend */
+        .chart-scroll-legend {
+            max-height: 180px;
             overflow-y: auto;
-            border: 1px solid var(--off-white);
-            border-radius: var(--radius-sm);
+            margin-top: var(--spacing-md);
+            border-top: 1px solid var(--off-white);
+            padding-top: var(--spacing-sm);
         }
-        .group-list-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-        .group-list-table thead {
-            background-color: var(--navy-blue);
-            position: sticky;
-            top: 0;
-            z-index: 1;
-        }
-        .group-list-table thead th {
-            padding: 8px 12px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .group-list-table tbody tr {
-            border-bottom: 1px solid var(--off-white);
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 6px;
+            border-radius: 4px;
             cursor: pointer;
+            font-size: 12px;
+            color: var(--charcoal);
             transition: background-color var(--transition-fast);
         }
-        .group-list-table tbody tr:hover {
-            background-color: #e8edf7;
+        .legend-item:hover {
+            background-color: var(--off-white);
         }
-        .group-list-table tbody td {
-            padding: 8px 12px;
+        .legend-swatch {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            flex-shrink: 0;
         }
-        .group-list-table .count-cell {
-            text-align: right;
+        .legend-label {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .legend-count {
             font-weight: 700;
             color: var(--burnt-orange);
+            flex-shrink: 0;
         }
     </style>
 
@@ -875,8 +873,9 @@
                 </div>
                 <div class="charts-row">
                     <div class="chart-card">
-                        <h3>Registrations by Pastor &amp; Assembly <span style="font-size:13px;font-weight:400;color:var(--dark-gray);">— click a slice</span></h3>
+                        <h3>Registrations by Pastor &amp; Assembly <span style="font-size:13px;font-weight:400;color:var(--dark-gray);">— click a slice or legend row</span></h3>
                         <canvas id="registrationGroupChart" height="280"></canvas>
+                        <div id="registrationGroupLegend" class="chart-scroll-legend"></div>
                         <div id="registrationGroupFlags" class="flag-list"></div>
                         <div class="chart-detail" id="registrationGroupDetail">
                             <div class="chart-detail-title" id="registrationGroupDetailTitle"></div>
@@ -889,8 +888,9 @@
                         </div>
                     </div>
                     <div class="chart-card">
-                        <h3>Volunteers by Pastor &amp; Assembly <span style="font-size:13px;font-weight:400;color:var(--dark-gray);">— click a slice</span></h3>
+                        <h3>Volunteers by Pastor &amp; Assembly <span style="font-size:13px;font-weight:400;color:var(--dark-gray);">— click a slice or legend row</span></h3>
                         <canvas id="volunteerGroupChart" height="280"></canvas>
+                        <div id="volunteerGroupLegend" class="chart-scroll-legend"></div>
                         <div id="volunteerGroupFlags" class="flag-list"></div>
                         <div class="chart-detail" id="volunteerGroupDetail">
                             <div class="chart-detail-title" id="volunteerGroupDetailTitle"></div>
@@ -904,39 +904,6 @@
                     </div>
                 </div>
 
-                <!-- PASTOR & ASSEMBLY LISTS -->
-                <div class="charts-row" style="margin-top: var(--spacing-lg);">
-                    <div class="chart-card">
-                        <h3>All Registrant Groups <span style="font-size:13px;font-weight:400;color:var(--dark-gray);">— click a row to see attendees</span></h3>
-                        <div class="group-list-container">
-                            <table class="group-list-table">
-                                <thead>
-                                    <tr>
-                                        <th>Pastor</th>
-                                        <th>Assembly</th>
-                                        <th style="text-align:right;">Count</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="registrationGroupListBody"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="chart-card">
-                        <h3>All Volunteer Groups <span style="font-size:13px;font-weight:400;color:var(--dark-gray);">— click a row to see volunteers</span></h3>
-                        <div class="group-list-container">
-                            <table class="group-list-table">
-                                <thead>
-                                    <tr>
-                                        <th>Pastor</th>
-                                        <th>Assembly</th>
-                                        <th style="text-align:right;">Count</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="volunteerGroupListBody"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
             </div>
 
         </main>
