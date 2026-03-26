@@ -1092,16 +1092,23 @@ function isSimilarAssemblyName(a, b) {
     if (!a || !b || a === b) return false;
 
     // Abbreviation check: one entry is 2–6 lowercase letters that match the
-    // first-letter initials of the other entry's words.
-    // e.g. "gotk" matches "gospel of the kingdom" → g·o·t·k
-    //      "cfga" matches "christian family gospel assembly" → c·f·g·a
+    // first-letter initials of the other entry's words (exact order or anagram).
+    // e.g. "cfga" matches "christian family gospel assembly" → c·f·g·a (exact)
+    //      "gotk" matches "gospel tabernacle of kissimmee" → g·t·o·k (anagram {g,o,t,k})
     const checkAbbrev = (short, full) => {
         if (short.length < 2 || short.length > 6) return false;
         if (!/^[a-z]+$/.test(short)) return false;
         const words = full.split(' ').filter(Boolean);
         if (words.length < short.length) return false;
         const initials = words.map(w => w[0]).join('');
-        return initials === short || initials.startsWith(short);
+        // Exact-order match: "cfga" → "christian family gospel assembly"
+        if (initials === short || initials.startsWith(short)) return true;
+        // Anagram match (same letters, any order): "gotk" matches "gospel tabernacle of kissimmee" (g·t·o·k)
+        if (initials.length === short.length) {
+            const sorted = s => s.split('').sort().join('');
+            if (sorted(initials) === sorted(short)) return true;
+        }
+        return false;
     };
 
     if (checkAbbrev(a, b) || checkAbbrev(b, a)) return true;
