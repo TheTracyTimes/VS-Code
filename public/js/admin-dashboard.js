@@ -1638,6 +1638,31 @@ document.addEventListener('DOMContentLoaded', () => {
         logoutBtn.addEventListener('click', handleLogout);
     }
 
+    // Restart duplicate review
+    const restartBtn = document.getElementById('restartDuplicateReview');
+    if (restartBtn) {
+        restartBtn.addEventListener('click', async () => {
+            if (!confirm('This will clear all saved merges and restart duplicate detection from the beginning. Continue?')) return;
+            restartBtn.disabled = true;
+            restartBtn.textContent = 'Restarting\u2026';
+            try {
+                await db.collection('adminSettings').doc('merges').delete();
+            } catch (e) {
+                // doc may not exist yet — that's fine
+            }
+            // Reset in-memory state
+            Object.keys(savedMerges).forEach(k => { savedMerges[k] = {}; });
+            dismissedRegPastor.clear();   dismissedRegAssembly.clear();
+            dismissedVolPastor.clear();   dismissedVolAssembly.clear();
+            registrationRound = 'pastor';
+            volunteerRound    = 'pastor';
+            renderRegistrationGroupChart();
+            renderVolunteerGroupChart();
+            restartBtn.disabled = false;
+            restartBtn.textContent = '\u21BB Restart Duplicate Review';
+        });
+    }
+
     // Navigation buttons
     const navButtons = document.querySelectorAll('.dashboard-nav button');
     navButtons.forEach(btn => {
