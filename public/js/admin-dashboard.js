@@ -1548,6 +1548,16 @@ function renderCommitteeChart() {
                 showChartDetail('committeeDetail', 'committeeDetailTitle', 'committeeDetailBody',
                     `${committee} \u2014 ${matches.length} volunteer${matches.length !== 1 ? 's' : ''}`,
                     matches);
+                // Musician bar: replace Email column with Principal Instrument
+                const col2Header = document.querySelector('#committeeDetail thead th:nth-child(2)');
+                if (committee === 'Musician') {
+                    if (col2Header) col2Header.textContent = 'Principal Instrument';
+                    document.querySelectorAll('#committeeDetailBody tr').forEach((row, i) => {
+                        if (row.cells[1]) row.cells[1].textContent = matches[i]?.principalInstrument || '\u2014';
+                    });
+                } else {
+                    if (col2Header) col2Header.textContent = 'Email';
+                }
             },
             plugins: {
                 legend: { display: false },
