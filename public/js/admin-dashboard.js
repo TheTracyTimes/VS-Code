@@ -1025,11 +1025,26 @@ function getPaletteColors(n) {
 function normalizePastorName(raw) {
     if (!raw) return '';
     return raw
-        .replace(/\b(pastor|pasteur)\b\.?/gi, '')
+        .replace(/\b(pastor|pasteur|past|pst|bro|brother|rev|reverend|elder|eld|deacon|min|minister)\b\.?/gi, '')
         .replace(/[.,]/g, '')
         .replace(/\s+/g, ' ')
         .trim()
         .toLowerCase();
+}
+
+// Levenshtein distance for typo detection
+function levenshtein(a, b) {
+    const m = a.length, n = b.length;
+    const dp = Array.from({ length: m + 1 }, (_, i) => [i]);
+    for (let j = 1; j <= n; j++) dp[0][j] = j;
+    for (let i = 1; i <= m; i++) {
+        for (let j = 1; j <= n; j++) {
+            dp[i][j] = a[i-1] === b[j-1]
+                ? dp[i-1][j-1]
+                : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+        }
+    }
+    return dp[m][n];
 }
 
 function normalizeAssemblyName(raw) {
@@ -1048,7 +1063,19 @@ function isSimilarPastorName(a, b) {
     const wa = a.split(' ').filter(Boolean);
     const wb = b.split(' ').filter(Boolean);
     const [shorter, longer] = wa.length <= wb.length ? [wa, wb] : [wb, wa];
-    return shorter.length > 0 && shorter.every(w => longer.includes(w));
+    // Exact word match: all words of shorter name appear in longer
+    if (shorter.length > 0 && shorter.every(w => longer.includes(w))) return true;
+    // Typo match: any word pair within edit distance 1-2 (min word length 4 to avoid false positives)
+    for (const sw of shorter) {
+        if (sw.length < 4) continue;
+        for (const lw of longer) {
+            if (lw.length < 4) continue;
+            const dist = levenshtein(sw, lw);
+            const maxDist = sw.length <= 5 ? 1 : 2;
+            if (dist > 0 && dist <= maxDist) return true;
+        }
+    }
+    return false;
 }
 
 function isSimilarAssemblyName(a, b) {
