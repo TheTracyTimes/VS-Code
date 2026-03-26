@@ -1177,11 +1177,10 @@ function renderGroupFlags(containerId, chartType) {
     const rerender   = isReg ? renderRegistrationGroupChart : renderVolunteerGroupChart;
 
     function doReset() {
+        // Keep dismissed pairs — only reset round progress to re-scan for new pairs
         if (isReg) {
-            dismissedRegPastor.clear(); dismissedRegAssembly.clear();
             registrationRound = 'pastor';
         } else {
-            dismissedVolPastor.clear(); dismissedVolAssembly.clear();
             volunteerRound = 'pastor';
         }
         rerender();
@@ -1642,9 +1641,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const restartBtn = document.getElementById('restartDuplicateReview');
     if (restartBtn) {
         restartBtn.addEventListener('click', () => {
-            // Keep all confirmed merges — just clear dismissed pairs and re-run detection
-            dismissedRegPastor.clear();   dismissedRegAssembly.clear();
-            dismissedVolPastor.clear();   dismissedVolAssembly.clear();
+            // Keep confirmed merges AND dismissed pairs — just reset round progress
+            // so detection re-runs and finds any new pairs that emerged from merges
             registrationRound = 'pastor';
             volunteerRound    = 'pastor';
             renderRegistrationGroupChart();
