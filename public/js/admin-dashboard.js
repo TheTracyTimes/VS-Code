@@ -1733,6 +1733,40 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Clear dismissals button
+    const clearDismissalsBtn = document.getElementById('clearDismissals');
+    if (clearDismissalsBtn) {
+        clearDismissalsBtn.addEventListener('click', async () => {
+            if (!confirm('Clear all dismissed duplicate pairs? This will re-surface every pair you previously said "No" to, so you can review them again.')) return;
+            clearDismissalsBtn.disabled = true;
+            clearDismissalsBtn.textContent = 'Clearing…';
+            try {
+                await db.collection('adminSettings').doc('dismissals').set({
+                    registrationPastor: [], registrationAssembly: [],
+                    volunteerPastor: [],    volunteerAssembly: []
+                });
+                // Clear in-memory sets
+                ['registrationPastor','registrationAssembly','volunteerPastor','volunteerAssembly'].forEach(k => {
+                    savedDismissals[k].clear();
+                });
+                dismissedRegPastor.clear();
+                dismissedRegAssembly.clear();
+                dismissedVolPastor.clear();
+                dismissedVolAssembly.clear();
+                // Re-render both charts so cleared pairs reappear
+                registrationRound = 'pastor';
+                volunteerRound    = 'pastor';
+                renderRegistrationGroupChart();
+                renderVolunteerGroupChart();
+            } catch (e) {
+                console.error('Error clearing dismissals:', e);
+                alert('Failed to clear dismissals. Please try again.');
+            }
+            clearDismissalsBtn.disabled = false;
+            clearDismissalsBtn.textContent = '\u2715 Clear Dismissals';
+        });
+    }
+
     // Navigation buttons
     const navButtons = document.querySelectorAll('.dashboard-nav button');
     navButtons.forEach(btn => {
