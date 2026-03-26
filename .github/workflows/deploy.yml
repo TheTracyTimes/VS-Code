@@ -40,7 +40,7 @@
             GOOGLE_SHEETS_VENDORS_ID: ${{ secrets.GOOGLE_SHEETS_VENDORS_ID }}
           run: chmod +x build.sh && ./build.sh
 
-        - name: Deploy to Firebase Hosting
-          run: firebase deploy --only hosting
+        - name: Deploy to Firebase Hosting and Firestore Rules
+          run: firebase deploy --only hosting,firestore:rules
           env:
             FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
