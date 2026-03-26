@@ -1034,7 +1034,12 @@ function normalizePastorName(raw) {
 
 function normalizeAssemblyName(raw) {
     if (!raw) return '';
-    return raw.replace(/\s+/g, ' ').trim().toLowerCase();
+    return raw
+        .replace(/\b(assembly|gospel|temple|body|christ|church|of|the|god|first|new|and)\b\.?/gi, '')
+        .replace(/[.,#&()]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .toLowerCase();
 }
 
 function isSimilarPastorName(a, b) {
@@ -1045,13 +1050,29 @@ function isSimilarPastorName(a, b) {
     return shorter.length > 0 && shorter.every(w => longer.includes(w));
 }
 
+// Check if one name could be an abbreviation of the other
+// e.g. "SGT" matches "Sarasota Gospel Temple" (initials match)
+function isAbbreviationOf(abbr, full) {
+    if (abbr.length < 2 || abbr.length > 6) return false;
+    const words = full.split(' ').filter(Boolean);
+    if (words.length < abbr.length) return false;
+    const initials = words.map(w => w[0]).join('');
+    return initials.startsWith(abbr) || initials === abbr;
+}
+
 function isSimilarAssemblyName(a, b) {
     if (!a || !b || a === b) return false;
-    const stop = new Set(['church','assembly','of','the','god','first','new','and','de','la','le','les','des','du','en','et']);
-    const sig = str => str.split(' ').filter(w => w.length > 2 && !stop.has(w));
+    const stop = new Set(['church','assembly','gospel','temple','body','christ','of','the','god','first','new','and','de','la','le','les','des','du','en','et']);
+    const sig = str => str.split(' ').filter(w => w.length > 1 && !stop.has(w));
     const wa = sig(a);
     const wb = sig(b);
     if (!wa.length || !wb.length) return false;
+    // Check abbreviation match (one side is all-caps short token)
+    const rawA = wa.join('');
+    const rawB = wb.join('');
+    if (/^[A-Z]{2,5}$/.test(rawA) && isAbbreviationOf(rawA, wb.join(' '))) return true;
+    if (/^[A-Z]{2,5}$/.test(rawB) && isAbbreviationOf(rawB, wa.join(' '))) return true;
+    // Check word overlap
     const [shorter, longer] = wa.length <= wb.length ? [wa, wb] : [wb, wa];
     return shorter.some(w => longer.includes(w));
 }

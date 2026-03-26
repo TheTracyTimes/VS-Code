@@ -518,7 +518,7 @@ document.getElementById('registrationForm').addEventListener('submit', async fun
     // Validate and sanitize form data if FormValidator is available
     if (window.FormValidator) {
         const validation = window.FormValidator.validateFormData(formData, [
-            'firstName', 'lastName', 'phone', 'email', 'pastorName', 'assemblyName'
+            'firstName', 'lastName', 'phone', 'email'
         ]);
 
         if (!validation.valid) {

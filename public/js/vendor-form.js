@@ -213,7 +213,7 @@ document.getElementById('vendorForm').addEventListener('submit', async function(
     // Validate and sanitize form data
     if (window.FormValidator) {
         const validation = window.FormValidator.validateFormData(formData, [
-            'businessName', 'firstName', 'lastName', 'phone', 'email', 'pastorName', 'assemblyName'
+            'firstName', 'lastName', 'phone', 'email', 'businessName'
         ]);
 
         if (!validation.valid) {

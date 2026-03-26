@@ -295,7 +295,7 @@ document.getElementById('volunteerForm').addEventListener('submit', async functi
     // Validate and sanitize form data
     if (window.FormValidator) {
         const validation = window.FormValidator.validateFormData(formData, [
-            'firstName', 'lastName', 'phone', 'email', 'pastorName', 'assemblyName'
+            'firstName', 'lastName', 'phone', 'email'
         ]);
 
         if (!validation.valid) {
