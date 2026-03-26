@@ -1001,6 +1001,14 @@ const dismissedRegAssembly = new Set();
 const dismissedVolPastor   = new Set();
 const dismissedVolAssembly = new Set();
 
+// Persisted dismissals loaded from Firestore (survive page refresh)
+const savedDismissals = {
+    registrationPastor:   new Set(),
+    registrationAssembly: new Set(),
+    volunteerPastor:      new Set(),
+    volunteerAssembly:    new Set()
+};
+
 // Admin merge decisions — stored in Firestore adminSettings, never modifies user submissions
 const savedMerges = {
     registrationPastor:   {},
@@ -1174,19 +1182,42 @@ function getEffectiveName(rawName, merges, normFn) {
     return merges[norm] || rawName;
 }
 
-// Load admin merge decisions from Firestore adminSettings (separate collection, never touches user submissions)
+// Load admin merge decisions and dismissals from Firestore (never touches user submissions)
 async function loadMergeDecisions() {
     try {
-        const doc = await db.collection('adminSettings').doc('merges').get();
-        if (doc.exists) {
-            const data = doc.data();
+        const [mergeDoc, dismissDoc] = await Promise.all([
+            db.collection('adminSettings').doc('merges').get(),
+            db.collection('adminSettings').doc('dismissals').get()
+        ]);
+        if (mergeDoc.exists) {
+            const data = mergeDoc.data();
             Object.assign(savedMerges.registrationPastor,   data.registrationPastor   || {});
             Object.assign(savedMerges.registrationAssembly, data.registrationAssembly || {});
             Object.assign(savedMerges.volunteerPastor,      data.volunteerPastor      || {});
             Object.assign(savedMerges.volunteerAssembly,    data.volunteerAssembly    || {});
         }
+        if (dismissDoc.exists) {
+            const data = dismissDoc.data();
+            (data.registrationPastor   || []).forEach(k => { savedDismissals.registrationPastor.add(k);   dismissedRegPastor.add(k);   });
+            (data.registrationAssembly || []).forEach(k => { savedDismissals.registrationAssembly.add(k); dismissedRegAssembly.add(k); });
+            (data.volunteerPastor      || []).forEach(k => { savedDismissals.volunteerPastor.add(k);      dismissedVolPastor.add(k);   });
+            (data.volunteerAssembly    || []).forEach(k => { savedDismissals.volunteerAssembly.add(k);    dismissedVolAssembly.add(k); });
+        }
     } catch (e) {
-        console.error('Error loading merge decisions:', e);
+        console.error('Error loading admin settings:', e);
+    }
+}
+
+// Save a dismissal decision to Firestore so it survives page refresh
+async function saveDismissal(chartType, round, pairKey) {
+    const key = chartType + round.charAt(0).toUpperCase() + round.slice(1);
+    savedDismissals[key].add(pairKey);
+    try {
+        await db.collection('adminSettings').doc('dismissals').set(
+            { [key]: [...savedDismissals[key]] }, { merge: true }
+        );
+    } catch (e) {
+        console.error('Error saving dismissal:', e);
     }
 }
 
@@ -1274,8 +1305,9 @@ function renderGroupFlags(containerId, chartType) {
         round_key  = 'assembly';
     }
 
+    const pairKey = (a, b) => [a, b].sort().join('|||');
     const flags  = findFlagsForField(data, fieldGetter, normFn, similarFn);
-    const active = flags.filter(f => !dismissed.has(`${f.normA}|||${f.normB}`));
+    const active = flags.filter(f => !dismissed.has(pairKey(f.normA, f.normB)));
 
     // Auto-advance if nothing left in this round
     if (!active.length) {
@@ -1336,8 +1368,12 @@ function renderGroupFlags(containerId, chartType) {
                     btn.textContent = 'Saving\u2026';
                     const loserNorm    = option.norm === f.normA ? f.normB : f.normA;
                     const loserDisplay = option.display === f.a ? f.b : f.a;
-                    dismissed.add(`${f.normA}|||${f.normB}`);
-                    await saveMerge(chartType, round_key, loserNorm, loserDisplay, option.display);
+                    const pk = pairKey(f.normA, f.normB);
+                    dismissed.add(pk);
+                    await Promise.all([
+                        saveMerge(chartType, round_key, loserNorm, loserDisplay, option.display),
+                        saveDismissal(chartType, round_key, pk)
+                    ]);
                     rerender();
                 });
                 btnRow.appendChild(btn);
@@ -1349,7 +1385,9 @@ function renderGroupFlags(containerId, chartType) {
         noBtn.textContent = 'No';
         noBtn.style.cssText = 'padding:2px 12px;font-size:12px;font-weight:600;background:white;color:#28478a;border:1px solid #28478a;border-radius:4px;cursor:pointer;';
         noBtn.addEventListener('click', () => {
-            dismissed.add(`${f.normA}|||${f.normB}`);
+            const pk = pairKey(f.normA, f.normB);
+            dismissed.add(pk);
+            saveDismissal(chartType, round_key, pk);
             rerender();
         });
 
