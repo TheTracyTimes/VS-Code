@@ -1065,14 +1065,15 @@ function isSimilarPastorName(a, b) {
     const [shorter, longer] = wa.length <= wb.length ? [wa, wb] : [wb, wa];
     // Exact word match: all words of shorter name appear in longer
     if (shorter.length > 0 && shorter.every(w => longer.includes(w))) return true;
+    // Same-family guard: if both names have ≥2 words and share the same last name,
+    // they are different members of the same family — not duplicates.
+    // e.g. "Theodate Desrivieres" vs "Theodore Desrivieres" → same surname → skip.
+    if (wa.length >= 2 && wb.length >= 2 && wa[wa.length - 1] === wb[wb.length - 1]) return false;
     // Typo match: any word pair within edit distance 1-2 (min word length 4 to avoid false positives)
-    // Guard: skip if words share the same first 5 chars but differ at the end — those are
-    // likely different names (e.g. "Theodate" vs "Theodore"), not typos.
     for (const sw of shorter) {
         if (sw.length < 4) continue;
         for (const lw of longer) {
             if (lw.length < 4) continue;
-            if (sw.length >= 6 && lw.length >= 6 && sw.slice(0, 5) === lw.slice(0, 5) && sw.slice(-2) !== lw.slice(-2)) continue;
             const dist = levenshtein(sw, lw);
             const maxDist = sw.length <= 5 ? 1 : 2;
             if (dist > 0 && dist <= maxDist) return true;
