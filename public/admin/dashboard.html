@@ -924,28 +924,30 @@
                         <span id="manualMergeArrow" style="display:inline-block;transition:transform 0.2s;">&#9654;</span> Manual Merge
                     </summary>
                     <div style="background:white;border-radius:var(--radius-md);padding:var(--spacing-lg);box-shadow:var(--shadow-md);margin-top:8px;">
-                        <p style="font-size:13px;color:var(--dark-gray);margin:0 0 var(--spacing-md);">Manually merge a name variant the algorithm didn't detect. Select the type, then enter the name exactly as it appears in the chart legend — for <strong>Pastor</strong> merges enter only the pastor name (the part before the —); for <strong>Assembly</strong> merges enter only the assembly name (the part after the —).</p>
-                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--spacing-md);margin-bottom:var(--spacing-md);">
-                            <div>
-                                <label style="display:block;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--dark-gray);margin-bottom:4px;">Duplicate name (merge FROM)</label>
-                                <input type="text" id="manualMergeFrom" list="manualMergeFromList" placeholder="e.g. Exavier et Rosage" style="width:100%;box-sizing:border-box;" autocomplete="off">
-                                <datalist id="manualMergeFromList"></datalist>
-                            </div>
-                            <div>
-                                <label style="display:block;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--dark-gray);margin-bottom:4px;">Canonical name (merge INTO)</label>
-                                <input type="text" id="manualMergeInto" list="manualMergeIntoList" placeholder="e.g. Exavier Noël Rosage Beauzil" style="width:100%;box-sizing:border-box;" autocomplete="off">
-                                <datalist id="manualMergeIntoList"></datalist>
-                            </div>
-                        </div>
-                        <div style="display:flex;align-items:center;gap:var(--spacing-md);flex-wrap:wrap;">
-                            <select id="manualMergeType" style="flex:1;min-width:200px;">
-                                <option value="volunteerPastor">Volunteers — Pastor Name</option>
-                                <option value="volunteerAssembly">Volunteers — Assembly Name</option>
-                                <option value="registrationPastor">Registrations — Pastor Name</option>
-                                <option value="registrationAssembly">Registrations — Assembly Name</option>
+                        <p style="font-size:13px;color:var(--dark-gray);margin:0 0 var(--spacing-md);">Select which chart to work with, then pick the duplicate group and the group it should merge into.</p>
+                        <div style="margin-bottom:var(--spacing-md);">
+                            <label style="display:block;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--dark-gray);margin-bottom:4px;">Data source</label>
+                            <select id="manualMergeChartType" style="width:100%;box-sizing:border-box;">
+                                <option value="volunteer">Volunteers</option>
+                                <option value="registration">Registrations</option>
                             </select>
-                            <button class="btn btn-primary" id="manualMergeBtn">Merge</button>
                         </div>
+                        <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:var(--spacing-md);align-items:end;margin-bottom:var(--spacing-md);">
+                            <div>
+                                <label style="display:block;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--dark-gray);margin-bottom:4px;">Merge FROM (duplicate)</label>
+                                <select id="manualMergeFrom" style="width:100%;box-sizing:border-box;">
+                                    <option value="">— Select —</option>
+                                </select>
+                            </div>
+                            <div style="padding-bottom:6px;font-size:18px;color:var(--dark-gray);user-select:none;">→</div>
+                            <div>
+                                <label style="display:block;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--dark-gray);margin-bottom:4px;">Merge INTO (canonical)</label>
+                                <select id="manualMergeInto" style="width:100%;box-sizing:border-box;">
+                                    <option value="">— Select —</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" id="manualMergeBtn">Merge</button>
                         <div id="manualMergeStatus" style="font-size:13px;margin-top:8px;min-height:20px;"></div>
                     </div>
                 </details>

@@ -1715,6 +1715,7 @@ async function renderCharts() {
     renderCommitteeChart();
     renderRegistrationGroupChart();
     renderVolunteerGroupChart();
+    populateMergeDropdowns();
 }
 
 // ===== INITIALIZE =====
@@ -1789,66 +1790,113 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Populate datalist suggestions when merge type changes
-    function updateMergeDatalist() {
-        const typeKey  = document.getElementById('manualMergeType').value;
-        const isPastor = typeKey.endsWith('Pastor');
-        const data     = typeKey.startsWith('volunteer') ? volunteersData : registrationsData;
-        const getField = isPastor ? (r => r.pastorName) : (r => r.assemblyName);
-        const seen     = new Set();
-        const names    = [];
+    // Populate FROM/INTO dropdowns with current chart groups
+    function populateMergeDropdowns() {
+        const typeEl = document.getElementById('manualMergeChartType');
+        if (!typeEl) return;
+        const chartType = typeEl.value;
+        const data           = chartType === 'volunteer' ? volunteersData : registrationsData;
+        const pastorMerges   = chartType === 'volunteer' ? savedMerges.volunteerPastor   : savedMerges.registrationPastor;
+        const assemblyMerges = chartType === 'volunteer' ? savedMerges.volunteerAssembly : savedMerges.registrationAssembly;
+
+        const groups = {};
         data.forEach(item => {
-            const v = getField(item);
-            if (v && !seen.has(v)) { seen.add(v); names.push(v); }
+            const ep = getEffectiveName(item.pastorName,  pastorMerges,   normalizePastorName);
+            const ea = getEffectiveName(item.assemblyName, assemblyMerges, normalizeAssemblyName);
+            const nk = getCombinedLabel(normalizePastorName(ep), normalizeAssemblyName(ea));
+            if (!groups[nk]) groups[nk] = { display: getCombinedLabel(ep, ea), count: 0 };
+            groups[nk].count++;
         });
-        names.sort();
-        ['manualMergeFromList', 'manualMergeIntoList'].forEach(id => {
-            const dl = document.getElementById(id);
-            if (!dl) return;
-            dl.innerHTML = '';
-            names.forEach(n => {
+        const sorted = Object.entries(groups).sort((a, b) => b[1].count - a[1].count);
+
+        ['manualMergeFrom', 'manualMergeInto'].forEach(id => {
+            const sel = document.getElementById(id);
+            if (!sel) return;
+            const prev = sel.value;
+            sel.innerHTML = '<option value="">— Select —</option>';
+            sorted.forEach(([nk, { display, count }]) => {
                 const opt = document.createElement('option');
-                opt.value = n;
-                dl.appendChild(opt);
+                opt.value = nk;
+                opt.textContent = `${display} (${count})`;
+                sel.appendChild(opt);
             });
+            if (prev && sel.querySelector(`option[value="${CSS.escape(prev)}"]`)) sel.value = prev;
         });
     }
-    const mergeTypeSelect = document.getElementById('manualMergeType');
-    if (mergeTypeSelect) {
-        mergeTypeSelect.addEventListener('change', updateMergeDatalist);
-        updateMergeDatalist(); // populate on load
+
+    const mergeChartTypeEl = document.getElementById('manualMergeChartType');
+    if (mergeChartTypeEl) {
+        mergeChartTypeEl.addEventListener('change', populateMergeDropdowns);
     }
 
     // Manual merge submit
     const manualMergeBtn = document.getElementById('manualMergeBtn');
     if (manualMergeBtn) {
         manualMergeBtn.addEventListener('click', async () => {
-            const fromVal  = (document.getElementById('manualMergeFrom').value  || '').trim();
-            const intoVal  = (document.getElementById('manualMergeInto').value  || '').trim();
-            const typeKey  = document.getElementById('manualMergeType').value;   // e.g. 'volunteerPastor'
-            const status   = document.getElementById('manualMergeStatus');
+            const chartType   = document.getElementById('manualMergeChartType').value;
+            const fromNormKey = document.getElementById('manualMergeFrom').value;
+            const intoNormKey = document.getElementById('manualMergeInto').value;
+            const status      = document.getElementById('manualMergeStatus');
 
-            if (!fromVal || !intoVal) { status.textContent = '⚠ Please fill in both name fields.'; status.style.color = '#856404'; return; }
-            if (fromVal.toLowerCase() === intoVal.toLowerCase()) { status.textContent = '⚠ From and Into names are identical.'; status.style.color = '#856404'; return; }
+            if (!fromNormKey || !intoNormKey) {
+                status.textContent = '⚠ Please select both a FROM and INTO group.';
+                status.style.color = '#856404';
+                return;
+            }
+            if (fromNormKey === intoNormKey) {
+                status.textContent = '⚠ FROM and INTO are the same group.';
+                status.style.color = '#856404';
+                return;
+            }
 
-            // Derive chartType ('volunteer'|'registration') and round ('pastor'|'assembly')
-            const isPastor   = typeKey.endsWith('Pastor');
-            const chartType  = typeKey.startsWith('volunteer') ? 'volunteer' : 'registration';
-            const round      = isPastor ? 'pastor' : 'assembly';
-            const normFn     = isPastor ? normalizePastorName : normalizeAssemblyName;
-            const loserNorm  = normFn(fromVal);
+            const data           = chartType === 'volunteer' ? volunteersData : registrationsData;
+            const pastorKey      = chartType + 'Pastor';
+            const assemblyKey    = chartType + 'Assembly';
+            const pastorMerges   = savedMerges[pastorKey];
+            const assemblyMerges = savedMerges[assemblyKey];
 
-            if (!loserNorm) { status.textContent = '⚠ The "from" name is empty after normalization.'; status.style.color = '#856404'; return; }
+            // Determine the canonical display names for the INTO group
+            let intoPastor = null, intoAssembly = null;
+            for (const item of data) {
+                const ep = getEffectiveName(item.pastorName,  pastorMerges,   normalizePastorName);
+                const ea = getEffectiveName(item.assemblyName, assemblyMerges, normalizeAssemblyName);
+                if (getCombinedLabel(normalizePastorName(ep), normalizeAssemblyName(ea)) === intoNormKey) {
+                    intoPastor   = ep;
+                    intoAssembly = ea;
+                    break;
+                }
+            }
+            if (intoPastor === null && intoAssembly === null) {
+                status.textContent = '⚠ INTO group not found. Refresh and try again.';
+                status.style.color = '#856404';
+                return;
+            }
 
-            // Check how many records actually match the FROM name before saving
-            const sourceData = chartType === 'volunteer' ? volunteersData : registrationsData;
-            const matchCount = sourceData.filter(item => {
-                const rawVal = isPastor ? item.pastorName : item.assemblyName;
-                return rawVal && normFn(rawVal) === loserNorm;
-            }).length;
+            // For every FROM record, map its raw names to the INTO canonical names
+            let updatedPastor = false, updatedAssembly = false;
+            data.forEach(item => {
+                const ep = getEffectiveName(item.pastorName,  pastorMerges,   normalizePastorName);
+                const ea = getEffectiveName(item.assemblyName, assemblyMerges, normalizeAssemblyName);
+                if (getCombinedLabel(normalizePastorName(ep), normalizeAssemblyName(ea)) !== fromNormKey) return;
 
-            if (matchCount === 0) {
-                status.textContent = `⚠ No ${chartType} records found with that ${isPastor ? 'pastor' : 'assembly'} name. Check the spelling matches exactly what appears in the chart legend.`;
+                if (item.pastorName) {
+                    const rn = normalizePastorName(item.pastorName);
+                    if (rn && rn !== normalizePastorName(intoPastor || '')) {
+                        pastorMerges[rn] = intoPastor;
+                        updatedPastor = true;
+                    }
+                }
+                if (item.assemblyName) {
+                    const rn = normalizeAssemblyName(item.assemblyName);
+                    if (rn && rn !== normalizeAssemblyName(intoAssembly || '')) {
+                        assemblyMerges[rn] = intoAssembly;
+                        updatedAssembly = true;
+                    }
+                }
+            });
+
+            if (!updatedPastor && !updatedAssembly) {
+                status.textContent = '⚠ Nothing to merge — groups appear equivalent after normalization.';
                 status.style.color = '#856404';
                 return;
             }
@@ -1858,24 +1906,42 @@ document.addEventListener('DOMContentLoaded', () => {
             status.textContent = '';
             let saveOk = true;
             try {
-                await saveMerge(chartType, round, loserNorm, fromVal, intoVal);
+                const updates = {};
+                if (updatedPastor)   updates[pastorKey]   = pastorMerges;
+                if (updatedAssembly) updates[assemblyKey] = assemblyMerges;
+                const user = auth && auth.currentUser ? auth.currentUser.email : 'admin';
+                await Promise.all([
+                    db.collection('adminSettings').doc('merges').set(updates, { merge: true }),
+                    db.collection('mergeLog').add({
+                        chartType,
+                        mergedFrom: fromNormKey,
+                        mergedInto: intoNormKey,
+                        by: user,
+                        at: firebase.firestore.FieldValue.serverTimestamp()
+                    })
+                ]);
             } catch (e) {
                 saveOk = false;
                 console.error('Merge Firestore save failed:', e);
-                status.textContent = `⚠ Database save failed (${e.message}). Merge applied this session only — will be lost on refresh. Check Firestore permissions.`;
+                status.textContent = `⚠ Database save failed: ${e.message}. Merge applied this session only — will be lost on refresh.`;
                 status.style.color = '#721c24';
             }
             if (saveOk) {
-                status.textContent = `✓ Merged "${fromVal}" → "${intoVal}" (${matchCount} record${matchCount !== 1 ? 's' : ''} updated)`;
+                const fromSel = document.getElementById('manualMergeFrom');
+                const fromLabel = fromSel.options[fromSel.selectedIndex]?.textContent || fromNormKey;
+                const intoSel  = document.getElementById('manualMergeInto');
+                const intoLabel = intoSel.options[intoSel.selectedIndex]?.textContent || intoNormKey;
+                status.textContent = `✓ Merged: ${fromLabel} → ${intoLabel}`;
                 status.style.color = '#155724';
                 document.getElementById('manualMergeFrom').value = '';
                 document.getElementById('manualMergeInto').value = '';
             }
-            // Always re-render both charts — in-memory merge is applied even if Firestore save failed
+            // Always re-render charts
             registrationRound = 'pastor';
             volunteerRound    = 'pastor';
             try { renderRegistrationGroupChart(); } catch (e) { console.error('Registration chart render error:', e); }
             try { renderVolunteerGroupChart(); }    catch (e) { console.error('Volunteer chart render error:', e); }
+            populateMergeDropdowns();
             manualMergeBtn.disabled = false;
             manualMergeBtn.textContent = 'Merge';
         });
