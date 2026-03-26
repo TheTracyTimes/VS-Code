@@ -1075,6 +1075,16 @@ function isSimilarPastorName(a, b) {
     const [shorter, longer] = wa.length <= wb.length ? [wa, wb] : [wb, wa];
     // Exact word match: all words of shorter name appear in longer
     if (shorter.length > 0 && shorter.every(w => longer.includes(w))) return true;
+    // Conjunction-stripped match: remove French/English conjunctions ("et"/"and") then retry.
+    // Handles entries like "Exavier et Rosage" vs "Exavier Noël Rosage Beauzil"
+    // where someone wrote two names joined by "et" instead of the full combined name.
+    const conj = new Set(['et', 'and']);
+    if (wa.some(w => conj.has(w)) || wb.some(w => conj.has(w))) {
+        const wac = wa.filter(w => !conj.has(w));
+        const wbc = wb.filter(w => !conj.has(w));
+        const [shorterC, longerC] = wac.length <= wbc.length ? [wac, wbc] : [wbc, wac];
+        if (shorterC.length > 0 && shorterC.every(w => longerC.includes(w))) return true;
+    }
     // Different-surname guard: if both names have ≥2 words and their last names are
     // clearly different (beyond a typo), they are different people — don't flag.
     // e.g. "Theodate Desrivieres" vs "Theodore Smith" → different surnames → skip.
