@@ -1448,12 +1448,6 @@ function showChartDetail(panelId, titleId, bodyId, title, registrants, getNote) 
     panel.classList.add('visible');
 }
 
-// Explicit chart instance declarations (prevents implicit-global issues)
-let serviceChartInstance            = null;
-let committeeChartInstance          = null;
-let registrationGroupChartInstance  = null;
-let volunteerGroupChartInstance     = null;
-
 function renderServiceChart() {
     const serviceOrder = [
         { key: 'Thursday Morning Service, April 9th',  label: 'Thu Morning' },
