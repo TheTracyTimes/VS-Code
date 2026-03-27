@@ -530,6 +530,9 @@ document.getElementById('registrationForm').addEventListener('submit', async fun
         formData = { ...formData, ...validation.sanitized };
     }
 
+    // Remove empty optional fields so Firestore rules don't reject them
+    if (!formData.email) delete formData.email;
+
     // Add timestamp and status (required by Firestore rules)
     formData.timestamp = new Date().toISOString();
     formData.type = 'registration';

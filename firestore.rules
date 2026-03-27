@@ -15,7 +15,7 @@ service cloud.firestore {
     }
 
     function isValidPhone(phone) {
-      return phone is string && phone.size() >= 10;
+      return phone is string && phone.size() >= 7;
     }
 
     // ===== REGISTRATIONS COLLECTION =====
@@ -33,6 +33,7 @@ service cloud.firestore {
         // Email is optional but must be valid if provided
         (!('email' in request.resource.data) ||
           request.resource.data.email == null ||
+          request.resource.data.email == '' ||
           isValidEmail(request.resource.data.email)) &&
         // Ensure createdAt is set
         request.resource.data.createdAt == request.time &&
@@ -55,6 +56,7 @@ service cloud.firestore {
         isValidPhone(request.resource.data.phone) &&
         (!('email' in request.resource.data) ||
           request.resource.data.email == null ||
+          request.resource.data.email == '' ||
           isValidEmail(request.resource.data.email)) &&
         request.resource.data.createdAt == request.time &&
         request.resource.data.status == 'pending';
