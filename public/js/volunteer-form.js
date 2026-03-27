@@ -224,9 +224,9 @@ function isValidEmail(email) {
 }
 
 function isValidPhone(phone) {
-    // Accept various phone formats; 7 digits minimum covers international numbers
+    // Accept various phone formats with country code
     const re = /^\+?[\d\s\-()]+$/;
-    return re.test(phone) && phone.replace(/\D/g, '').length >= 7;
+    return re.test(phone) && phone.replace(/\D/g, '').length >= 10;
 }
 
 // ===== FORM SUBMISSION =====
