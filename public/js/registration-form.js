@@ -518,7 +518,7 @@ document.getElementById('registrationForm').addEventListener('submit', async fun
     // Validate and sanitize form data if FormValidator is available
     if (window.FormValidator) {
         const validation = window.FormValidator.validateFormData(formData, [
-            'firstName', 'lastName', 'phone'
+            'firstName', 'lastName', 'phone', 'email'
         ]);
 
         if (!validation.valid) {
@@ -529,9 +529,6 @@ document.getElementById('registrationForm').addEventListener('submit', async fun
         // Use sanitized data
         formData = { ...formData, ...validation.sanitized };
     }
-
-    // Remove empty optional fields so Firestore rules don't reject them
-    if (!formData.email) delete formData.email;
 
     // Add timestamp and status (required by Firestore rules)
     formData.timestamp = new Date().toISOString();
