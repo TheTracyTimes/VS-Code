@@ -31,8 +31,8 @@ const FormValidator = {
     validatePhone(phone) {
         if (!phone) return { valid: false, message: 'Phone is required' };
         const cleaned = phone.replace(/\D/g, '');
-        if (cleaned.length < 10) {
-            return { valid: false, message: 'Phone must be at least 10 digits' };
+        if (cleaned.length < 7) {
+            return { valid: false, message: 'Phone must be at least 7 digits' };
         }
         return { valid: true, sanitized: cleaned };
     },

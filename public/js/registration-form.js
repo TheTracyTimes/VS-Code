@@ -400,9 +400,9 @@ function isValidEmail(email) {
 }
 
 function isValidPhone(phone) {
-    // Accept various phone formats with country code
+    // Accept various phone formats; 7 digits minimum covers international numbers
     const re = /^\+?[\d\s\-()]+$/;
-    return re.test(phone) && phone.replace(/\D/g, '').length >= 10;
+    return re.test(phone) && phone.replace(/\D/g, '').length >= 7;
 }
 
 // ===== SAVE FORM DATA =====
@@ -518,7 +518,7 @@ document.getElementById('registrationForm').addEventListener('submit', async fun
     // Validate and sanitize form data if FormValidator is available
     if (window.FormValidator) {
         const validation = window.FormValidator.validateFormData(formData, [
-            'firstName', 'lastName', 'phone', 'email'
+            'firstName', 'lastName', 'phone'
         ]);
 
         if (!validation.valid) {
