@@ -58,6 +58,11 @@ service cloud.firestore {
           request.resource.data.email == null ||
           request.resource.data.email == '' ||
           isValidEmail(request.resource.data.email)) &&
+        // Must select at least one committee and one availability slot
+        request.resource.data.committees is list &&
+        request.resource.data.committees.size() > 0 &&
+        request.resource.data.availability is list &&
+        request.resource.data.availability.size() > 0 &&
         request.resource.data.createdAt == request.time &&
         request.resource.data.status == 'pending';
 
