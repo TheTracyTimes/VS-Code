@@ -98,7 +98,7 @@ function toggleAirportFields(show) {
                 if (arrivalDatepicker) arrivalDatepicker.clear();
             } else if (input.id === 'departureDate') {
                 if (departureDatepicker) departureDatepicker.clear();
-            } else {
+            } else if (input.type !== 'radio') {
                 input.value = 'N/A';
             }
             // Remove error state
