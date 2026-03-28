@@ -415,6 +415,9 @@ function saveCurrentSectionData() {
 
     // Save all input values
     section.querySelectorAll('input, textarea, select').forEach(input => {
+        // Skip inputs with no name (e.g. Flatpickr's nameless mobile date input)
+        if (!input.name) return;
+
         if (input.type === 'checkbox') {
             // Reset the array the first time we encounter each checkbox name
             // so navigating back and forward never creates duplicates
