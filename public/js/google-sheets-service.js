@@ -36,6 +36,18 @@ function requestGoogleAuth() {
     });
 }
 
+function formatTimestamp(date) {
+    const mm  = String(date.getMonth() + 1).padStart(2, '0');
+    const dd  = String(date.getDate()).padStart(2, '0');
+    const yyyy = date.getFullYear();
+    const raw  = date.getHours();
+    const ampm = raw >= 12 ? 'PM' : 'AM';
+    const hh   = String(raw % 12 || 12).padStart(2, '0');
+    const min  = String(date.getMinutes()).padStart(2, '0');
+    const sec  = String(date.getSeconds()).padStart(2, '0');
+    return `${mm}/${dd}/${yyyy}, ${hh}:${min}:${sec} ${ampm}`;
+}
+
 window.GoogleSheetsService = {
     /**
      * Check if Google Sheets is properly configured
@@ -249,9 +261,9 @@ window.GoogleSheetsService = {
      * Format form data for Google Sheets
      */
     formatDataForSheet(formType, data) {
-        const timestamp = data.createdAt && data.createdAt.toDate ?
-                         data.createdAt.toDate().toLocaleString() :
-                         new Date().toLocaleString();
+        const timestamp = formatTimestamp(
+            data.createdAt && data.createdAt.toDate ? data.createdAt.toDate() : new Date()
+        );
 
         switch (formType) {
             case 'registrations':
